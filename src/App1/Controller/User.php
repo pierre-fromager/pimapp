@@ -20,6 +20,7 @@ use \Pimvc\Views\Helpers\Widgets\Standart as widgetHelper;
 use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use App1\Form\Users\Search as searchUsersForm;
 use App1\Form\Users\Edit as editUsersForm;
+use App1\Form\Users\Password as passwordForm;
 use App1\Views\Helpers\Form\Search\Filter as formFilter;
 use App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
 use App1\Form\Users\Login as loginForm;
@@ -453,6 +454,61 @@ final class User extends basicController
     }
 
     /**
+     * changepassword
+     *
+     * @return array
+     */
+    final public function changepassword()
+    {
+        $postedDatas = $this->getParams();
+        $form = new passwordForm($postedDatas);
+        $isPost = ($this->getApp()->getRequest()->getMethod() === 'POST');
+        if ($isPost) {
+            $uid = $postedDatas['id'];
+            $userDatas = (array) $this->userModel->getById($uid);
+            $newPassword = $postedDatas['newpassword1'];
+            $doubleCheckPassword = ($newPassword == $postedDatas['newpassword2']);
+            $passwordCheck = ($userDatas['password'] == $this->getParams('oldpassword'));
+            if ($form->isValid() && $doubleCheckPassword && $passwordCheck) {
+                $userData = $this->userModel->getById($uid);
+                $this->userModel->setWhere(array('id' => $uid));
+                $this->userModel->bindWhere();
+                $updateData = array(
+                    'password' => $newPassword
+                    , 'token' => \Pimvc\Tools\User\Token::get(
+                        $postedDatas[self::PARAM_EMAIL],
+                        $postedDatas['password']
+                    )
+                );
+                unset($userData);
+                $this->userModel->update($updateData);
+                unset($userDatas);
+                $message = 'Le mot de passe a correctement été changé.';
+            } else {
+                $DCMessage = (!$doubleCheckPassword) ? '<p style="color:red">Saisie nouveaux mots de passe inconrrecte.</p>' : '';
+                $PCMessage = (!$passwordCheck) ? '<p style="color:red">L\'ancien mot de passe ne correspond pas.</p>' : '';
+                $message = $DCMessage . $PCMessage . (string) $form;
+                unset($userDatas);
+            }
+        } else {
+            $message = (string) $form;
+        }
+
+        $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
+            . 'Changer mon mot de passe';
+
+        $widget = (new widgetHelper())
+            ->setTitle($widgetTitle)
+            ->setBody((string) $form);
+        $widget->render();
+        $detailContent = (string) $widget;
+        unset($widget);
+        $nav = (new bootstrapNav());
+        $nav->setParams($this->getNavConfig())->render();
+        return (string) $this->getLayout((string) $nav . $detailContent);
+    }
+
+    /**
      * getLayout
      *
      * @param string $content
@@ -496,6 +552,11 @@ final class User extends basicController
                     self::PARAM_TITLE => 'Acl'
                     , 'icon' => 'fa fa-lock'
                     , 'link' => $this->baseUrl . '/acl/manage'
+                ],
+                [
+                    self::PARAM_TITLE => 'Password'
+                    , 'icon' => 'fa fa-lock'
+                    , 'link' => $this->baseUrl . '/user/changepassword'
                 ],
                 [
                     self::PARAM_TITLE => 'Database'
