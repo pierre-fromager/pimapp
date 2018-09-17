@@ -1,0 +1,787 @@
+{
+    "App1\\Controller\\Lang": {
+        "set": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "import": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "export": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Stat": {
+        "pong": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "opcache": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "redirect": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "getHtmlResponse": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "getJsonReponse": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Business": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "getBusinessWeekJson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "calendar": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "calupdate": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "caljson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Error": {
+        "index": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Database": {
+        "tables4dAction": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "tablespgsqlAction": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "tablesmysql": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "gencode4dAction": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "proscopecoverageAction": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "gencodemysql": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Acl": {
+        "manage": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "toggle": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "__destruct": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\File": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\User": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "login": {
+            "anonymous": "allow",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "deny"
+        },
+        "logout": {
+            "anonymous": "deny",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "register": {
+            "anonymous": "allow",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "deny"
+        },
+        "manage": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "duplicate": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "detail": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "delete": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "po": {
+            "anonymous": "deny",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Home": {
+        "index": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "redir": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "ping": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "json": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Math": {
+        "index": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "matrixajax": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "base": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Quizz": {
+        "index": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "check": {
+            "anonymous": "allow",
+            "waiting": "allow",
+            "user": "allow",
+            "pro": "allow",
+            "svi": "allow",
+            "admin": "allow"
+        },
+        "detail": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "delete": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        },
+        "liste": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "svi": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Api\\V1\\Ping": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "create": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "destroy": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "show": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "store": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "update": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Approval": {
+        "manage": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "validate": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "refuse": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "people": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Dashboard": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "populations": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "approvals": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "populationpinsdata": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "populationmonthlydata": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "monthlyapprovalsdatas": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "approvaldatas": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Mail": {
+        "sendapproval": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Probes": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "manage": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "duplicate": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "detail": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "delete": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "voljson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "criteriasjson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "voldayjson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "voldetailjson": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "volumes": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Api\\V1\\Probes": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "create": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "destroy": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "show": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "store": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "update": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Api\\V1\\Authsn": {
+        "store": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Api\\V1\\Auth": {
+        "store": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Api\\V1\\Probesconfig": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "create": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "destroy": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "show": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "store": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "update": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    },
+    "App1\\Controller\\Probesconfig": {
+        "index": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "manage": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "duplicate": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "edit": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "detail": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "delete": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        },
+        "configure": {
+            "anonymous": "deny",
+            "waiting": "deny",
+            "user": "deny",
+            "pro": "deny",
+            "admin": "allow"
+        }
+    }
+}

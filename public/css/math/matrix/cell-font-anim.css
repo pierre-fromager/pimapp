@@ -1,0 +1,25 @@
+@-webkit-keyframes fontSizeAnim {
+    0%   { font-size: 5px; }
+    100% { font-size: 10px; }
+}
+@-moz-keyframes fontSizeAnim {
+    0%   { font-size: 5px; }
+    100% { font-size: 10px; }
+}
+@-o-keyframes fontSizeAnim {
+    0%   { font-size: 5px; }
+    100% { font-size: 10px; }
+}
+@keyframes fontSizeAnim {
+    0%   { font-size: 5px; }
+    100% { font-size: 10px; }
+}
+
+.pivot {
+    /*
+    -webkit-animation: fontSizeAnim 1s infinite; 
+    -moz-animation:    fontSizeAnim 1s infinite; 
+    -o-animation:      fontSizeAnim 1s infinite;
+    animation:         fontSizeAnim 1s infinite; 
+    */
+}

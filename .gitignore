@@ -1,0 +1,7 @@
+/nbproject
+/vendor
+src/App1/cache
+src/App1/log
+src/App1/tmp
+composer.lock
+.php_cs.cache

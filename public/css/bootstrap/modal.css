@@ -1,0 +1,19 @@
+
+.modal-dialog {
+    background-color: white;
+    display: block;
+    width: 90%;
+    height: 60%;
+}
+
+.modal-header{
+    background-color: darkgrey;
+    color: white;
+    border-top: 1px solid black;
+}
+
+#modal-content {
+    background-image: url(../../img/feet.jpg);
+    background-repeat: repeat;
+}
+

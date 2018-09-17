@@ -1,0 +1,151 @@
+body{
+   /* background: url(../img/feet.jpg) repeat-y;*/
+}
+
+section{
+    padding: 10px 10px 10px 10px ;
+}
+
+.jumbotron {
+    padding: 10px 10px 10px 10px;
+}
+
+.container > p {
+    padding: 10px 10px 10px 10px;
+    background-color: white;
+    color: darkgray;
+}
+
+#content{
+    margin-top: 3em;
+}
+
+#content > h3 {
+    color: black;
+}
+
+.row > p {
+    padding: 10px 10px 10px 10px;
+    background-color: white;
+    color: darkgray;
+}
+
+address{
+    padding: 10px 10px 10px 10px;
+    background-color: white;
+    color: black;
+}
+
+h1{
+    background-color: white;
+    padding: 0 0 0 0;
+    margin:0 0 0 0 ;
+    padding-left: 10px;
+}
+
+
+a{
+    color: black;
+}  
+
+.abstract{
+    margin: 0 auto;
+}
+
+.col-md-4{
+    padding: 10px 10px 10px 10px;
+}
+
+.zoomer{
+    display: none;
+    position: absolute;
+    z-index: 2;    
+    font-size: 25px;
+    padding-top: 30%;
+    left: 20%;
+    color: white;
+    cursor: pointer;
+}
+
+.photo-profil{
+    cursor: pointer;
+    border-top-right-radius : 25px;
+    border-top-left-radius: 25px;
+}
+
+.modal-photo-profil{
+    position: relative;
+    display: block;
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 10px 10px 10px 10px ;
+}
+
+.subtitle{
+    border-bottom-right-radius : 15px;
+    border-bottom-left-radius : 15px;
+}
+
+a.anchor{
+    display: block;
+    position: relative;
+    top: -50px;
+    visibility: hidden;
+}
+/* SOCIAL */
+
+.twitter-color {
+    background-color: #5ea9dd;
+}
+.facebook-color {
+    background-color: #3b5999;
+}
+
+.social_icons{
+    color: white;
+    cursor: pointer;
+    padding: 4px 4px 4px 4px;
+}
+
+.sante p, .alimentation p{
+    color: darkslategrey;
+}
+
+.table-responsive{
+    overflow-x: visible;
+}
+
+/* RESPONSIVE */
+
+@media screen and (max-width:1000px){
+    .subtitle{
+        min-height: 10px;
+    }
+
+    .table-responsive{
+        overflow-x: visible;
+    }
+
+}
+
+
+@media screen and (min-width: 200px) and (max-width: 321px) and (orientation:portrait) {
+
+    section.widget{
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+        width: 320px;
+        margin-left: -32px;
+    }
+}
+
+@media screen and (max-width: 641px) and (orientation:landscape) {
+
+    section.widget{
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+        width: 640px;
+        margin-left: -32px;
+    }
+}
+

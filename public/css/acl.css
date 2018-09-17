@@ -1,0 +1,77 @@
+div.acl-manager{
+    margin: auto auto auto auto;
+}
+
+div.controler_header {
+    background-repeat: no-repeat;
+    background-position: 0px 3px;
+}
+
+h3.controler_header{
+    font-size: 1.2em;
+    margin-left: 2em;
+}
+
+div.active {
+    background-image: url('../img/acl/minus.gif');
+}
+
+div.inactive {
+    background-image: url('../img/acl/plus.gif');  
+}
+
+.allow {
+    background-image: url('../img/acl/icon-16-allow.png');
+    background-repeat: no-repeat;
+}
+
+.deny {
+    background-image: url('../img/acl/icon-16-deny.png');
+    background-repeat: no-repeat;
+}
+
+div.controler_header{
+    display: block;
+    background-repeat: no-repeat;
+    background-position: 0 0.3em;
+}
+
+div.action_header{
+    display: block;
+    background-repeat: no-repeat;
+    background-position: 2.5em 0.3em;
+}
+
+.action_header:hover{
+    cursor: pointer;
+}
+
+
+h4.controler_header{ 
+    margin-left: 4.5em;
+    font-size: 1.2em;
+}
+
+.controler_header:hover{
+    cursor: pointer;
+}
+
+div.role_header{
+    margin-left: 10px;
+    background-repeat: no-repeat;
+    background-position: 2.5em 3em;
+}
+
+div.controler_content,div.action_content,div.role_content {
+    display:none;
+}
+
+a.ajaxLink{
+    margin-left: 4em;
+    font-size:0.8em;
+    text-decoration: none;
+}
+
+span.role-acl{
+    margin-left: 2em;
+}

@@ -1,0 +1,116 @@
+.widget {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    /*background: rgba(AA, AA, AA, 0.6);*/
+    margin-bottom: 2em;
+    position: relative;
+    border:solid darkgray 1px;
+    margin-top: 1.5em;
+}
+.widget.normal {
+    height: 220px;
+}
+.widget.large {
+    height: 315px;
+}
+.widget.large .body {
+    height: 280px;
+}
+.widget.xlarge {
+    height: 415px;
+}
+.widget.xlarge .body {
+    height: 380px;
+}
+.widget.tiny {
+    height: 188px;
+}
+.widget.tiny-x2 {
+    height: 426px;
+}
+.widget.transparent {
+    background: transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+.widget>header {
+    position: relative;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    background: rgba(99, 99, 99, 0.8);
+    color:white; 
+}
+
+.widget>header h1, .widget>header h2, .widget>header h3, .widget>header h4, .widget>header h5 {
+    font-weight: 400;
+    color: white;
+    text-shadow: 0px 0px 0 #4a4a4a, 0px 1px 0 #474747, 0px 2px 0 #454545, 0px 3px 0 #424242, 0px 4px 0 #404040, 0px 5px 0 #3d3d3d, 0px 6px 0 #3b3b3b, 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.widget>header h1 small, .widget>header h2 small, .widget>header h3 small, .widget>header h4 small, .widget>header h5 small {
+    text-transform: lowercase;
+}
+.widget>header h4 {
+    font-size: 1em;
+}
+
+.widget>header h3 {
+    font-size: 1em;
+}
+
+.widget .body {
+    margin-top: 1em;
+    /*background: rgba(99, 99, 99, 0.3);*/
+}
+
+.widget .body p{
+    color:black;
+    font-size: 1.3em;
+}
+
+.widget .body h1,h2,h3,h4{
+    /*color:white;*/
+}
+
+.widget>footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 1em 0 0;
+}
+.widget .actions {
+    position: absolute;
+    right: 0;
+    top: -2px;
+}
+.widget .actions a {
+    text-decoration: none;
+}
+
+.widget a {
+    color:black;
+}
+
+.widget a.sortheader {
+    color:orange;
+}
+
+.widget a.sortheader:hover {
+    color:orangered;
+    text-decoration: none;
+}
+
+a.linkedIcon {
+    color: wheat;
+}
+
+a.linkedIcon > span:hover{
+    color: orange;
+}
