@@ -1,1 +1,3 @@
-*.rb linguist-language=Php
+*.php linguist-language=Php
+* linguist-vendored
+*.php linguist-vendored=false
