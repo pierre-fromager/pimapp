@@ -45,7 +45,10 @@ class Edit extends Form
         $this->setMode($mode);
         parent::__construct(
             $this->_getFields(),
-            self::LINE_EDIT_FORM_NAME, $this->baseUrl . DIRECTORY_SEPARATOR . self::LINE_EDIT_ACTION, self::LINE_EDIT_FORM_METHOD, $this->postedData
+            self::LINE_EDIT_FORM_NAME,
+            $this->baseUrl . DIRECTORY_SEPARATOR . self::LINE_EDIT_ACTION,
+            self::LINE_EDIT_FORM_METHOD,
+            $this->postedData
         );
         $this->_setWrappers();
         $this->setLabels($this->_getLabels());
