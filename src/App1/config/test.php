@@ -16,9 +16,9 @@ return [
             'nl-NL' => 'Nederlands'
         ],
         'mailer' => [
-            'host' => 'ssl0.ovh.net',
-            'username' => 'postmaster@pier-infor.fr',
-            'password' => 'vSB8Siss',
+            'host' => 'smtp.mailhost.tld',
+            'username' => 'postmaster@yourdomain.tld',
+            'password' => 'postmaster_password',
             'secure' => 'ssl',
         ]
     ],
