@@ -22,5 +22,7 @@ import sql tables from fixtures/sql into your database.
 ## Config
 
 Configure your env in src/App1/config
+
 Create a virtual host with DocumentRoot to src.
+
 Add  RewriteEngine to on.
