@@ -32,33 +32,23 @@ Add  RewriteEngine to on.
 ### Http middlewares
 
 * Acl (Access control list by roles).
-
 * Jwt (Auth).
-
 * Tokenizer (Auth).
-
 * Restful (Hook router to match api's routes).
 
 ### User
 
 * Login.
-
 * Logout.
-
 * Register.
-
 * Change password.
-
 * Lost password.
-
 * Crud complete.
 
 ### Api
 
 * Auth through jwt.
-
 * Acl controlled.
-
 * Restull compliant.
 
 ### Home
@@ -72,7 +62,6 @@ Add  RewriteEngine to on.
 ### Database
 
 * Model code generator.
-
 * Model Domain code generator.
 
 ### Acl
@@ -88,13 +77,10 @@ Add  RewriteEngine to on.
 #### Lignes
 
 * Path search (graph method weighted or not).
-
 * Crud complete.
-
 * Gis use OpenStreetMap.
 
 #### Stations
 
 * Crud complete.
-
 * Gis use OpenStreetMap.
