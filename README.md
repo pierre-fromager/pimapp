@@ -26,3 +26,75 @@ Configure your env in src/App1/config
 Create a virtual host with DocumentRoot to src.
 
 Add  RewriteEngine to on.
+
+## Features
+
+### Http middlewares
+
+* Acl (Access control list by roles).
+
+* Jwt (Auth).
+
+* Tokenizer (Auth).
+
+* Restful (Hook router to match api's routes).
+
+### User
+
+* Login.
+
+* Logout.
+
+* Register.
+
+* Change password.
+
+* Lost password.
+
+* Crud complete.
+
+### Api
+
+* Auth through jwt.
+
+* Acl controlled.
+
+* Restull compliant.
+
+### Home
+
+* Landing page.
+
+### Lang
+
+* Multilang ready (.csv).
+
+### Database
+
+* Model code generator.
+
+* Model Domain code generator.
+
+### Acl
+
+* Acl front manager.
+
+### File
+
+* Remote file browser.
+
+### Metro
+
+#### Lignes
+
+* Path search (graph method weighted or not).
+
+* Crud complete.
+
+* Gis use OpenStreetMap.
+
+#### Stations
+
+* Crud complete.
+
+* Gis use OpenStreetMap.
