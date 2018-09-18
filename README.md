@@ -27,6 +27,22 @@ Create a virtual host with DocumentRoot to src.
 
 Add  RewriteEngine to on.
 
+### Dev
+
+Using autoloader first cache level.
+
+```bash
+composer dump-autoload -o
+```
+
+### Prod
+
+Using autoloader second cache level.
+
+```bash
+composer dump-autoload -a
+```
+
 ## Features
 
 ### Http middlewares
