@@ -7,7 +7,7 @@
 namespace App1\Model\Metro;
 
 use \Pimvc\Db\Model\Orm;
-use App1\Helper\Math\Geo\Distance as geoDistance;
+use \Pimvc\Helper\Math\Geo\Distance as geoDistance;
 
 class Lignes extends Orm
 {

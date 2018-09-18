@@ -5,7 +5,7 @@
  */
 namespace App1\Model\Metro;
 
-use App1\Helper\Math\Geo\Distance as geoDistance;
+use \Pimvc\Helper\Math\Geo\Distance as geoDistance;
 
 class Stations extends \Pimvc\Db\Model\Orm
 {
