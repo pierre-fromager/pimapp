@@ -11,12 +11,8 @@ if (function_exists('opcache_get_configuration')) {
     ini_set('opcache.load_comments', true);
 }
 
-$there = __DIR__;
 $loader = require '../vendor/autoload.php';
-$fwkPath = $there . '/../vendor/pier-infor/pimvc/src/';
-$loader->add('Pimvc', $fwkPath);
-$appPath = $there . '/App1/';
-$loader->add('App1', $appPath);
+$appPath = __DIR__ . '/App1/';
 
 $config = (new \Pimvc\Config())->setPath($appPath . 'config/')
     ->setEnv(\Pimvc\Config::ENV_DEV)
