@@ -115,6 +115,10 @@ a.anchor{
     overflow-x: visible;
 }
 
+.alert{
+    margin-top: 20px;
+}
+
 /* RESPONSIVE */
 
 @media screen and (max-width:1000px){

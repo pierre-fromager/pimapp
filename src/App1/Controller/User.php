@@ -21,10 +21,12 @@ use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use App1\Form\Users\Search as searchUsersForm;
 use App1\Form\Users\Edit as editUsersForm;
 use App1\Form\Users\Password as passwordForm;
-use App1\Views\Helpers\Form\Search\Filter as formFilter;
-use App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
+use App1\Form\Users\Lostpassword as lostPasswordForm;
 use App1\Form\Users\Login as loginForm;
 use App1\Form\Users\Register as registerForm;
+use App1\Views\Helpers\Form\Search\Filter as formFilter;
+use App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
+use App1\Tools\Mail\Sender as mailSender;
 
 final class User extends basicController
 {
@@ -58,6 +60,8 @@ final class User extends basicController
     const USER_MESSAGE_REGISTRATION_INVALID = 'Les champs obligatoires n\'ont pas été saisis correctement.';
     const FORM_INCOMPLETE_MESSAGE = 'Formulaire incomplet.';
     const USER_MESSAGE_DELETE_SUCCESS = 'Enregistrement supprimé';
+    const MAIL_MESSAGE_NOTIFY_COMPLETE = 'Un email vous a été adressé contenant les informations nécessaires.';
+    const MAIL_MESSAGE_NOTIFY_NOUSER = 'Vous n\'êtes pas inscrit.';
 
     private $modelConfig;
     private $userModel;
@@ -126,13 +130,17 @@ final class User extends basicController
             $viewParams,
             self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
         );
-        $links = '<div style="float:right">'
-            . glyphHelper::getLinked(
-                glyphHelper::CERTIFICATE,
-                $this->baseUrl . DIRECTORY_SEPARATOR . 'user/register',
-                [self::PARAM_TITLE => 'Register']
-            )
-            . '</div>';
+        $registerLink = glyphHelper::getLinked(
+            glyphHelper::CERTIFICATE,
+            $this->baseUrl . '/user/register',
+            [self::PARAM_TITLE => 'Register']
+        );
+        $lostpasswdLink = glyphHelper::getLinked(
+            glyphHelper::LOCK,
+            $this->baseUrl . '/user/lostpassword',
+            [self::PARAM_TITLE => 'Register']
+        );
+        $links = '<div style="float:right">' . $registerLink . $lostpasswdLink . '</div>';
         $nav = (new bootstrapNav());
         $nav->setParams($this->getNavConfig())->render();
         $widgetTitle = '<span class="fa fa-sign-in"></span>Login' . $links;
@@ -500,6 +508,67 @@ final class User extends basicController
         $widget = (new widgetHelper())
             ->setTitle($widgetTitle)
             ->setBody((string) $form);
+        $widget->render();
+        $detailContent = (string) $widget;
+        unset($widget);
+        $nav = (new bootstrapNav());
+        $nav->setParams($this->getNavConfig())->render();
+        return (string) $this->getLayout((string) $nav . $detailContent);
+    }
+
+    /**
+     * lostpassword
+     *
+     * @return Response
+     */
+    final public function lostpassword()
+    {
+        $formData = $this->getParams();
+        $form = new lostPasswordForm($formData);
+        $isPost = ($this->getApp()->getRequest()->getMethod() === 'POST');
+        $content = '';
+        if ($isPost) {
+            if ($form->isValid()) {
+                $user = $this->userModel->getByEmail($formData['email']);
+                if ($user) {
+                    $tplPath = $this->getApp()->getPath() . 'Views/User/Mail/Lostpassword.php';
+                    $mailBody = (new \Pimvc\View())
+                        ->setFilename($tplPath)
+                        ->setParams(['user' => $user])
+                        ->render();
+                    (new mailSender())
+                        ->setFrom('pf@pier-infor.fr')
+                        ->setTo($user->email)
+                        ->setSubject('Password retrieval')
+                        ->setBody($mailBody)
+                        ->send();
+                }
+                $messageType = ($user) ? flashTools::FLASH_INFO : flashTools::FLASH_ERROR;
+                $message = ($user) ? self::MAIL_MESSAGE_NOTIFY_COMPLETE : self::MAIL_MESSAGE_NOTIFY_NOUSER;
+                flashTools::add($messageType, $message);
+                $content = (string) $form;
+            } else {
+                flashTools::addError('Email invalide');
+                $content = (string) $form;
+            }
+        } else {
+            $content = (string) $form;
+        }
+        $loginLink = glyphHelper::getLinked(
+            glyphHelper::LOG_IN,
+            $this->baseUrl . '/user/login',
+            ['title' => 'Se connecter']
+        );
+        $registerLink = glyphHelper::getLinked(
+            glyphHelper::CERTIFICATE,
+            $this->baseUrl . '/user/register',
+            ['title' => 'Enregistrement']
+        );
+        $links = '<div style="float:right">' . $loginLink . $registerLink . '</div>';
+        $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
+            . 'Mot de passe perdu' . $links;
+
+        $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody($content);
         $widget->render();
         $detailContent = (string) $widget;
         unset($widget);
