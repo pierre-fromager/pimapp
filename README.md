@@ -71,10 +71,6 @@ composer dump-autoload -a
 
 * Landing page.
 
-### Lang
-
-* Multilang ready (.csv).
-
 ### Database
 
 * Model code generator.
