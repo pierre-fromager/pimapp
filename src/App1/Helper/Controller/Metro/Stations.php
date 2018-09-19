@@ -145,7 +145,7 @@ class Stations extends basicController
      * @param array $formDatas
      * @return string
      */
-    protected function detailMapOsm(array $datas): string
+    protected function detailMapOsm(array $datas)
     {
         $markerIcon = new OsmMarkerIcon();
         $markerIcon->iconUrl = $this->baseUrl . '/public/img/gis/icon/pin.png';

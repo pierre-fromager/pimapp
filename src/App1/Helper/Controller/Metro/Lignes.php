@@ -89,7 +89,7 @@ class Lignes extends basicController
      * @param array $datas
      * @return string
      */
-    protected function searchMapOsm(array $hCollection, float $distance): string
+    protected function searchMapOsm(array $hCollection, $distance)
     {
         $markers = [];
         $markerIcon = new OsmMarkerIcon();
@@ -206,7 +206,7 @@ class Lignes extends basicController
      * @param array $datas
      * @return string
      */
-    protected function detailMapOsm(array $datas): string
+    protected function detailMapOsm(array $datas)
     {
         $markers = [];
         $markerIcon = new OsmMarkerIcon();

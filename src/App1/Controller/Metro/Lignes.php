@@ -203,7 +203,7 @@ final class Lignes extends ControlerMetroLignesHelper
      */
     final public function rebuild()
     {
-        $redirectUrl = $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION;
+        $redirectUrl = $redirectUrl = $this->baseUrl . '/' . self::LIST_ACTION;
         $this->stationsModel->rebuildh();
         $hStations = $this->stationsModel->getByH();
         $this->lignesModel->updateDistances($hStations);
@@ -222,7 +222,7 @@ final class Lignes extends ControlerMetroLignesHelper
             $userObject = $this->lignesModel->getById($id);
             unset($userObject->id);
             $this->lignesModel->save($userObject);
-            flashTools::addInfo('Line id ' . $id . ' dupliqué.');
+            flashTools::addInfo('Probe id ' . $id . ' dupliqué.');
             $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION;
             return $this->redirect($redirectUrl);
         }

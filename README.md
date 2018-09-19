@@ -4,7 +4,7 @@
 
 ## Requirements
 
-* php version >= 7.0.0
+* php version >= 5.6.3
 * composer installed
 
 ## Setup
