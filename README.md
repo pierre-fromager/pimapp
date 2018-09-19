@@ -84,10 +84,6 @@ composer dump-autoload -a
 
 * Acl front manager.
 
-### File
-
-* Remote file browser.
-
 ### Metro
 
 #### Lignes
