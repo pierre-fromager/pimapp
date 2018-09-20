@@ -19,8 +19,16 @@ class Stations extends \Pimvc\Db\Model\Orm
     protected $_primary = 'id';
     protected $_alias = 'metrostageo';
     protected $_adapter = parent::MODEL_ADAPTER_DEFAULT;
-    protected $_refMap = [];
     protected $hList = [];
+    protected $_refMap = [
+        \App1\Model\Metro\Lignes::class => [
+            self::_LOCAL => self::_H,
+            self::_FOREIGN => \App1\Model\Metro\Lignes::_HSRC,
+            self::_ALIAS => 'metrostageo',
+            self::_TABLE => 'metro_sta_geo',
+            self::_CARDINALITY => true
+        ],
+    ];
 
     /**
      * __construct
@@ -127,6 +135,17 @@ class Stations extends \Pimvc\Db\Model\Orm
     public function getClosest($lat, $lon)
     {
         return $this->getSortedDistancesFrom($lat, $lon)[0];
+    }
+
+    /**
+     * getSrcLignes
+     *
+     * @param string $h
+     * @return \App1\Model\Metro\Domain\Lignes[]
+     */
+    public function getSrcLignes($h)
+    {
+        return $this->getDependantObjects(self::_H, $h);
     }
 
     /**

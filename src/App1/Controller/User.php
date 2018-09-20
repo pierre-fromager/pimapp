@@ -85,7 +85,7 @@ final class User extends helperUserController
         $lostpasswdLink = glyphHelper::getLinked(
             glyphHelper::LOCK,
             $this->baseUrl . '/user/lostpassword',
-            [self::PARAM_TITLE => 'Register']
+            [self::PARAM_TITLE => 'Lost password']
         );
         $links = '<div style="float:right">' . $registerLink . $lostpasswdLink . '</div>';
         $nav = (new bootstrapNav());
@@ -202,7 +202,7 @@ final class User extends helperUserController
         }
         $liste->render();
         $widgetTitle = glyphHelper::get(glyphHelper::SEARCH)
-            . 'Gestion des comptes utilisateurs'
+                . 'Gestion des comptes utilisateurs'
             . '<div style="float:right">'
             /*
               . glyphHelper::getLinked(
@@ -282,6 +282,7 @@ final class User extends helperUserController
                     }
                 }
                 if (isset($postedDatas[\Pimvc\Form::FORM_XCSRF])) {
+                    die;
                     unset($postedDatas[\Pimvc\Form::FORM_XCSRF]);
                 }
                 $postedDatas[self::PARAM_TOKEN] = \Pimvc\Tools\User\Token::get(
@@ -333,7 +334,7 @@ final class User extends helperUserController
             . $linkIntervenant
             . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::PENCIL)
-            . 'Edition du compte' . $links;
+                . 'Edition du compte' . $links;
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $message);
         $widget->render();
         $nav = (new bootstrapNav());
@@ -376,7 +377,7 @@ final class User extends helperUserController
             ) . $manageButton
             . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::EYE_OPEN)
-            . 'Détail du compte' . $links;
+                . 'Détail du compte' . $links;
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $form);
         $widget->render();
         $detailContent = (string) $widget;
@@ -450,11 +451,11 @@ final class User extends helperUserController
         }
 
         $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
-            . 'Changer mon mot de passe';
+                . 'Changer mon mot de passe';
 
         $widget = (new widgetHelper())
-            ->setTitle($widgetTitle)
-            ->setBody((string) $form);
+                ->setTitle($widgetTitle)
+                ->setBody((string) $form);
         $widget->render();
         $detailContent = (string) $widget;
         unset($widget);
@@ -480,15 +481,15 @@ final class User extends helperUserController
                 if ($user) {
                     $tplPath = $this->getApp()->getPath() . 'Views/User/Mail/Lostpassword.php';
                     $mailBody = (new \Pimvc\View())
-                        ->setFilename($tplPath)
-                        ->setParams(['user' => $user])
-                        ->render();
+                            ->setFilename($tplPath)
+                            ->setParams(['user' => $user])
+                            ->render();
                     (new mailSender())
-                        ->setFrom('pf@pier-infor.fr')
-                        ->setTo($user->email)
-                        ->setSubject('Password retrieval')
-                        ->setBody($mailBody)
-                        ->send();
+                            ->setFrom('pf@pier-infor.fr')
+                            ->setTo($user->email)
+                            ->setSubject('Password retrieval')
+                            ->setBody($mailBody)
+                            ->send();
                 }
                 $messageType = ($user) ? flashTools::FLASH_INFO : flashTools::FLASH_ERROR;
                 $message = ($user) ? self::MAIL_MESSAGE_NOTIFY_COMPLETE : self::MAIL_MESSAGE_NOTIFY_NOUSER;
@@ -513,7 +514,7 @@ final class User extends helperUserController
         );
         $links = '<div style="float:right">' . $loginLink . $registerLink . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
-            . 'Mot de passe perdu' . $links;
+                . 'Mot de passe perdu' . $links;
 
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody($content);
         $widget->render();

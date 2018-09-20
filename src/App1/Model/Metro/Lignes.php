@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Description App1\Model\Metro\Lignes
  *
  * @author pierrefromager
  */
+
 namespace App1\Model\Metro;
 
 use \Pimvc\Db\Model\Orm;
@@ -11,6 +13,7 @@ use \Pimvc\Helper\Math\Geo\Distance as geoDistance;
 
 class Lignes extends Orm
 {
+
     const _LIGNE = 'ligne';
     const _SRC = 'src';
     const _DST = 'dst';
@@ -25,7 +28,14 @@ class Lignes extends Orm
     protected $_primary = 'id';
     protected $_alias = 'metrolignode';
     protected $_adapter = parent::MODEL_ADAPTER_DEFAULT;
-    protected $_refMap = [];
+    protected $_refMap = [
+        \App1\Model\Metro\Stations::class => [
+            self::_LOCAL => self::_HSRC,
+            self::_FOREIGN => \App1\Model\Metro\Stations::_H,
+            self::_ALIAS => 'metrostageo',
+            self::_TABLE => 'metro_sta_geo',
+        ],
+    ];
     private $_weights = [];
     private $_nodes = [];
 
@@ -244,6 +254,42 @@ class Lignes extends Orm
                 }
             }
         }
+    }
+
+    /**
+     * getSrcStation
+     *
+     * @param string $hsrc
+     * @return \App1\Model\Metro\Domain\Station
+     */
+    public function getSrcStation($hsrc)
+    {
+        return $this->getDependantObjects(self::_HSRC, $hsrc);
+    }
+
+    /**
+     * getDstStation
+     *
+     * @param string $hdst
+     * @return \App1\Model\Metro\Domain\Station
+     */
+    public function getDstStation($hdst)
+    {
+        return $this->getDependantObjects(self::_HDST, $hdst);
+    }
+
+    /**
+     * getTroncon
+     *
+     * @param string $hsrc
+     * @param string $hdst
+     * @return \App1\Model\Metro\Domain\Ligne
+     */
+    public function getTroncon($hsrc, $hdst)
+    {
+        $this->cleanRowset();
+        $this->find([], [self::_HSRC => $hsrc, self::_HDST => $hdst]);
+        return $this->getRowsetAsArray();
     }
 
     /**

@@ -153,12 +153,48 @@ final class Lignes extends ControlerMetroLignesHelper
             $hasContext = $this->hasValue('context');
             $isUnweighted = ($this->getParams(searchItiForm::_OPTIM) && $this->getParams(searchItiForm::_OPTIM) === 'unweighted');
             $r = ($isUnweighted) ? $this->searchUnweighted() : $this->searchWeighted();
+            $hops = $r['hops'];
+            $hs = count($hops);
+            $hCouples = [];
+            for ($c = 0; $c < $hs; ++$c) {
+                $src = $hops[0];
+                $dst = (isset($hops[1])) ? $hops[1] : '';
+                if ($src && $dst) {
+                    $hCouples[] = [$src, $dst];
+                }
+                array_shift($hops);
+            }
+            $stasCouples = [];
+            foreach ($hCouples as $hCouple) {
+                $rs = $this->lignesModel->getTroncon($hCouple[0], $hCouple[1]);
+                if (isset($rs[0])) {
+                    $stasCouples[] = $rs[0];
+                }
+            }
+            $tableData = [];
+            $itiCount = 0;
+            foreach ($stasCouples as $hCouple) {
+                $itiCount++;
+                $tableData[] = [$itiCount, $hCouple[modelLignes::_LIGNE],
+                    $hCouple[modelLignes::_SRC], $hCouple[modelLignes::_DST],
+                    round($hCouple[modelLignes::_DIST], 3)
+                ];
+            }
+            $itiTable = new \Pimvc\Views\Helpers\Table(
+                '',
+                ['Dir', 'Ligne', 'Départ', 'Arrivée', 'Dist km'],
+                $tableData
+            );
+            $itiTable->setId('itiTable');
+            $itiTable->render();
+
             if ($hasContext) {
                 $this->getJsonHeaders();
                 echo \json_encode((object) $r, JSON_PRETTY_PRINT);
                 die;
             }
-            $widgetContent = $this->searchMapOsm($r['hops'], $r['distance']);
+            
+            $widgetContent = $itiTable . '<br style="clear:both"/>' . $this->searchMapOsm($r['hops'], $stasCouples, $r['distance']);
         }
 
         $widgetTitle = faHelper::get(faHelper::CUBES)
@@ -311,9 +347,8 @@ final class Lignes extends ControlerMetroLignesHelper
         
         $widgetTitle = glyphHelper::get(glyphHelper::EYE_OPEN)
                 . 'Détail du tronçon' . $this->detailButtons();
-
         $widget = (new widgetHelper())
-            ->setTitle($widgetTitle)
+                ->setTitle($widgetTitle)
             ->setBody((string) $form . $this->detailMapOsm($formDatas));
         $widget->render();
         $detailContent = (string) $widget;

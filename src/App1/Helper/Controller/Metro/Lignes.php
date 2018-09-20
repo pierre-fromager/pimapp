@@ -89,12 +89,11 @@ class Lignes extends basicController
      * @param array $datas
      * @return string
      */
-    protected function searchMapOsm(array $hCollection, $distance)
+    protected function searchMapOsm(array $hCollection, $staInfos, $distance)
     {
         $markers = [];
         $markerIcon = new OsmMarkerIcon();
         $markerIcon->iconUrl = $this->baseUrl . self::_ICON_GIS;
-
         foreach ($hCollection as $h) {
             $sta = $this->stationsModel->getByH($h);
             $markerOptDep = new OsmMarkerOptions($markerIcon);
