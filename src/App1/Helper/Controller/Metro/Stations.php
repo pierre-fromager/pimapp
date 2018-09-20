@@ -158,6 +158,7 @@ class Stations extends basicController
         $markers[] = $marker;
         $mapOptions = new OsmMapOptions($marker->getLat(), $marker->getLng());
         $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
+        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
         $map->render();
         return (string) $map;
     }

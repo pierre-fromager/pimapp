@@ -99,6 +99,7 @@ class Lignes extends basicController
             $markerOptDep = new OsmMarkerOptions($markerIcon);
             $markerOptDep->title = $sta[modelStations::_NAME];
             $markerOptDep->alt = $sta[modelStations::_NAME];
+            //$markerOptDep-> = $sta[modelStations::_NAME];
             $markerDep = new OsmMarker($markerOptDep);
             $markerDep->setLatlng($sta[modelStations::_LAT], $sta[modelStations::_LON]);
             $markers[] = $markerDep;
@@ -113,6 +114,7 @@ class Lignes extends basicController
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
         $mapOptions->zoom = 14;
         $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
+        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
         $map->render();
         return (string) $map;
     }
@@ -236,6 +238,7 @@ class Lignes extends basicController
         $center = geoCenter::getFromAzimuts($markCenters);
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
         $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
+        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
         $map->render();
         return (string) $map;
     }
