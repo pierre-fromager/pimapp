@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Description of App1\Helper\Controller\Metro\Lignes
  *
  * @author Pierre Fromager
  */
+
 namespace App1\Helper\Controller\Metro;
 
 use \Pimvc\Input\Filter as inputFilter;
@@ -99,7 +101,6 @@ class Lignes extends basicController
             $markerOptDep = new OsmMarkerOptions($markerIcon);
             $markerOptDep->title = $sta[modelStations::_NAME];
             $markerOptDep->alt = $sta[modelStations::_NAME];
-            //$markerOptDep-> = $sta[modelStations::_NAME];
             $markerDep = new OsmMarker($markerOptDep);
             $markerDep->setLatlng($sta[modelStations::_LAT], $sta[modelStations::_LON]);
             $markers[] = $markerDep;
@@ -110,12 +111,28 @@ class Lignes extends basicController
             $markCenters[] = [$marker->getLat(), $marker->getLng()];
         }
 
+        $polylines = [];
+        for ($cp = 0; $cp < count($staInfos); $cp++) {
+            $poly = new \stdClass();
+            $polyOptions = new \stdClass();
+            $polyOptions->color = '#00a9ce';
+            $polyOptions->weight = 3;
+            $polyOptions->opacity = 0.5;
+            $polyOptions->smoothFactor = 1;
+            $poly->tupple = $staInfos[$cp]['geo'];
+            $poly->options = $polyOptions;
+            $polylines[] = $poly;
+        }
+
         $center = geoCenter::getFromAzimuts($markCenters);
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
         $mapOptions->zoom = 14;
-        $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
-        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
-        $map->render();
+        $map = (new OsmMap())
+                ->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}')
+                ->setMarkers($markers)
+                ->setPolylines($polylines)
+                ->setOptions($mapOptions)
+                ->render();
         return (string) $map;
     }
 
@@ -196,8 +213,8 @@ class Lignes extends basicController
         );
 
         $links = '<div style="float:right">'
-            . $editButton . '&nbsp;' . $manageButton
-            . '</div>';
+                . $editButton . '&nbsp;' . $manageButton
+                . '</div>';
         return $links;
     }
 
@@ -235,11 +252,29 @@ class Lignes extends basicController
         foreach ($markers as $marker) {
             $markCenters[] = [$marker->getLat(), $marker->getLng()];
         }
+
+        $polylines = [];
+        $poly = new \stdClass();
+        $polyOptions = new \stdClass();
+        $polyOptions->color = '#00a9ce';
+        $polyOptions->weight = 3;
+        $polyOptions->opacity = 0.5;
+        $polyOptions->smoothFactor = 1;
+        $poly->tupple = [
+            [$srcSta[modelStations::_LAT], $srcSta[modelStations::_LON]],
+            [$dstSta[modelStations::_LAT], $dstSta[modelStations::_LON]]
+        ];
+        $poly->options = $polyOptions;
+        $polylines[] = $poly;
+
         $center = geoCenter::getFromAzimuts($markCenters);
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
-        $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
-        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
-        $map->render();
+        $map = (new OsmMap())
+                ->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}')
+                ->setMarkers($markers)
+                ->setPolylines($polylines)
+                ->setOptions($mapOptions)
+                ->render();
         return (string) $map;
     }
 
@@ -254,9 +289,9 @@ class Lignes extends basicController
         $layout = (new \App1\Views\Helpers\Layouts\Responsive());
         $layoutParams = ['content' => $content];
         $layout->setApp($this->getApp())
-            ->setName(self::LAYOUT_NAME)
-            ->setLayoutParams($layoutParams)
-            ->build();
+                ->setName(self::LAYOUT_NAME)
+                ->setLayoutParams($layoutParams)
+                ->build();
         return $layout;
     }
 
@@ -274,11 +309,11 @@ class Lignes extends basicController
             self::PARAM_TITLE => 'Logout'
             , self::PARAM_ICON => 'fa fa-sign-out'
             , self::PARAM_LINK => $this->baseUrl . '/user/logout'
-            ] : [
+                ] : [
             self::PARAM_TITLE => 'Login'
             , self::PARAM_ICON => 'fa fa-sign-in'
             , self::PARAM_LINK => $this->baseUrl . '/user/login'
-            ];
+                ];
 
         $isAdmin = sessionTools::isAdmin();
         if ($isAdmin) {
@@ -425,9 +460,9 @@ class Lignes extends basicController
                 inputRange::MAX_RANGE => 10000,
                 inputRange::_DEFAULT => 800,
                 inputRange::CAST => inputRange::FILTER_INTEGER
-                ]),
+                    ]),
             self::PARAM_EMAIL => FILTER_SANITIZE_STRING
-            ]
+                ]
         );
     }
 

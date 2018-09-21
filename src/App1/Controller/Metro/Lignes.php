@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Description of App1\Controller\Metro\Lignes
  *
  * @author Pierre Fromager
  */
+
 namespace App1\Controller\Metro;
 
 use \Pimvc\Tools\Session as sessionTools;
@@ -22,7 +24,7 @@ use \App1\Helper\Controller\Metro\Lignes as ControlerMetroLignesHelper;
 
 final class Lignes extends ControlerMetroLignesHelper
 {
-   
+
     /**
      * user
      *
@@ -92,7 +94,7 @@ final class Lignes extends ControlerMetroLignesHelper
             [],
             [
             self::PARAM_ORDER => 'desc',
-            ]
+                ]
         );
         if (!sessionTools::isAdmin()) {
             $whereConditions = ['key' => 'id', 'operator' => '>', 'value' => 0];
@@ -119,14 +121,14 @@ final class Lignes extends ControlerMetroLignesHelper
         );
         $widgetTitle = glyphHelper::get(glyphHelper::SEARCH)
                 . 'Gestion lignes métro'
-            . '<div style="float:right">' . $stationsButton
-            . '</div>';
+                . '<div style="float:right">' . $stationsButton
+                . '</div>';
         $widget = (new widgetHelper())
-            ->setTitle($widgetTitle)
-            ->setBody(
-                $filter
-                . '<div class="table-responsive">' . (string) $liste . '</div>'
-            );
+                ->setTitle($widgetTitle)
+                ->setBody(
+                    $filter
+                    . '<div class="table-responsive">' . (string) $liste . '</div>'
+                );
         unset($liste);
         $widget->render();
         $content = (string) $widget;
@@ -146,9 +148,9 @@ final class Lignes extends ControlerMetroLignesHelper
         $this->setDetailOsmAssets();
         $openCrit = '<script>$j(\'#criteriaFilter\').click()</script>';
         $widgetContent = '<h3 class="text-center">'
-            . 'Selectionner les critères de départ et d\'arrivée.'
-            . '</h3>'
-            . $openCrit;
+                . 'Selectionner les critères de départ et d\'arrivée.'
+                . '</h3>'
+                . $openCrit;
         if ($this->getParams(self::_HSRC) && $this->getParams(self::_HDST)) {
             $hasContext = $this->hasValue('context');
             $isUnweighted = ($this->getParams(searchItiForm::_OPTIM) && $this->getParams(searchItiForm::_OPTIM) === 'unweighted');
@@ -167,8 +169,8 @@ final class Lignes extends ControlerMetroLignesHelper
             $stasCouples = [];
             foreach ($hCouples as $hCouple) {
                 $rs = $this->lignesModel->getTroncon($hCouple[0], $hCouple[1]);
-                if (isset($rs[0])) {
-                    $stasCouples[] = $rs[0];
+                if (!empty($rs)) {
+                    $stasCouples[] = $rs;
                 }
             }
             $tableData = [];
@@ -193,13 +195,14 @@ final class Lignes extends ControlerMetroLignesHelper
                 echo \json_encode((object) $r, JSON_PRETTY_PRINT);
                 die;
             }
-            
-            $widgetContent = $itiTable . '<br style="clear:both"/>' . $this->searchMapOsm($r['hops'], $stasCouples, $r['distance']);
+
+            $widgetContent = $itiTable . '<br style="clear:both"/>'
+                    . $this->searchMapOsm($r['hops'], $stasCouples, $r['distance']);
         }
 
         $widgetTitle = faHelper::get(faHelper::CUBES)
                 . 'Recherche itinéraire'
-            . '<div style="float:right">' . $this->detailButtons() . '</div>';
+                . '<div style="float:right">' . $this->detailButtons() . '</div>';
         $form = new searchItiForm($this->getParams());
         $widgetBody = '<div class="table-responsive">' . (string) $form . $widgetContent . '</div>';
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody($widgetBody);
@@ -211,7 +214,6 @@ final class Lignes extends ControlerMetroLignesHelper
         $nav->setParams($this->getNavConfig())->render();
         return (string) $this->getLayout((string) $nav . (string) $content);
     }
-
 
     /**
      * tiles
@@ -314,9 +316,9 @@ final class Lignes extends ControlerMetroLignesHelper
             [self::PARAM_TITLE => 'Détail']
         );
         $links = '<div style="float:right">'
-            . $linkManage
-            . $linkDetail
-            . '</div>';
+                . $linkManage
+                . $linkDetail
+                . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::PENCIL)
                 . 'Edition du tronçon' . $links;
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $message);
@@ -344,12 +346,12 @@ final class Lignes extends ControlerMetroLignesHelper
         );
         $form->setEnableButtons(false);
         $form->render();
-        
+
         $widgetTitle = glyphHelper::get(glyphHelper::EYE_OPEN)
                 . 'Détail du tronçon' . $this->detailButtons();
         $widget = (new widgetHelper())
                 ->setTitle($widgetTitle)
-            ->setBody((string) $form . $this->detailMapOsm($formDatas));
+                ->setBody((string) $form . $this->detailMapOsm($formDatas));
         $widget->render();
         $detailContent = (string) $widget;
         unset($widget);

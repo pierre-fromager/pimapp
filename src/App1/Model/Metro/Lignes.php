@@ -289,7 +289,27 @@ class Lignes extends Orm
     {
         $this->cleanRowset();
         $this->find([], [self::_HSRC => $hsrc, self::_HDST => $hdst]);
-        return $this->getRowsetAsArray();
+        $all = $this->getRowsetAsArray();
+        if ($all) {
+            $first = $all[0];
+            $first['geo'] = $this->getGeoTroncon($hsrc, $hdst);
+            return $first;
+        }
+        return [];
+    }
+
+    /**
+     * getGeoTroncon
+     *
+     * @param string $hsrc
+     * @param string $hdst
+     * @return [[],[]]
+     */
+    public function getGeoTroncon($hsrc, $hdst)
+    {
+        $srcgeo = $this->getDependantObjects(self::_HSRC, $hsrc)->metrostageo;
+        $dstgeo = $this->getDependantObjects(self::_HSRC, $hdst)->metrostageo;
+        return [[$srcgeo->lat, $srcgeo->lon], [$dstgeo->lat, $dstgeo->lon]];
     }
 
     /**

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Description of App1\Helper\Controller\Metro\Stations
  *
  * @author Pierre Fromager
  */
+
 namespace App1\Helper\Controller\Metro;
 
 use \Pimvc\Input\Filter as inputFilter;
@@ -113,7 +115,7 @@ class Stations extends basicController
             [],
             [
             self::PARAM_ORDER => 'desc',
-            ]
+                ]
         );
         if (!sessionTools::isAdmin()) {
             $whereConditions = [
@@ -157,9 +159,11 @@ class Stations extends basicController
         $markers = [];
         $markers[] = $marker;
         $mapOptions = new OsmMapOptions($marker->getLat(), $marker->getLng());
-        $map = new OsmMap($this->baseUrl, $markers, $mapOptions);
-        $map->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}');
-        $map->render();
+        $map = (new OsmMap())
+                ->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}')
+                ->setMarkers($markers)
+                ->setOptions($mapOptions)
+                ->render();
         return (string) $map;
     }
 
@@ -185,8 +189,8 @@ class Stations extends basicController
         );
 
         $links = '<div style="float:right">'
-            . $editButton . '&nbsp;' . $manageButton
-            . '</div>';
+                . $editButton . '&nbsp;' . $manageButton
+                . '</div>';
         return $links;
     }
 
@@ -231,9 +235,9 @@ class Stations extends basicController
         $layout = (new \App1\Views\Helpers\Layouts\Responsive());
         $layoutParams = ['content' => $content];
         $layout->setApp($this->getApp())
-            ->setName(self::LAYOUT_NAME)
-            ->setLayoutParams($layoutParams)
-            ->build();
+                ->setName(self::LAYOUT_NAME)
+                ->setLayoutParams($layoutParams)
+                ->build();
         return $layout;
     }
 
@@ -251,11 +255,11 @@ class Stations extends basicController
             self::PARAM_TITLE => 'Logout'
             , 'icon' => 'fa fa-sign-out'
             , 'link' => $this->baseUrl . '/user/logout'
-            ] : [
+                ] : [
             self::PARAM_TITLE => 'Login'
             , 'icon' => 'fa fa-sign-in'
             , 'link' => $this->baseUrl . '/user/login'
-            ];
+                ];
 
         $freeItems = [
             [
@@ -293,14 +297,14 @@ class Stations extends basicController
 
         if ($isAuth) {
             $authItems = [/* [
-                  self::PARAM_TITLE => 'Bizz Calc'
-                  , 'icon' => 'fa fa-calculator'
-                  , 'link' => $this->baseUrl . '/business/index'
-                  ],[
-                  self::PARAM_TITLE => 'Bizz Cra'
-                  , 'icon' => 'fa fa-calendar'
-                  , 'link' => $this->baseUrl . '/business/calendar'
-                  ] */];
+                      self::PARAM_TITLE => 'Bizz Calc'
+                      , 'icon' => 'fa fa-calculator'
+                      , 'link' => $this->baseUrl . '/business/index'
+                      ],[
+                      self::PARAM_TITLE => 'Bizz Cra'
+                      , 'icon' => 'fa fa-calendar'
+                      , 'link' => $this->baseUrl . '/business/calendar'
+                      ] */];
             $items = array_merge($items, $authItems);
         }
 
@@ -415,9 +419,9 @@ class Stations extends basicController
                 inputRange::MAX_RANGE => 10000,
                 inputRange::_DEFAULT => 800,
                 inputRange::CAST => inputRange::FILTER_INTEGER
-                ]),
+                    ]),
             modelStations::_H => FILTER_SANITIZE_STRING
-            ]
+                ]
         );
     }
 
@@ -455,7 +459,6 @@ class Stations extends basicController
     {
         return self::METRO_STATIONS_URI . $action;
     }
-
 
     /**
      * stationsUrl
