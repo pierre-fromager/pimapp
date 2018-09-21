@@ -26,6 +26,7 @@ use \Pimvc\Views\Helpers\Gis\Osm\Marker\Options as OsmMarkerOptions;
 use \Pimvc\Views\Helpers\Gis\Osm\Marker as OsmMarker;
 use App1\Model\Metro\Lignes as modelLignes;
 use App1\Model\Metro\Stations as modelStations;
+use App1\Helper\Format\Metro\Lignes\Colors as helperMetroLigneColors;
 
 class Lignes extends basicController
 {
@@ -115,12 +116,13 @@ class Lignes extends basicController
         for ($cp = 0; $cp < count($staInfos); $cp++) {
             $poly = new \stdClass();
             $polyOptions = new \stdClass();
-            $polyOptions->color = '#00a9ce';
-            $polyOptions->weight = 3;
-            $polyOptions->opacity = 0.5;
+            $polyOptions->color = helperMetroLigneColors::get($staInfos[$cp][modelLignes::_LIGNE]);
+            $polyOptions->weight = 5;
+            $polyOptions->opacity = 1;
             $polyOptions->smoothFactor = 1;
             $poly->tupple = $staInfos[$cp]['geo'];
             $poly->options = $polyOptions;
+            $poly->title = $staInfos[$cp][modelLignes::_LIGNE];
             $polylines[] = $poly;
         }
 
@@ -256,15 +258,16 @@ class Lignes extends basicController
         $polylines = [];
         $poly = new \stdClass();
         $polyOptions = new \stdClass();
-        $polyOptions->color = '#00a9ce';
-        $polyOptions->weight = 3;
-        $polyOptions->opacity = 0.5;
+        $polyOptions->color = helperMetroLigneColors::get($datas[modelLignes::_LIGNE]);
+        $polyOptions->weight = 5;
+        $polyOptions->opacity = 1;
         $polyOptions->smoothFactor = 1;
         $poly->tupple = [
             [$srcSta[modelStations::_LAT], $srcSta[modelStations::_LON]],
             [$dstSta[modelStations::_LAT], $dstSta[modelStations::_LON]]
         ];
         $poly->options = $polyOptions;
+        $poly->title = $datas[modelLignes::_LIGNE];
         $polylines[] = $poly;
 
         $center = geoCenter::getFromAzimuts($markCenters);
