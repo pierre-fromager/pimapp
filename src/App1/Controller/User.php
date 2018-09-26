@@ -37,12 +37,11 @@ final class User extends helperUserController
         $transform = new \stdClass();
         $transform->filter = $input->get();
         $transform->data = $this->userModel->find(
-            [self::PARAM_ID, self::PARAM_EMAIL],
-            [
+                [self::PARAM_ID, self::PARAM_EMAIL], [
                 self::PARAM_ID . '#>' => (isset($input->id)) ? $input->id : 800
                 , self::PARAM_EMAIL => (isset($input->email)) ? self::WILDCARD . $input->email . self::WILDCARD : self::WILDCARD
                 ]
-        )->getRowset();
+            )->getRowset();
         unset($input);
         return $this->getJsonResponse($transform);
     }
@@ -60,9 +59,7 @@ final class User extends helperUserController
         $form = new loginForm((array) $inputLoginFilter);
         if ($inputLoginFilter->login && $inputLoginFilter->password || $inputLoginFilter->token) {
             $auth = new authTools(
-                $inputLoginFilter->login,
-                $inputLoginFilter->password,
-                $inputLoginFilter->token
+                $inputLoginFilter->login, $inputLoginFilter->password, $inputLoginFilter->token
             );
             if ($auth->isAllowed) {
                 $authAction = ($auth->profil === 'admin') ? 'user/manage' : 'user/edit';
@@ -74,18 +71,13 @@ final class User extends helperUserController
         }
         $viewParams = ['form' => (string) $form];
         $view = $this->getView(
-            $viewParams,
-            self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
+            $viewParams, self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
         );
         $registerLink = glyphHelper::getLinked(
-            glyphHelper::CERTIFICATE,
-            $this->baseUrl . '/user/register',
-            [self::PARAM_TITLE => 'Register']
+                glyphHelper::CERTIFICATE, $this->baseUrl . '/user/register', [self::PARAM_TITLE => 'Register']
         );
         $lostpasswdLink = glyphHelper::getLinked(
-            glyphHelper::LOCK,
-            $this->baseUrl . '/user/lostpassword',
-            [self::PARAM_TITLE => 'Lost password']
+                glyphHelper::LOCK, $this->baseUrl . '/user/lostpassword', [self::PARAM_TITLE => 'Lost password']
         );
         $links = '<div style="float:right">' . $registerLink . $lostpasswdLink . '</div>';
         $nav = (new bootstrapNav());
@@ -175,18 +167,10 @@ final class User extends helperUserController
         );
         $listeFields = array(self::PARAM_ID, self::PARAM_NAME, self::PARAM_LOGIN, self::PARAM_STATUS);
         $listeExclude = array_diff(
-            $this->userModel->getDomainInstance()->getVars(),
-            $listeFields
+            $this->userModel->getDomainInstance()->getVars(), $listeFields
         );
         $liste = new \Pimvc\Liste(
-            get_class($this->userModel),
-            self::LIST_ACTION,
-            $listeExclude,
-            $excludeToolbarAction,
-            $this->getParams('page'),
-            $criterias,
-            array(),
-            array(self::PARAM_ORDER => 'desc')
+            get_class($this->userModel), self::LIST_ACTION, $listeExclude, $excludeToolbarAction, $this->getParams('page'), $criterias, array(), array(self::PARAM_ORDER => 'desc')
         );
         $whereConditions = array('key' => self::PARAM_STATUS, 'value' => 'valid');
         $conditions = array(
@@ -202,7 +186,7 @@ final class User extends helperUserController
         }
         $liste->render();
         $widgetTitle = glyphHelper::get(glyphHelper::SEARCH)
-                . 'Gestion des comptes utilisateurs'
+            . 'Gestion des comptes utilisateurs'
             . '<div style="float:right">'
             /*
               . glyphHelper::getLinked(
@@ -222,9 +206,9 @@ final class User extends helperUserController
         $widget = (new widgetHelper())
             ->setTitle($widgetTitle)
             ->setBody(
-                $filter
-                . '<div class="table-responsive">' . (string) $liste . '</div>'
-            );
+            $filter
+            . '<div class="table-responsive">' . (string) $liste . '</div>'
+        );
         unset($liste);
         $widget->render();
         $content = (string) $widget;
@@ -286,8 +270,7 @@ final class User extends helperUserController
                     unset($postedDatas[\Pimvc\Form::FORM_XCSRF]);
                 }
                 $postedDatas[self::PARAM_TOKEN] = \Pimvc\Tools\User\Token::get(
-                    $postedDatas[self::PARAM_EMAIL],
-                    $postedDatas['password']
+                        $postedDatas[self::PARAM_EMAIL], $postedDatas['password']
                 );
                 $postedDatas['ip'] = $this->getApp()->getRequest()->getRemoteAddr();
                 $domainInstance = $this->userModel->getDomainInstance();
@@ -314,19 +297,13 @@ final class User extends helperUserController
         }
         $linkDetailId = ($this->hasValue(self::PARAM_ID)) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
         $linkManage = ($isAdmin) ? glyphHelper::getLinked(
-            glyphHelper::SEARCH,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage',
-            [self::PARAM_TITLE => 'Comptes']
-        ) : '';
+                glyphHelper::SEARCH, $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage', [self::PARAM_TITLE => 'Comptes']
+            ) : '';
         $linkDetail = glyphHelper::getLinked(
-            glyphHelper::EYE_OPEN,
-            $this->baseUrl . 'user/detail' . DIRECTORY_SEPARATOR . $linkDetailId,
-            [self::PARAM_TITLE => 'Détail']
+                glyphHelper::EYE_OPEN, $this->baseUrl . 'user/detail' . DIRECTORY_SEPARATOR . $linkDetailId, [self::PARAM_TITLE => 'Détail']
         );
         $linkIntervenant = glyphHelper::getLinked(
-            glyphHelper::FOLDER_OPEN,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'intervenant/edit/uid/' . $uid,
-            [self::PARAM_TITLE => 'Edition']
+                glyphHelper::FOLDER_OPEN, $this->baseUrl . DIRECTORY_SEPARATOR . 'intervenant/edit/uid/' . $uid, [self::PARAM_TITLE => 'Edition']
         );
         $links = '<div style="float:right">'
             . $linkManage
@@ -334,7 +311,7 @@ final class User extends helperUserController
             . $linkIntervenant
             . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::PENCIL)
-                . 'Edition du compte' . $links;
+            . 'Edition du compte' . $links;
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $message);
         $widget->render();
         $nav = (new bootstrapNav());
@@ -357,27 +334,21 @@ final class User extends helperUserController
         $this->userModel->cleanRowset();
         $formDatas = (array) $this->userModel->getById($uid);
         $form = new \App1\Form\Users\Edit(
-            $formDatas,
-            $uid,
-            $mode = 'readonly'
+            $formDatas, $uid, $mode = 'readonly'
         );
         $form->setEnableButtons(false);
         $form->render();
         $linkEditId = ($this->hasValue(self::PARAM_ID)) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
         $manageButton = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
-            glyphHelper::SEARCH,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage' . $linkEditId,
-            array(self::PARAM_TITLE => 'Gestion des comptes')
-        ) : '';
+                glyphHelper::SEARCH, $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage' . $linkEditId, array(self::PARAM_TITLE => 'Gestion des comptes')
+            ) : '';
         $links = '<div style="float:right">'
             . glyphHelper::getLinked(
-                glyphHelper::PENCIL,
-                $this->baseUrl . DIRECTORY_SEPARATOR . 'user/edit' . $linkEditId,
-                array(self::PARAM_TITLE => 'Edition du compte')
+                glyphHelper::PENCIL, $this->baseUrl . DIRECTORY_SEPARATOR . 'user/edit' . $linkEditId, array(self::PARAM_TITLE => 'Edition du compte')
             ) . $manageButton
             . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::EYE_OPEN)
-                . 'Détail du compte' . $links;
+            . 'Détail du compte' . $links;
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $form);
         $widget->render();
         $detailContent = (string) $widget;
@@ -432,8 +403,7 @@ final class User extends helperUserController
                 $updateData = array(
                     'password' => $newPassword
                     , 'token' => \Pimvc\Tools\User\Token::get(
-                        $postedDatas[self::PARAM_EMAIL],
-                        $postedDatas['password']
+                        $postedDatas[self::PARAM_EMAIL], $postedDatas['password']
                     )
                 );
                 unset($userData);
@@ -451,11 +421,11 @@ final class User extends helperUserController
         }
 
         $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
-                . 'Changer mon mot de passe';
+            . 'Changer mon mot de passe';
 
         $widget = (new widgetHelper())
-                ->setTitle($widgetTitle)
-                ->setBody((string) $form);
+            ->setTitle($widgetTitle)
+            ->setBody((string) $form);
         $widget->render();
         $detailContent = (string) $widget;
         unset($widget);
@@ -476,23 +446,31 @@ final class User extends helperUserController
         $isPost = ($this->getApp()->getRequest()->getMethod() === 'POST');
         $content = '';
         if ($isPost) {
+            $mailSent = false;
+            $mailError = '';
             if ($form->isValid()) {
                 $user = $this->userModel->getByEmail($formData['email']);
                 if ($user) {
                     $tplPath = $this->getApp()->getPath() . 'Views/User/Mail/Lostpassword.php';
                     $mailBody = (new \Pimvc\View())
-                            ->setFilename($tplPath)
-                            ->setParams(['user' => $user])
-                            ->render();
-                    (new mailSender())
-                            ->setFrom('pf@pier-infor.fr')
-                            ->setTo($user->email)
-                            ->setSubject('Password retrieval')
-                            ->setBody($mailBody)
-                            ->send();
+                        ->setFilename($tplPath)
+                        ->setParams(['user' => $user])
+                        ->render();
+                    $mailSender = new mailSender();
+                    $mailSender->setFrom('pf@pier-infor.fr')
+                        ->setTo($user->email)
+                        ->setSubject('Password retrieval')
+                        ->setBody($mailBody);
+                    try {
+                        $mailSender->send();
+                        $mailSent = true;
+                    } catch (\Exception $ex) {
+                        $mailError = $ex->getMessage();
+                    }
                 }
-                $messageType = ($user) ? flashTools::FLASH_INFO : flashTools::FLASH_ERROR;
+                $messageType = ($user && $mailSent) ? flashTools::FLASH_INFO : flashTools::FLASH_ERROR;
                 $message = ($user) ? self::MAIL_MESSAGE_NOTIFY_COMPLETE : self::MAIL_MESSAGE_NOTIFY_NOUSER;
+                $message = ($mailSent) ? $message : $mailError;
                 flashTools::add($messageType, $message);
                 $content = (string) $form;
             } else {
@@ -503,18 +481,14 @@ final class User extends helperUserController
             $content = (string) $form;
         }
         $loginLink = glyphHelper::getLinked(
-            glyphHelper::LOG_IN,
-            $this->baseUrl . '/user/login',
-            ['title' => 'Se connecter']
+                glyphHelper::LOG_IN, $this->baseUrl . '/user/login', ['title' => 'Se connecter']
         );
         $registerLink = glyphHelper::getLinked(
-            glyphHelper::CERTIFICATE,
-            $this->baseUrl . '/user/register',
-            ['title' => 'Enregistrement']
+                glyphHelper::CERTIFICATE, $this->baseUrl . '/user/register', ['title' => 'Enregistrement']
         );
         $links = '<div style="float:right">' . $loginLink . $registerLink . '</div>';
         $widgetTitle = glyphHelper::get(glyphHelper::LOCK)
-                . 'Mot de passe perdu' . $links;
+            . 'Mot de passe perdu' . $links;
 
         $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody($content);
         $widget->render();
