@@ -126,7 +126,11 @@ class Sender
                 $initialHeaders = $this->message->getHeaders();
                 $canonizedHeaders = $this->getCanonizedHeaders($initialHeaders);
                 $signedHeaders = $dkimTool->getSigner()->getSignedHeaders(
-                    $this->to, $this->message->getSubject(), $this->message->getBody(), $canonizedHeaders, $this->signerOptions()
+                    $this->to,
+                    $this->message->getSubject(),
+                    $this->message->getBody(),
+                    $canonizedHeaders,
+                    $this->signerOptions()
                 );
                 $signContent = substr($signedHeaders, 15);
                 $this->message->setHeader(Dkim::_DKIM_SIGNATURE_HEADER, $signContent);
