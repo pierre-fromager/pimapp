@@ -1,7 +1,8 @@
 <?php
 
 /**
- * class DatabaseController
+ * App1\Controller\Database
+ *
  * is a controller for database table description and code generation.
  *
  * @author Pierre Fromager <pf@pier-infor.fr>
@@ -11,31 +12,14 @@
 
 namespace App1\Controller;
 
-//use \Pimvc\Controller\Basic as basicController;
-//use Pimvc\Views\Helpers\Collection\Css as cssCollecion;
-//use Pimvc\Views\Helpers\Collection\Js as jsCollecion;
-//use \App1\Views\Helpers\Bootstrap\Button as bootstrapButton;
 use \App1\Views\Helpers\Bootstrap\Tab as bootstrapTab;
-//use \App1\Model\Users as usersModel;
 use App1\Helper\Controller\Database as databaseHelperController;
 
 class Database extends databaseHelperController
 {
 
-    protected $baseUrl = '';
-    protected $request = null;
-    protected $indexes = array();
-    protected $indexesType = array();
-    protected $columns = array();
-    protected $relations = array();
-    protected $tableList = array();
-    protected $currentTableName = '';
-    protected $consColumns = array();
-    // private $modelConfig;
-    protected $adapter;
-
     /**
-     * tables4dAction
+     * tables4d
      *
      * @return array
      */
@@ -124,23 +108,30 @@ class Database extends databaseHelperController
      */
     final public function tablespgsql()
     {
-        $content = \App1\Views\Helpers\Urlselector::get(
-            self::PARAM_TABLES_4D,
-            $this->baseUrl . 'database/tablespgsql/id/',
+        $content = '<h1><span class="fa fa-database"></span>&nbsp;Tables Pgsql</h1>';
+        $targetUrl = $this->baseUrl . '/database/tablespgsql/id/';
+        $content .= \App1\Views\Helpers\Urlselector::get(
+            'tables-pgsql',
+            $targetUrl,
             $this->tableList,
-            $this->getParam(self::PARAM_ID)
+            $this->getParams(self::PARAM_ID)
         );
-        return array('content' => $content);
+        $viewParams = [
+            'nav' => (string) $this->getNav()
+            , 'content' => (string) $content
+        ];
+        $view = $this->getView($viewParams, '/Views/Database/Tablesmysql.php');
+        return (string) $this->getLayout($view);
     }
 
     /**
-     * tablesmysqlAction
+     * tablesmysql
      *
-     * @return array
+     * @return string
      */
     final public function tablesmysql()
     {
-        $content = '<h1><span class="fa fa-database"></span>&nbsp;Table Mysql</h1>'
+        $content = '<h1><span class="fa fa-database"></span>&nbsp;Tables Mysql</h1>'
                 . \App1\Views\Helpers\Urlselector::get(
                     self::PARAM_TABLES_4D,
                     $this->baseUrl . '/database/tablesmysql/id/',
