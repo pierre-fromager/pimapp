@@ -66,7 +66,7 @@ final class User extends helperUserController
             );
             if ($auth->isAllowed) {
                 $authAction = ($auth->profil === 'admin') ? 'user/manage' : 'user/edit';
-                return $this->redirect($this->baseUrl . DIRECTORY_SEPARATOR . $authAction);
+                return $this->redirect($this->baseUrl . '/' . $authAction);
             } else {
                 flashTools::addError('Authentication failed');
                 return $this->redirect($this->baseUrl . '/home');
@@ -129,7 +129,7 @@ final class User extends helperUserController
                     $message = ($hasError) ? $this->userModel->getError() : self::USER_MESSAGE_REGISTRATION_SUCCESS;
                     flashTools::add($messageType, $message);
                     $redirectAction = ($hasError) ? 'user/register/type/' . $this->getParams(self::PARAM_PROFIL) : 'user/login';
-                    $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . $redirectAction;
+                    $redirectUrl = $this->baseUrl . '/' . $redirectAction;
                     return $this->redirect($redirectUrl);
                 } else {
                     flashTools::addError(self::USER_MESSAGE_REGISTRATION_FAILED);
@@ -247,7 +247,7 @@ final class User extends helperUserController
             unset($userObject->id);
             $this->userModel->save($userObject);
             flashTools::addInfo('User id ' . $id . ' dupliqué.');
-            $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION;
+            $redirectUrl = $this->baseUrl . '/' . self::LIST_ACTION;
             return $this->redirect($redirectUrl);
         }
         $this->getError();
@@ -301,7 +301,7 @@ final class User extends helperUserController
                 } else {
                     $redirectÀction = ($isAdmin) ? self::LIST_ACTION : self::DETAIL_ACTION;
                     flashTools::addInfo(self::USER_MESSAGE_VALDATED);
-                    return $this->redirect($this->baseUrl . DIRECTORY_SEPARATOR . $redirectÀction);
+                    return $this->redirect($this->baseUrl . '/' . $redirectÀction);
                 }
             } else {
                 foreach ($form->getErrors() as $k => $v) {
@@ -315,17 +315,17 @@ final class User extends helperUserController
         $linkDetailId = ($this->hasValue(self::PARAM_ID)) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
         $linkManage = ($isAdmin) ? glyphHelper::getLinked(
             glyphHelper::SEARCH,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage',
+            $this->baseUrl . '/user/manage',
             [self::PARAM_TITLE => 'Comptes']
         ) : '';
         $linkDetail = glyphHelper::getLinked(
             glyphHelper::EYE_OPEN,
-            $this->baseUrl . 'user/detail' . DIRECTORY_SEPARATOR . $linkDetailId,
+            $this->baseUrl . '/user/detail' . '/' . $linkDetailId,
             [self::PARAM_TITLE => 'Détail']
         );
         $linkIntervenant = glyphHelper::getLinked(
             glyphHelper::FOLDER_OPEN,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'intervenant/edit/uid/' . $uid,
+            $this->baseUrl . '/' . 'intervenant/edit/uid/' . $uid,
             [self::PARAM_TITLE => 'Edition']
         );
         $links = '<div style="float:right">'
@@ -366,13 +366,13 @@ final class User extends helperUserController
         $linkEditId = ($this->hasValue(self::PARAM_ID)) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
         $manageButton = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
             glyphHelper::SEARCH,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'user/manage' . $linkEditId,
+            $this->baseUrl . '/user/manage' . $linkEditId,
             array(self::PARAM_TITLE => 'Gestion des comptes')
         ) : '';
         $links = '<div style="float:right">'
             . glyphHelper::getLinked(
                 glyphHelper::PENCIL,
-                $this->baseUrl . DIRECTORY_SEPARATOR . 'user/edit' . $linkEditId,
+                $this->baseUrl . '/user/edit' . $linkEditId,
                 array(self::PARAM_TITLE => 'Edition du compte')
             ) . $manageButton
             . '</div>';
@@ -404,7 +404,7 @@ final class User extends helperUserController
             $messageType = ($hasError) ? 'error' : 'info';
             $message = ($hasError) ? self::USER_MESSAGE_DELETE_ERROR . $this->userModel->getError() : self::USER_MESSAGE_DELETE_SUCCESS;
             flashTools::add($messageType, $message);
-            return $this->redirect($this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION);
+            return $this->redirect($this->baseUrl . '/' . self::LIST_ACTION);
         }
         $this->getError();
     }
