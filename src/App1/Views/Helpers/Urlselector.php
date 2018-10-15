@@ -1,11 +1,13 @@
 <?php
 
 /**
- * Description of urlselector
+ * Description of App1\Views\Helpers\Urlselector
  *
  * @author Pierre Fromager <pf@pier-infor.fr>
  */
 namespace App1\Views\Helpers;
+
+use Pimvc\Tools\Arrayproto;
 
 class Urlselector
 {
@@ -56,7 +58,7 @@ class Urlselector
     private static function getOptions($options, $default)
     {
         $optionsContent = '';
-        $options = self::getTupple($options);
+        $options = Arrayproto::getTupple($options);
         foreach ($options as $key => $value) {
             $selected = ($value == self::$selected)
                 ? self::OPTION_SELECTED
@@ -81,36 +83,5 @@ class Urlselector
             . $selected
             . $key
             . self::OPTION_CLOSE_VALUE;
-    }
-    
-    /**
-     * isAssoc
-     *
-     * @param array $array
-     * @return boolean
-     */
-    private static function isAssoc($array)
-    {
-        $array = array_keys($array);
-        return ($array !== array_keys($array));
-    }
-    
-    /**
-     * getTupple
-     *
-     * @param array $options
-     * @return boolean
-     */
-    private static function getTupple($options)
-    {
-        $tupple = array();
-        if (!self::isAssoc($options)) {
-            foreach ($options as $value) {
-                $tupple[$value] = $value;
-            }
-        } else {
-            $tupple = $options;
-        }
-        return $tupple;
     }
 }
