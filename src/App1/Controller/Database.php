@@ -1,5 +1,4 @@
 <?php
-
 /**
  * App1\Controller\Database
  *
@@ -9,14 +8,28 @@
  * @copyright Pier-Infor
  * @version 1.0
  */
-
 namespace App1\Controller;
 
 use \App1\Views\Helpers\Bootstrap\Tab as bootstrapTab;
 use App1\Helper\Controller\Database as databaseHelperController;
+use App1\Form\Files\Upload as uploadForm;
+//use \Pimvc\Views\Helpers\Glyph as glyphHelper;
+use Pimvc\Views\Helpers\Fa as faHelper;
+use Pimvc\Tools\Flash as flashTools;
+use Pimvc\Db\Model\Forge as dbForge;
+use Pimvc\Db\Model\Field as dbField;
+use Pimvc\Db\Model\Fields as dbFields;
+use \Pimvc\Helper\Db\Field\Name\Normalize as FieldNormalizer;
+use App1\Form\Database\Import as formImport;
 
 class Database extends databaseHelperController
 {
+
+    const DOCUMENT_MIME_CSV = 'text/csv';
+    const DOCUMENT_UPLOAD_EXTRA = 'Le fichier doit porter les extensions suivantes ';
+    const FORM_FILE_MAX_FILESIZE = 52428800;
+    const DOCUMENT_PATH = 'cache/documents/';
+    const UPLOAD_SUCCESS = 'Upload successful for ';
 
     /**
      * tables4d
@@ -29,7 +42,7 @@ class Database extends databaseHelperController
             self::PARAM_TABLES_4D,
             $this->baseUrl . 'database/tables4d/id/',
             $this->tableList,
-            $this->getParam(self::PARAM_ID)
+            $this->getParams(self::PARAM_ID)
         );
 
         if ($this->hasValue(self::PARAM_ID)) {
@@ -37,7 +50,7 @@ class Database extends databaseHelperController
             $flipedList = array_flip($this->tableList);
             $tableName = strtolower($flipedList[$tableId]);
             $link = $this->baseUrl . 'database/gencode4d/id/'
-                    . $this->getParam(self::PARAM_ID);
+                . $this->getParam(self::PARAM_ID);
             $button = $this->getButton(
                 self::LABEL_GENERATE_CODE,
                 $link,
@@ -50,7 +63,6 @@ class Database extends databaseHelperController
 
             $content .= $button;
 
-            // Indexes
             if ($this->indexes) {
                 $helper = new \Pimvc\Views\Helpers\Table(
                     'Indexes ' . $this->currentTableName,
@@ -63,7 +75,6 @@ class Database extends databaseHelperController
                 $tabParams['Indexes'] = (string) $helper;
             }
 
-            // Relations
             if ($this->relations) {
                 $helper = new \Pimvc\Views\Helpers\Table(
                     'Relations ' . $this->currentTableName,
@@ -98,7 +109,12 @@ class Database extends databaseHelperController
             $content .= (string) $tab;
         }
 
-        return array('content' => $content);
+        $viewParams = [
+            'nav' => (string) $this->getNav()
+            , 'content' => (string) $content
+        ];
+        $view = $this->getView($viewParams, '/Views/Database/Tablesmysql.php');
+        return (string) $this->getLayout($view);
     }
 
     /**
@@ -132,17 +148,17 @@ class Database extends databaseHelperController
     final public function tablesmysql()
     {
         $content = '<h1><span class="fa fa-database"></span>&nbsp;Tables Mysql</h1>'
-                . \App1\Views\Helpers\Urlselector::get(
-                    self::PARAM_TABLES_4D,
-                    $this->baseUrl . '/database/tablesmysql/id/',
-                    $this->tableList,
-                    $this->getParams(self::PARAM_ID)
-                );
+            . \App1\Views\Helpers\Urlselector::get(
+                self::PARAM_TABLES_4D,
+                $this->baseUrl . '/database/tablesmysql/id/',
+                $this->tableList,
+                $this->getParams(self::PARAM_ID)
+            );
 
         if ($this->hasValue(self::PARAM_ID)) {
             $tabParams = array();
             $link = $this->baseUrl . '/database/gencodemysql/id/'
-                    . $this->getParams(self::PARAM_ID);
+                . $this->getParams(self::PARAM_ID);
             $button = $this->getButton(
                 self::LABEL_GENERATE_CODE . ' Mysql generation',
                 $link,
@@ -154,35 +170,35 @@ class Database extends databaseHelperController
             $classTable = 'table-6 managetable';
             // Indexes
             $helper->setTitle('Indexes ' . $this->currentTableName)
-                    ->setHeader([self::PARAM_ID, 'Nom', self::PARAM_TYPE, 'Unicité'])
-                    ->setData($this->indexes)
-                    ->setId('indexesColumns-table')
-                    ->setClass($classTable)
-                    ->render();
+                ->setHeader([self::PARAM_ID, 'Nom', self::PARAM_TYPE, 'Unicité'])
+                ->setData($this->indexes)
+                ->setId('indexesColumns-table')
+                ->setClass($classTable)
+                ->render();
             $tabParams['indexes'] = (string) $helper;
 
             // Relations
             $helper->setTitle('Relations ' . $this->currentTableName)
-                    ->setHeader(['Pk', 'Table', 'Fk', 'Cascade'])
-                    ->setData($this->relations)
-                    ->setId('colonnes-relations')
-                    ->setClass($classTable)
-                    ->render();
+                ->setHeader(['Pk', 'Table', 'Fk', 'Cascade'])
+                ->setData($this->relations)
+                ->setId('colonnes-relations')
+                ->setClass($classTable)
+                ->render();
             $tabParams['relations'] = (string) $helper;
 
             // Colonnes
             $helper->setTitle('Colonnes ' . $this->currentTableName)
-                    ->setHeader(['Nom', 'Type Pdo', 'Longeur'])
-                    ->setData($this->columns)
-                    ->setId('colonnes-table')
-                    ->setClass($classTable)
-                    ->render();
+                ->setHeader(['Nom', 'Type Pdo', 'Longeur'])
+                ->setData($this->columns)
+                ->setId('colonnes-table')
+                ->setClass($classTable)
+                ->render();
             $tabParams['Colonnes'] = (string) $helper;
 
             $tabs = new bootstrapTab($tabParams);
             $tabs->setSelected('indexes')
-                    ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
-                    ->render();
+                ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
+                ->render();
             $content .= $button . (string) $tabs;
         }
 
@@ -210,7 +226,7 @@ class Database extends databaseHelperController
         );
         if ($this->hasValue(self::PARAM_ID)) {
             $link = $this->baseUrl . 'database/tables4d/id/'
-                    . $this->getParam(self::PARAM_ID);
+                . $this->getParam(self::PARAM_ID);
             $button = $this->getButton(
                 'Modèle',
                 $link,
@@ -238,8 +254,8 @@ class Database extends databaseHelperController
             );
             $tabs = new bootstrapTab($tabParams);
             $tabs->setSelected('Domain')
-                    ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
-                    ->render();
+                ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
+                ->render();
             $content .= $button . (string) $tabs;
         }
 
@@ -267,7 +283,7 @@ class Database extends databaseHelperController
         if ($this->hasValue(self::PARAM_ID)) {
             $tabsParams = [];
             $link = $this->baseUrl . '/database/tablesmysql/id/'
-                    . $this->currentTableName;
+                . $this->currentTableName;
             $button = $this->getButton(
                 'Back to Mysl model',
                 $link,
@@ -289,8 +305,8 @@ class Database extends databaseHelperController
 
             $tabs = new bootstrapTab($tabsParams);
             $tabs->setSelected('Domain')
-                    ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
-                    ->render();
+                ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
+                ->render();
             $content .= $button . (string) $tabs;
         }
         $viewParams = [
@@ -299,5 +315,222 @@ class Database extends databaseHelperController
         ];
         $view = $this->getView($viewParams, '/Views/Database/Gencodemysql.php');
         return (string) $this->getLayout($view);
+    }
+
+    /**
+     * uploadcsv
+     *
+     * @return array
+     */
+    final public function uploadcsv()
+    {
+        $formAction = $this->baseUrl . '/database/uploadcsv';
+        $docPath = $this->getDocumentPath();
+        $form = new uploadForm(
+            $this->getParams(),
+            $formAction,
+            self::FORM_FILE_MAX_FILESIZE
+        );
+        $form->_setDestination($docPath)
+            ->_setMaxsize(self::FORM_FILE_MAX_FILESIZE)
+            ->_setAllowedType([self::DOCUMENT_MIME_CSV])
+            ->_setAllowedExtension(['.csv', '.Csv', '.CSV'])
+            ->render();
+        if ($this->isPost()) {
+            $filesInfos = $form->_getUploadInfos();
+            if ($form->isValid()) {
+                $returnCode = $form->_move();
+                $parser = new \Pimvc\File\Csv\Parser();
+                $fullPathName = $docPath . $filesInfos->filename;
+                $delimiter = $parser->auto($fullPathName);
+                if ($parser->error != 0) {
+                    flashTools::addError($parser->error_info);
+                } else {
+                    $message = self::UPLOAD_SUCCESS . $filesInfos->filename;
+                    flashTools::addInfo($message);
+                }
+            }
+        }
+        $csvIcon = faHelper::get(faHelper::FILE);
+        $widgetTitle = $csvIcon . ' Csv upload';
+        $viewParams = [
+            'nav' => (string) $this->getNav()
+            , 'content' => $this->getWidget($widgetTitle, (string) $form)
+        ];
+        $view = $this->getView($viewParams, '/Views/Database/Gencodemysql.php');
+        return (string) $this->getLayout($view);
+    }
+
+    /**
+     * importcsv
+     *
+     * @return string
+     */
+    final public function importcsv()
+    {
+        $form = new formImport($this->getParams());
+        $isPost = $this->isPost();
+        $isValid = $form->isValid();
+        if ($isPost && $isValid) {
+            $form->setMode('readonly');
+            $parser = new \Pimvc\File\Csv\Parser();
+            $filepath = $this->getDocumentPath() . $this->getParams('filename');
+            $delimiter = $parser->auto($filepath);
+            if ($parser->error != 0) {
+                flashTools::addError('Error occured during csv parsing');
+            } else {
+                $headers = array_keys($parser->data[0]);
+                $normalizedHeaders = FieldNormalizer::normalizeFieldsName(
+                    $headers
+                );
+                $mapperHeader = array_combine($headers, $normalizedHeaders);
+                $fields = new dbFields();
+                foreach ($headers as $columnName) {
+                    $_field = (new dbField())
+                        ->setFromData($parser->data, $columnName)
+                        ->setName($mapperHeader[$columnName]);
+                    $fields->addItem($_field);
+                }
+                $forge = new dbForge($this->getParams('slot'));
+                $forge->tableCreate($this->getParams('tablename'), $fields, false);
+                unset($headers);
+                unset($fields);
+                unset($mapperHeader);
+                unset($parser);
+                unset($forge);
+            }
+        } elseif (!$isValid && $isPost) {
+            foreach ($form->getErrors() as $fieldName => $error) {
+                flashTools::addWarning($fieldName . ' ' . $error);
+            }
+        }
+        $csvIcon = faHelper::get(faHelper::FILE_TEXT);
+        $widgetTitle = $csvIcon . ' Csv import - Table creation';
+        $widgetContent = (string) $form;
+        $viewParams = [
+            'isValid' => $isValid,
+            'tablename' => $this->getParams('tablename'),
+            'filename' => $this->getParams('filename'),
+            'slot' => $this->getParams('slot'),
+            'pagesize' => $this->getParams('poolsize') || 100,
+            'page' => 1,
+            'ingest' => $isPost,
+            'nav' => (string) $this->getNav()
+            , 'content' => $this->getWidget($widgetTitle, $widgetContent, 'widget-body')
+        ];
+        $view = $this->getView($viewParams, '/Views/Database/Importcsv.php');
+        return (string) $this->getLayout($view);
+    }
+
+    /**
+     * asyncimportcsv
+     */
+    final public function asyncimportcsv()
+    {
+        $pagesize = $this->getParams('pagesize');
+        $page = $this->getParams('page');
+        $slot = $this->getParams('slot');
+        $tablename = $this->getParams('tablename');
+        $filename = $this->getParams('filename');
+        $isValid = $pagesize && $page && $slot && $tablename && $filename;
+        $response = new \stdClass();
+        $response->error = 0;
+        $response->errors = [];
+        $response->request = new \stdClass;
+        $response->request = (object) $this->getParams();
+        if ($isValid) {
+            $filepath = $this->getDocumentPath() . $filename;
+            if (file_exists($filepath)) {
+                $response->headers = $this->getNormalizedHeaders($filepath);
+                $parser = new \Pimvc\File\Csv\Parser();
+                $parser->offset = $response->offset = (($page - 1) * $pagesize);
+                $parser->limit = $response->limit = $pagesize;
+                $response->maxline = $this->countFileLines($filepath);
+                $percent = ($parser->offset * 100) / $response->maxline;
+                $response->progress = round($percent, 0);
+                $delimiter = $parser->auto($filepath);
+                $response->datas = [];
+                $response->linesError = [];
+                $dc = count($parser->data);
+                $forge = new dbForge($this->getParams('slot'));
+                for ($c = 0; $c < $dc; $c++) {
+                    $response->datas[] = array_values($parser->data[$c]);
+                    $resok = $forge->tableInsert(
+                        $tablename,
+                        $response->headers,
+                        $parser->data[$c]
+                    );
+                    if (!$resok) {
+                        $response->linesError[] = $parser->offset + $c;
+                    }
+                }
+                unset($forge);
+                unset($parser);
+            } else {
+                $response->error = 1;
+                $response->errors[] = 'incorrect filename';
+            }
+        } else {
+            $response->error = 1;
+            $response->request = (object) $this->getParams();
+            $response->errors[] = 'missing params';
+        }
+        return $this->getJsonResponse($response);
+    }
+
+    /**
+     * getNormalizedHeaders
+     *
+     * @param string $filepath
+     * @return array
+     */
+    private function getNormalizedHeaders(string $filepath): array
+    {
+        $parser = new \Pimvc\File\Csv\Parser();
+        $parser->offset = 0;
+        $parser->limit = 1;
+        $delimiter = $parser->auto($filepath);
+        $headers = array_keys($parser->data[0]);
+        unset($parser);
+        return FieldNormalizer::normalizeFieldsName($headers);
+    }
+
+    /**
+     * getPath
+     *
+     * @return string
+     */
+    private function getDocumentPath()
+    {
+        $documentPath = $this->getApp()->getPath() . self::DOCUMENT_PATH;
+        if (!file_exists($documentPath)) {
+            mkdir($documentPath, 0777, true);
+        }
+        return $documentPath;
+    }
+
+    /**
+     * countFileLines
+     *
+     * @param string $filename
+     * @return int
+     */
+    private function countFileLines($filename): int
+    {
+        $fh = new \SplFileObject($filename, 'r');
+        $fh->seek(PHP_INT_MAX);
+        $nbLine = $fh->key();
+        unset($fh);
+        return (int) $nbLine;
+    }
+
+    /**
+     * isPost
+     *
+     * @return boolean
+     */
+    private function isPost()
+    {
+        return ($this->getApp()->getRequest()->getMethod() === 'POST');
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * class App1\Helper\Controller\Database
  *
@@ -9,13 +8,14 @@
  * @copyright Pier-Infor
  * @version 1.0
  */
-
 namespace App1\Helper\Controller;
 
 use \Pimvc\Controller\Basic as basicController;
-use Pimvc\Views\Helpers\Collection\Css as cssCollecion;
-use Pimvc\Views\Helpers\Collection\Js as jsCollecion;
+use \Pimvc\Tools\Session as sessionTools;
+use Pimvc\Views\Helpers\Collection\Css as cssCollection;
+use Pimvc\Views\Helpers\Collection\Js as jsCollection;
 use \App1\Views\Helpers\Bootstrap\Button as bootstrapButton;
+use \Pimvc\Views\Helpers\Widgets\Standart as widgetHelper;
 use Pimvc\Helper\Model\Mysql as mysqlModelHelper;
 use Pimvc\Helper\Model\Fourd as fourdModelHelper;
 use Pimvc\Helper\Model\Pgsql as pgsqlModelHelper;
@@ -23,6 +23,12 @@ use Pimvc\Helper\Model\IHelper as interfaceModelHelper;
 
 class Database extends basicController implements interfaceModelHelper
 {
+
+    const _TITLE = 'title';
+    const _ICON = 'icon';
+    const _LINK = 'link';
+    const _ITEMS = 'items';
+    const _TEXT = 'text';
 
     protected $baseUrl = '';
     protected $request = null;
@@ -71,11 +77,14 @@ class Database extends basicController implements interfaceModelHelper
     private function initAssets()
     {
         $cssPath = '/public/css/';
-        cssCollecion::add($cssPath . 'tables/table-6.css');
-        cssCollecion::save();
+        $cssAssets = ['tables/table-6.css', 'widget.css', 'spinkit/cube-grid.css'];
+        for ($c = 0; $c < count($cssAssets); $c++) {
+            cssCollection::add($cssPath . $cssAssets[$c]);
+        }
+        cssCollection::save();
         $jsPath = '/public/js/';
-        jsCollecion::add($jsPath . 'sortable.js');
-        jsCollecion::save();
+        jsCollection::add($jsPath . 'sortable.js');
+        jsCollection::save();
     }
 
     /**
@@ -204,9 +213,9 @@ class Database extends basicController implements interfaceModelHelper
     {
         $button = new bootstrapButton($label);
         $button->setDatalink($link)
-                ->setType($button::TYPE_BLOCK)
-                ->setExtraClass($button::TYPE_SUCCESS)
-                ->render();
+            ->setType($button::TYPE_BLOCK)
+            ->setExtraClass($button::TYPE_SUCCESS)
+            ->render();
         return (string) $button;
     }
 
@@ -219,7 +228,7 @@ class Database extends basicController implements interfaceModelHelper
     protected function getViewPath($actionName)
     {
         return $this->getApp()->getPath() . self::VIEW_DATABASE_PATH
-                . ucfirst($actionName) . '.php';
+            . ucfirst($actionName) . '.php';
     }
 
     /**
@@ -229,14 +238,77 @@ class Database extends basicController implements interfaceModelHelper
      */
     protected function getNavConfig()
     {
-        return [
-            'title' => [
-                'text' => 'Pimapp',
-                'icon' => 'fa fa-home',
-                'link' => $this->baseUrl
-            ],
-            'items' => []
+        $isAuth = sessionTools::isAuth();
+        $isAdmin = sessionTools::isAdmin();
+        $items = [];
+        $authLink = $this->menuAction(
+            ($isAuth) ? 'Logout' : 'Login',
+            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
+            ($isAuth) ? '/user/logout' : '/user/login'
+        );
+        $freeItems = [
+            $this->menuAction('Change lang', 'fa fa-language', '/lang/change'),
         ];
+        $items = array_merge($items, $freeItems);
+        if ($isAdmin) {
+            $adminItems = [
+                $this->menuAction('Mysql', 'fa fa-database', '/database/tablesmysql'),
+                $this->menuAction('Pgsql', 'fa fa-database', '/database/tablespgsql'),
+                $this->menuAction('4d', 'fa fa-database', '/database/tables4d'),
+                $this->menuAction('Csv upload', 'fa fa-file', '/database/uploadcsv'),
+                $this->menuAction('Csv import', 'fa fa-file-text', '/database/importcsv'),
+            ];
+            $items = array_merge($items, $adminItems);
+        }
+        if ($isAuth) {
+            $authItems = [
+                $this->menuAction('User', 'fa fa-user', '/user/edit'),
+            ];
+            $items = array_merge($items, $authItems);
+        }
+        array_push($items, $authLink);
+        $navConfig = [
+            self::_TITLE => [
+                self::_TEXT => 'Pimapp',
+                self::_ICON => 'fa fa-home',
+                self::_LINK => $this->baseUrl
+            ],
+            self::_ITEMS => $items
+        ];
+        return $navConfig;
+    }
+
+    /**
+     * menuAction
+     *
+     * @param string $title
+     * @param string $icon
+     * @param string $action
+     * @return array
+     */
+    private function menuAction($title, $icon, $action)
+    {
+        return [
+            self::_TITLE => $title
+            , self::_ICON => $icon
+            , self::_LINK => $this->baseUrl . $action
+        ];
+    }
+
+    /**
+     * getWidget
+     *
+     * @return Pimvc\Views\Helpers\Widget
+     */
+    protected function getWidget($title, $content, $id = '')
+    {
+        $widget = (new widgetHelper())->setTitle($title);
+        if ($id) {
+            $widget->setBodyOptions(['id' => $id, 'class' => 'body']);
+        }
+        $widget->setBody((string) $content);
+        $widget->render();
+        return (string) $widget;
     }
 
     /**
@@ -257,14 +329,17 @@ class Database extends basicController implements interfaceModelHelper
      * @param string $content
      * @return \App1\Views\Helpers\Layouts\Responsive
      */
-    protected function getLayout($content)
+    protected function getLayout($content, $nav = true)
     {
         $layout = (new \App1\Views\Helpers\Layouts\Responsive());
         $layoutParams = ['content' => $content];
+        if ($nav) {
+            $layoutParams['nav'] = $this->getNav();
+        }
         $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
+            ->setName(self::LAYOUT_NAME)
+            ->setLayoutParams($layoutParams)
+            ->build();
         return $layout;
     }
 }
