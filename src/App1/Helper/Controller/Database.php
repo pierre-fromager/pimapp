@@ -60,11 +60,11 @@ class Database extends basicController implements interfaceModelHelper
             $tableListIds = array_flip($this->tableList);
             $this->currentTableName = $tableListIds[$id];
             unset($tableListIds);
-            if ($this->adapter == self::ADAPTER_4D) {
+            if ($this->adapter == \Pimvc\Db\Model\Core::MODEL_ADAPTER_4D) {
                 $this->init4d($id, $actionName);
-            } elseif ($this->adapter == self::ADAPTER_MYSQL) {
+            } elseif ($this->adapter == \Pimvc\Db\Model\Core::MODEL_ADAPTER_MYSQL) {
                 $this->initMysql($id, $actionName);
-            } elseif ($this->adapter == self::ADAPTER_PGSQL) {
+            } elseif ($this->adapter == \Pimvc\Db\Model\Core::MODEL_ADAPTER_PGSQL) {
                 $this->initPgsql($id, $actionName);
             }
         }
@@ -83,7 +83,10 @@ class Database extends basicController implements interfaceModelHelper
         }
         cssCollection::save();
         $jsPath = '/public/js/';
-        jsCollection::add($jsPath . 'sortable.js');
+        $jsAssets = ['sortable.js'];
+        for ($c = 0; $c < count($jsAssets); $c++) {
+            jsCollection::add($jsPath . $jsAssets[$c]);
+        }
         jsCollection::save();
     }
 
@@ -144,12 +147,11 @@ class Database extends basicController implements interfaceModelHelper
     protected function setAdapterFromAction($action)
     {
         if (strpos($action, 'mysql') !== false) {
-            $this->adapter = self::ADAPTER_MYSQL;
+            $this->adapter = \Pimvc\Db\Model\Core::MODEL_ADAPTER_MYSQL;
         } elseif (strpos($action, 'pgsql') !== false) {
-            $this->adapter = self::ADAPTER_PGSQL;
-        } else {
-            //$this->adapter = self::ADAPTER_4D;
-            $this->adapter = self::ADAPTER_MYSQL;
+            $this->adapter = \Pimvc\Db\Model\Core::MODEL_ADAPTER_PGSQL;
+        } elseif (strpos($action, '4d') !== false) {
+            $this->adapter = \Pimvc\Db\Model\Core::MODEL_ADAPTER_4D;
         }
     }
 
@@ -160,19 +162,16 @@ class Database extends basicController implements interfaceModelHelper
     protected function setTableList()
     {
         switch ($this->adapter) {
-            case self::ADAPTER_MYSQL:
+            case \Pimvc\Db\Model\Core::MODEL_ADAPTER_MYSQL:
                 $tablesModel = new \Pimvc\Model\Users($this->modelConfig);
-                $tables = $tablesModel->showTable();
-                foreach ($tables as $key => $value) {
-                    $tupples = array_values($value);
-                    $this->tableList[] = $tupples[0];
-                }
+                $tables = $tablesModel->showTables();
+                $this->tableList = array_combine($tables, $tables);
                 break;
-            case self::ADAPTER_4D:
+            case \Pimvc\Db\Model\Core::MODEL_ADAPTER_4D:
                 $tablesModel = new \Pimvc\Model\Fourd\Tables($this->modelConfig);
                 $this->tableList = $tablesModel->getPair();
                 break;
-            case self::ADAPTER_PGSQL:
+            case \Pimvc\Db\Model\Core::MODEL_ADAPTER_PGSQL:
                 $tablesModel = new \Pimvc\Model\Pgsql\Tables($this->modelConfig);
                 $this->tableList = $tablesModel->getPair();
                 break;
@@ -254,7 +253,8 @@ class Database extends basicController implements interfaceModelHelper
             $adminItems = [
                 $this->menuAction('Mysql', 'fa fa-database', '/database/tablesmysql'),
                 $this->menuAction('Pgsql', 'fa fa-database', '/database/tablespgsql'),
-                $this->menuAction('4d', 'fa fa-database', '/database/tables4d'),
+                //$this->menuAction('4d', 'fa fa-database', '/database/tables4d'),
+                $this->menuAction('Crud', 'fa fa-cog', '/crud'),
                 $this->menuAction('Csv upload', 'fa fa-file', '/database/uploadcsv'),
                 $this->menuAction('Csv import', 'fa fa-file-text', '/database/importcsv'),
             ];

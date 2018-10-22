@@ -1,11 +1,9 @@
 <?php
-
 /**
  * App1\Form\Database\Import
  *
  * @author pierrefromager
  */
-
 namespace App1\Form\Database;
 
 use Pimvc\Form;
@@ -43,14 +41,8 @@ class Import extends Form
         $this->baseUrl = $this->app->getRequest()->getBaseUrl();
         $this->isAdmin = sessionTool::isAdmin();
         $this->postedData = $postedDatas;
-        if (!isset($this->postedData[self::_DB_POOL])) {
+        if (empty($postedDatas[self::_POOL_SIZE])) {
             $this->postedData[self::_POOL_SIZE] = 100;
-        }
-
-
-
-        if (!isset($this->postedData[self::_TABLENAME])) {
-            $this->postedData[self::_TABLENAME] = 'hereMyTableImportName';
         }
         parent::__construct(
             $this->_getFields(),
@@ -70,7 +62,7 @@ class Import extends Form
         $this->setData(self::_SLOT, $this->getSlotList());
         $this->setType(self::_POOL_SIZE, 'select');
         $this->setData(self::_POOL_SIZE, $this->getPoolSize());
-        
+
         $this->_setWrappers();
         $this->setLabels($this->_getLabels());
         $this->setAlign('left');
@@ -161,12 +153,13 @@ class Import extends Form
     {
         $elementWrapper = 'form-element-wrapper';
         $cols12 = $elementWrapper . ' col-sm-12';
+        $cols6 = $elementWrapper . ' col-sm-6';
         $formControl = 'form form-control';
         $this->setWrapperClass(self::_FILENAME, $cols12);
         $this->setClass(self::_FILENAME, $formControl);
-        $this->setWrapperClass(self::_SLOT, $cols12);
+        $this->setWrapperClass(self::_SLOT, $cols6);
         $this->setClass(self::_SLOT, $formControl);
-        $this->setWrapperClass(self::_POOL_SIZE, $cols12);
+        $this->setWrapperClass(self::_POOL_SIZE, $cols6);
         $this->setClass(self::_POOL_SIZE, $formControl);
         $this->setWrapperClass(self::_TABLENAME, $cols12);
         $this->setClass(self::_TABLENAME, $formControl);

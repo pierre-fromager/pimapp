@@ -46,19 +46,17 @@ class Database extends databaseHelperController
         );
 
         if ($this->hasValue(self::PARAM_ID)) {
-            $tableId = $this->getParam(self::PARAM_ID);
+            $tableId = $this->getParams(self::PARAM_ID);
             $flipedList = array_flip($this->tableList);
             $tableName = strtolower($flipedList[$tableId]);
             $link = $this->baseUrl . 'database/gencode4d/id/'
-                . $this->getParam(self::PARAM_ID);
+                . $this->getParams(self::PARAM_ID);
             $button = $this->getButton(
                 self::LABEL_GENERATE_CODE,
-                $link,
-                self::PARAM_BUTTON
+                $link
             ) . $this->getButton(
                 'Liste',
-                $this->baseUrl . self::LIST_ACTION . '/model/' . $tableName . 's',
-                self::PARAM_BUTTON
+                $this->baseUrl . self::LIST_ACTION . '/model/' . $tableName . 's'
             );
 
             $content .= $button;
@@ -99,14 +97,13 @@ class Database extends databaseHelperController
             $helper->render();
             $tabParams['Columns'] = (string) $helper;
 
-            $tab = new Helper_Bootstrap_Tab($tabParams);
-            $tab->setId('tabs-database-4d');
-            $tab->setClass('nav nav-tabs');
-            $paneClass = Helper_Bootstrap_Tab::TAB_ITEM_CLASS . ' col-sm-12';
-            $tab->setPaneClass($paneClass);
-            $tab->setSelected('Indexes');
-            $tab->render();
-            $content .= (string) $tab;
+
+            $tabs = new bootstrapTab($tabParams);
+            $tabs->setSelected('Indexes')
+                ->setPaneClass($tabs::TAB_ITEM_CLASS . ' col-sm-12')
+                ->setSelected('Indexes')
+                ->render();
+            $content .= $button . (string) $tabs;
         }
 
         $viewParams = [
@@ -161,9 +158,7 @@ class Database extends databaseHelperController
                 . $this->getParams(self::PARAM_ID);
             $button = $this->getButton(
                 self::LABEL_GENERATE_CODE . ' Mysql generation',
-                $link,
-                self::PARAM_BUTTON,
-                '<br style="clear:both"/>'
+                $link
             );
 
             $helper = new \Pimvc\Views\Helpers\Table();
@@ -217,40 +212,33 @@ class Database extends databaseHelperController
      */
     final public function gencode4d()
     {
-        $modelSuffix = ($this->hasValue('suffix')) ? $this->getParam('suffix') : 'Proscope_';
+        $modelSuffix = ($this->hasValue('suffix')) ? $this->getParams('suffix') : 'Proscope_';
         $content = \App1\Views\Helpers\Urlselector::get(
             self::PARAM_TABLES_4D,
             $this->baseUrl . 'database/gencode4d/id/',
             $this->tableList,
-            $this->getParam(self::PARAM_ID)
+            $this->getParams(self::PARAM_ID)
         );
         if ($this->hasValue(self::PARAM_ID)) {
             $link = $this->baseUrl . 'database/tables4d/id/'
-                . $this->getParam(self::PARAM_ID);
-            $button = $this->getButton(
-                'Modèle',
-                $link,
-                self::PARAM_BUTTON,
-                '<br style="clear:both"/>'
-            );
+                . $this->getParams(self::PARAM_ID);
+            $button = $this->getButton('Modèle', $link);
             $content .= $button;
             $tabParams = array();
             $tableList = array_flip($this->tableList);
             $tabParams['Domain'] = \Pimvc\Db\Generate\Domain::get(
-                $tableList[$this->getParam(self::PARAM_ID)],
+                $tableList[$this->getParams(self::PARAM_ID)],
                 $this->columns,
                 $this->indexes,
-                $this->relations,
-                $modelSuffix
+                $this->relations
             );
 
             $tableList = array_flip($this->tableList);
             $tabParams['Model'] = \Pimvc\Db\Generate\Model::get(
                 self::PDO_ADPATER_4D,
-                $tableList[$this->getParam(self::PARAM_ID)],
+                $tableList[$this->getParams(self::PARAM_ID)],
                 $this->indexes,
-                $this->relations,
-                $modelSuffix
+                $this->relations
             );
             $tabs = new bootstrapTab($tabParams);
             $tabs->setSelected('Domain')
@@ -284,12 +272,7 @@ class Database extends databaseHelperController
             $tabsParams = [];
             $link = $this->baseUrl . '/database/tablesmysql/id/'
                 . $this->currentTableName;
-            $button = $this->getButton(
-                'Back to Mysl model',
-                $link,
-                self::PARAM_BUTTON,
-                '<br style="clear:both"/>'
-            );
+            $button = $this->getButton('Back to Mysl model', $link);
             $tabsParams['Domain'] = \Pimvc\Db\Generate\Domain::get(
                 $this->currentTableName,
                 $this->columns,
@@ -371,11 +354,13 @@ class Database extends databaseHelperController
         $form = new formImport($this->getParams());
         $isPost = $this->isPost();
         $isValid = $form->isValid();
+        $pagesize = $this->getParams('poolsize');
         if ($isPost && $isValid) {
             $form->setMode('readonly');
             $parser = new \Pimvc\File\Csv\Parser();
             $filepath = $this->getDocumentPath() . $this->getParams('filename');
             $delimiter = $parser->auto($filepath);
+
             if ($parser->error != 0) {
                 flashTools::addError('Error occured during csv parsing');
             } else {
@@ -392,7 +377,12 @@ class Database extends databaseHelperController
                     $fields->addItem($_field);
                 }
                 $forge = new dbForge($this->getParams('slot'));
-                $forge->tableCreate($this->getParams('tablename'), $fields, false);
+                $forge->tableCreate(
+                    $this->getParams('tablename'),
+                    $fields,
+                    true
+                );
+                sleep(1);
                 unset($headers);
                 unset($fields);
                 unset($mapperHeader);
@@ -412,7 +402,7 @@ class Database extends databaseHelperController
             'tablename' => $this->getParams('tablename'),
             'filename' => $this->getParams('filename'),
             'slot' => $this->getParams('slot'),
-            'pagesize' => $this->getParams('poolsize') || 100,
+            'pagesize' => ($pagesize) ? $pagesize : 100,
             'page' => 1,
             'ingest' => $isPost,
             'nav' => (string) $this->getNav()
@@ -435,44 +425,53 @@ class Database extends databaseHelperController
         $isValid = $pagesize && $page && $slot && $tablename && $filename;
         $response = new \stdClass();
         $response->error = 0;
+        $response->jsonError = JSON_ERROR_NONE;
         $response->errors = [];
         $response->request = new \stdClass;
         $response->request = (object) $this->getParams();
         if ($isValid) {
+            $forge = new dbForge($slot);
             $filepath = $this->getDocumentPath() . $filename;
-            if (file_exists($filepath)) {
-                $response->headers = $this->getNormalizedHeaders($filepath);
-                $parser = new \Pimvc\File\Csv\Parser();
-                $parser->offset = $response->offset = (($page - 1) * $pagesize);
-                $parser->limit = $response->limit = $pagesize;
-                $response->maxline = $this->countFileLines($filepath);
-                $percent = ($parser->offset * 100) / $response->maxline;
-                $response->progress = round($percent, 0);
-                $delimiter = $parser->auto($filepath);
-                $response->datas = [];
-                $response->linesError = [];
-                $dc = count($parser->data);
-                $forge = new dbForge($this->getParams('slot'));
-                for ($c = 0; $c < $dc; $c++) {
-                    $response->datas[] = array_values($parser->data[$c]);
-                    $resok = $forge->tableInsert(
-                        $tablename,
-                        $response->headers,
-                        $parser->data[$c]
-                    );
-                    if (!$resok) {
-                        $response->linesError[] = $parser->offset + $c;
+            $tableExists = $forge->tableExist($tablename);
+            if ($tableExists) {
+                $fileExist = file_exists($filepath);
+                if ($fileExist) {
+                    $response->headers = $this->getNormalizedHeaders($filepath);
+                    $parser = new \Pimvc\File\Csv\Parser();
+                    $parser->fields = $response->headers;
+                    $parser->offset = $response->offset = (($page - 1) * $pagesize);
+                    $parser->limit = $response->limit = $pagesize;
+                    $response->maxline = $this->countFileLines($filepath);
+                    $percent = ($parser->offset * 100) / $response->maxline;
+                    $response->progress = round($percent, 0);
+                    $delimiter = $parser->auto($filepath);
+                    $response->datas = [];
+                    $response->linesError = [];
+                    $response->delim = $delimiter;
+                    $dc = count($parser->data);
+                    for ($c = 0; $c < $dc; $c++) {
+                        $response->datas[] = $parser->data[$c];
+                        $resok = $forge->tableInsert(
+                            $tablename,
+                            $response->headers,
+                            $parser->data[$c]
+                        );
+                        if (!$resok) {
+                            $response->linesError[] = $parser->offset + $c;
+                        }
                     }
+                    unset($parser);
+                } else {
+                    $response->error = 1;
+                    $response->errors[] = 'incorrect filename';
                 }
-                unset($forge);
-                unset($parser);
             } else {
                 $response->error = 1;
-                $response->errors[] = 'incorrect filename';
+                $response->errors[] = 'incorrect tablename';
             }
+            unset($forge);
         } else {
             $response->error = 1;
-            $response->request = (object) $this->getParams();
             $response->errors[] = 'missing params';
         }
         return $this->getJsonResponse($response);
