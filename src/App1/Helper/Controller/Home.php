@@ -58,7 +58,6 @@ class Home extends basicController
             $adminItems = [
                 $this->menuAction('Acl', 'fa fa-lock', '/acl/manage'),
                 $this->menuAction('Database', 'fa fa-database', '/database/tablesmysql'),
-                $this->menuAction('Probes', 'fa fa-compass', '/probes/manage'),
             ];
             $items = array_merge($items, $adminItems);
         }

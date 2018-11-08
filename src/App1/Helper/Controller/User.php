@@ -104,11 +104,6 @@ class User extends basicController
                     , 'icon' => 'fa fa-database'
                     , 'link' => $this->baseUrl . '/database/tablesmysql'
                 ],
-                [
-                    self::PARAM_TITLE => 'Probes'
-                    , 'icon' => 'fa fa-compass'
-                    , 'link' => $this->baseUrl . '/probes/manage'
-                ],
             ];
         }
 

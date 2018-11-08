@@ -260,7 +260,7 @@ final class Lignes extends ControlerMetroLignesHelper
             $userObject = $this->lignesModel->getById($id);
             unset($userObject->id);
             $this->lignesModel->save($userObject);
-            flashTools::addInfo('Probe id ' . $id . ' dupliqué.');
+            flashTools::addInfo('Ligne id ' . $id . ' dupliqué.');
             $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION;
             return $this->redirect($redirectUrl);
         }
