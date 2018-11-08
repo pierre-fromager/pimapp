@@ -23,7 +23,7 @@ return [
         'mailer' => include 'dev/mailer.php',
     ],
     'request' => [
-        'scheme' => 'https',
+        'scheme' => 'http',
         'hostname' => '',
     ],
     'jwt' => [
@@ -43,7 +43,7 @@ return [
         'google' => [
             'map' => [
                 'api' => [
-                    'key' => 'AIzaSyD8hn-JMOxFb9Bm-Yvn8N5wSJ229N2P6z4'
+                    'key' => 'mygooglekey'
                 ]
             ]
         ]
