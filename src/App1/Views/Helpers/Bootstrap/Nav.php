@@ -1,17 +1,18 @@
 <?php
 
 /**
- * Description of nav
+ * Description of App1\Views\Helpers\Bootstrap\Nav
  *
  * @author pierrefromager
  */
+
 namespace App1\Views\Helpers\Bootstrap;
 
 class Nav extends \Pimvc\View
 {
-    const TEMPLATE_PATH = '/Template/';
-    const TEMPLATE_PARTIAL = 'Nav.php';
-    
+
+    const _TEMPLATE = __DIR__ . '/Template/Nav.php';
+
     /**
      * __construct
      *
@@ -19,18 +20,8 @@ class Nav extends \Pimvc\View
      */
     public function __construct()
     {
-        $this->setFilename($this->getPartialFilename());
+        $this->setFilename(self::_TEMPLATE);
         parent::__construct();
         return $this;
-    }
-    
-    /**
-     * getPartialFilename
-     *
-     * @return string
-     */
-    private function getPartialFilename()
-    {
-        return __DIR__ . self::TEMPLATE_PATH . self::TEMPLATE_PARTIAL;
     }
 }

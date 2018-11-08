@@ -6,6 +6,9 @@
  */
 namespace App1\Views\Helpers\Pages;
 
+use Pimvc\Views\Helpers\Collection\Css as cssCollection;
+use Pimvc\Views\Helpers\Collection\Js as jsCollection;
+
 class Paginator
 {
     const PAGINATOR_DEFAULT_PAGE = 0;
@@ -31,8 +34,8 @@ class Paginator
     public function __construct($link, $curentPage, $pageSize, $maxPage)
     {
         $cssPath = 'public/css/';
-        Helper_Collection_Css::add($cssPath . 'paginator.css');
-        Helper_Collection_Css::save();
+        cssCollection::add($cssPath . 'paginator.css');
+        cssCollection::save();
         $this->content = '';
         $this->baseUrl = \Pimvc\App::getInstance()->getRequest()->getBaseUrl();
         $this->link = $link . '/page/';

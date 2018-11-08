@@ -10,16 +10,19 @@ namespace App1\Views\Helpers\Bootstrap;
 
 class Button
 {
-    const PARAM_CLASS = 'class';
-    const PARAM_ID = 'id';
-    const PARAM_STYLE = 'style';
-    const PARAM_TYPE = 'type';
-    const PARAM_BUTTON = 'button';
-    const PARAM_VALUE = 'value';
-    const PARAM_ROLE = 'role';
-    const PARAM_HREF = 'href';
-    const PARAM_DATALINK = 'data-link';
-    const TAG_BUTTON = 'button';
+
+    const _BUTTON = 'button';
+    const _CLASS = 'class';
+    const _ID = 'id';
+    const _STYLE = 'style';
+    const _TYPE = 'type';
+    const _VALUE = 'value';
+    const _ROLE = 'role';
+    const _HREF = 'href';
+    const _DATALINK = 'data-link';
+    const _ACTIVE = 'active';
+    const _DISABLED = 'disabled';
+    const TAG_BUTTON = self::_BUTTON;
     const TAG_A = 'a';
     const TAG_INPUT = 'input';
     const CLASS_BUTTON = 'btn';
@@ -35,8 +38,6 @@ class Button
     const SIZE_MEDIUM = 'btn-md';
     const SIZE_SMALL = 'btn-sm';
     const SIZE_XSMALL = 'btn-xs';
-    const ACTIVE = 'active';
-    const DISABLED = 'disabled';
 
     protected $content;
     protected $tag;
@@ -78,7 +79,7 @@ class Button
     /**
      * setTag
      *
-     * @param string $title
+     * @param string $tag
      */
     public function setTag($tag)
     {
@@ -144,7 +145,7 @@ class Button
     /**
      * setExtraClass
      *
-     * @param string $class
+     * @param string $extraClass
      */
     public function setExtraClass($extraClass)
     {
@@ -166,22 +167,22 @@ class Button
     /**
      * setActive
      *
-     * @param boolean $disabled
+     * @param boolean $active
      */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
-        $this->active = ($active === true) ? self::ACTIVE : '';
+        $this->active = ($active) ? self::_ACTIVE : '';
         return $this;
     }
 
     /**
      * setDisabled
      *
-     * @param boolean $disabled
+     * @param bool $disabled
      */
-    public function setDisabled($disabled)
+    public function setDisabled(bool $disabled)
     {
-        $this->disabled = ($disabled === true) ? self::DISABLED : '';
+        $this->disabled = ($disabled) ? self::_DISABLED : '';
         return $this;
     }
 
@@ -206,26 +207,26 @@ class Button
         switch ($this->tag) {
             case self::TAG_BUTTON:
                 $options = array(
-                    self::PARAM_TYPE => self::PARAM_BUTTON
-                    , self::PARAM_DATALINK => $this->datalink
+                    self::_TYPE => self::_BUTTON
+                    , self::_DATALINK => $this->datalink
                 );
                 break;
             case self::TAG_A:
                 $options = array(
-                    self::PARAM_ROLE => self::PARAM_BUTTON
-                    , self::PARAM_HREF => $this->datalink
+                    self::_ROLE => self::_BUTTON
+                    , self::_HREF => $this->datalink
                 );
                 break;
             case self::TAG_INPUT:
                 $options = array(
-                    self::PARAM_TYPE => self::PARAM_BUTTON
-                    , self::PARAM_VALUE => $this->title
+                    self::_TYPE => self::_BUTTON
+                    , self::_VALUE => $this->title
                 );
                 break;
         }
-        $options[self::PARAM_ID] = $this->id;
-        $options[self::PARAM_CLASS] = $this->class;
-        $options[self::PARAM_STYLE] = $this->style;
+        $options[self::_ID] = $this->id;
+        $options[self::_CLASS] = $this->class;
+        $options[self::_STYLE] = $this->style;
         $this->content = (string) new \Pimvc\Html\Element\Decorator(
             $this->tag,
             $this->title,

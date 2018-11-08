@@ -7,17 +7,8 @@ $params = \app1\app::getInstance()->getController()->getParams();
             <div class="col-sm-12">
                 <?= \Pimvc\Tools\Flash::render();?>
             </div>
-            <div class="row col-sm-12">
-                <div id="breadcrumb" class="col-sm-4">
-                    <?=$breadcrumb; ?>
-                </div>
-                <div id="langWrapper" class="col-sm-4">
-                    <div id="lang">
-                        <?=$langSelector;?>
-                    </div>             
-                </div>
-            </div>
             <div class="row col-xs-12 col-md-12 col-lg-12">
+                <?=$nav; ?>
                 <?=$content; ?>
             </div>
         </div> <!-- #content -->

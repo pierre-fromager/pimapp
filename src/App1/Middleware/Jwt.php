@@ -30,9 +30,9 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
     /**
      * peel
      *
-     * @param type $object
+     * @param object $object
      * @param \Closure $next
-     * @return type
+     * @return \Closure
      */
     public function peel($object, \Closure $next)
     {

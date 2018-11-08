@@ -17,6 +17,11 @@ class Home extends basicController
     const PARAM_CAROUSEL = 'carousel';
     const LAYOUT_NAME = 'responsive';
     const VIEW_INDEX = '/Views/Home/Index.php';
+    const _TITLE = 'title';
+    const _ICON = 'icon';
+    const _LINK = 'link';
+    const _ITEMS = 'items';
+    const _TEXT = 'text';
 
     protected $baseUrl;
 
@@ -39,61 +44,57 @@ class Home extends basicController
         $isAuth = sessionTools::isAuth();
         $isAdmin = sessionTools::isAdmin();
         $items = [];
-        $authLink = ($isAuth) ? [
-            'title' => 'Logout'
-            , 'icon' => 'fa fa-sign-out'
-            , 'link' => $this->baseUrl . '/user/logout'
-            ] : [
-            'title' => 'Login'
-            , 'icon' => 'fa fa-sign-in'
-            , 'link' => $this->baseUrl . '/user/login'
-            ];
+        $authLink = $this->menuAction(
+            ($isAuth) ? 'Logout' : 'Login',
+            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
+            ($isAuth) ? '/user/logout' : '/user/login'
+        );
         $freeItems = [
-            [
-                'title' => 'Lignes'
-                , 'icon' => 'fa fa-subway'
-                , 'link' => $this->baseUrl . '/metro/lignes/manage'
-            ]
+            $this->menuAction('Change lang', 'fa fa-language', '/lang/change'),
+            $this->menuAction('Lignes', 'fa fa-subway', '/metro/lignes/manage')
         ];
-        $items = $items = array_merge($items, $freeItems);
+        $items = array_merge($items, $freeItems);
         if ($isAdmin) {
-            $items += [
-                [
-                    'title' => 'Acl'
-                    , 'icon' => 'fa fa-lock'
-                    , 'link' => $this->baseUrl . '/acl/manage'
-                ],
-                [
-                    'title' => 'Database'
-                    , 'icon' => 'fa fa-database'
-                    , 'link' => $this->baseUrl . '/database/tablesmysql'
-                ],
-                [
-                    'title' => 'Probes'
-                    , 'icon' => 'fa fa-compass'
-                    , 'link' => $this->baseUrl . '/probes/manage'
-                ],
+            $adminItems = [
+                $this->menuAction('Acl', 'fa fa-lock', '/acl/manage'),
+                $this->menuAction('Database', 'fa fa-database', '/database/tablesmysql'),
+                $this->menuAction('Probes', 'fa fa-compass', '/probes/manage'),
             ];
+            $items = array_merge($items, $adminItems);
         }
         if ($isAuth) {
             $authItems = [
-                [
-                    'title' => 'User'
-                    , 'icon' => 'fa fa-user'
-                    , 'link' => $this->baseUrl . '/user/edit'
-                ]];
+                $this->menuAction('User', 'fa fa-user', '/user/edit'),
+            ];
             $items = array_merge($items, $authItems);
         }
         array_push($items, $authLink);
         $navConfig = [
-            'title' => [
-                'text' => 'Pimapp',
-                'icon' => 'fa fa-home',
-                'link' => $this->baseUrl
+            self::_TITLE => [
+                self::_TEXT => 'Pimapp',
+                self::_ICON => 'fa fa-home',
+                self::_LINK => $this->baseUrl
             ],
-            'items' => $items
+            self::_ITEMS => $items
         ];
         return $navConfig;
+    }
+
+    /**
+     * menuAction
+     *
+     * @param string $title
+     * @param string $icon
+     * @param string $action
+     * @return array
+     */
+    private function menuAction($title, $icon, $action)
+    {
+        return [
+            self::_TITLE => $title
+            , self::_ICON => $icon
+            , self::_LINK => $this->baseUrl . $action
+        ];
     }
 
     /**

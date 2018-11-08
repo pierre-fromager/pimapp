@@ -4,7 +4,8 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase as PFT;
 
-class TestCase extends PFT {
+class TestCase extends PFT
+{
 
     const APP_PATH = '/../src/App1/';
     const APP_CONFIG_PATH = '/../src/App1/config/';
@@ -19,7 +20,8 @@ class TestCase extends PFT {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp()
+    {
         $this->createConfig(\Pimvc\Config::ENV_TEST);
         $this->createApp();
     }
@@ -28,7 +30,8 @@ class TestCase extends PFT {
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown()
+    {
         $this->config = null;
         $this->app = null;
         $this->appPath = '';
@@ -36,23 +39,25 @@ class TestCase extends PFT {
 
     /**
      * createConfig
-     * 
+     *
      * create \Pimvc\Config instance for a given env
-     * 
+     *
      * @param string $env
      */
-    private function createConfig($env) {
+    private function createConfig($env)
+    {
         $path = __DIR__ . self::APP_CONFIG_PATH;
         $this->config = (new \Pimvc\Config())->setPath($path)->setEnv($env)->load();
     }
 
     /**
      * createApp
-     * 
+     *
      * create \Pimvc\App instance for a given config
-     * 
+     *
      */
-    private function createApp() {
+    private function createApp()
+    {
         $this->appPath = __DIR__ . self::APP_PATH;
         $this->app = (new \App1\App($this->config))
                 ->setPath($this->appPath)
@@ -68,18 +73,20 @@ class TestCase extends PFT {
 
     /**
      * testConfig
-     * 
+     *
      */
-    public function testConfig() {
+    public function testConfig()
+    {
         $this->assertTrue($this->config instanceof \Pimvc\Config);
     }
 
     /**
      * appComponentProvider
-     * 
-     * @return array 
+     *
+     * @return array
      */
-    public function appComponentProvider() {
+    public function appComponentProvider()
+    {
         if (!$this->app) {
             $this->setUp(); // because dataProvider starts before setUp
         }
@@ -97,35 +104,38 @@ class TestCase extends PFT {
 
     /**
      * testApp
-     * 
+     *
      * @param object $component
      * @param string $classname
-     * @param boolean $expected 
-     * 
+     * @param boolean $expected
+     *
      * test app components for a given \Pimvc\App instance
-     * 
+     *
      * @covers \Pimvc\App
      * @dataProvider appComponentProvider
      */
-    public function testAppComponents($component, $classname, $expected) {
+    public function testAppComponents($component, $classname, $expected)
+    {
         $this->assertEquals($component instanceof $classname, $expected);
     }
 
     /**
      * testAppPath
-     * 
+     *
      * test if app path is correct
      */
-    public function testAppPath() {
+    public function testAppPath()
+    {
         $this->assertTrue($this->app->getPath() === $this->appPath);
     }
 
     /**
      * testRequestUri
-     * 
+     *
      * test if app path is correct
      */
-    public function testRequestUri() {
+    public function testRequestUri()
+    {
         $uri = 'home/index';
         $this->app->getRequest()->setUri($uri);
         $this->assertEquals($this->app->getRequest()->getUri(), $uri);
@@ -133,10 +143,11 @@ class TestCase extends PFT {
 
     /**
      * caseRouterProvider
-     * 
-     * @return array 
+     *
+     * @return array
      */
-    public function caseRouterProvider() {
+    public function caseRouterProvider()
+    {
         if (!$this->app) {
             //$this->setUp(); // because dataProvider starts before setUp
         }
@@ -176,9 +187,9 @@ class TestCase extends PFT {
 
     /**
      * testRouter
-     * 
+     *
      * test if the router find a route from a given uri matching route list
-     * 
+     *
      * @param string $method
      * @param string $uri
      * @param type $matchingRoute
@@ -186,7 +197,8 @@ class TestCase extends PFT {
      * @covers \App1\App
      * @dataProvider caseRouterProvider
      */
-    public function testRouter($method, $uri, $matchingRoute, $expected) {
+    public function testRouter($method, $uri, $matchingRoute, $expected)
+    {
         $this->app->getRequest()->setMethod($method);
         $this->app->getRouter()->setUri($uri);
         $testRoute = $this->app->getRouter()->compile();
@@ -199,10 +211,11 @@ class TestCase extends PFT {
 
     /**
      * caseRequestProvider
-     * 
-     * @return array 
+     *
+     * @return array
      */
-    public function caseRequestProvider() {
+    public function caseRequestProvider()
+    {
         
         return [
             ['GET', false, null, true],
@@ -250,7 +263,8 @@ class TestCase extends PFT {
      * @covers \Pimvc\App
      * @dataProvider caseRequestProvider
      */
-    public function testRequest($method, $uri) {
+    public function testRequest($method, $uri)
+    {
         //if (!$this->app) {
         /*
           $this->method = $method;
@@ -286,7 +300,8 @@ class TestCase extends PFT {
      * @param type $uri
      * @return type
      */
-    private function mockedServer($uri, $method) {
+    private function mockedServer($uri, $method)
+    {
         return [
             "REDIRECT_SCRIPT_URL" => $uri,
             "REDIRECT_SCRIPT_URI" => "https://pimapp.pier-infor.fr" . $uri,
@@ -337,5 +352,4 @@ class TestCase extends PFT {
             "REQUEST_TIME" => 1536927790
         ];
     }
-
 }

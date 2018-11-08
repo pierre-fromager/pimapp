@@ -85,13 +85,13 @@
             //$j(this).prop('disabled', true);
         });
 
-<?php if ($ingest && $isValid) : ?>
-            $("section").first().css("display", "none");
-            $j('#formDatabase-import-csv').css("display", "none");
-            $j('#progress-step').css("display", "block");
-            stickyFooter();
-            startImport();
-<?php endif; ?>
+    <?php if ($ingest && $isValid) : ?>
+                $("section").first().css("display", "none");
+                $j('#formDatabase-import-csv').css("display", "none");
+                $j('#progress-step').css("display", "block");
+                stickyFooter();
+                startImport();
+    <?php endif; ?>
     });
 </script>
 

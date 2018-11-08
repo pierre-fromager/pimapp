@@ -41,8 +41,9 @@ class Responsive extends \Pimvc\Layout implements responsiveLayoutInterface
     {
         $this->app = $app;
         $this->path = $this->app->getPath() . self::LAYOUT_PATH . DIRECTORY_SEPARATOR;
-        $this->layoutConfig = $this->app->getConfig()
-            ->getSettings(self::PARAM_HTML)[self::PARAM_LAYOUT_CONFIG];
+        $this->layoutConfig = $this->app
+                        ->getConfig()
+                        ->getSettings(self::PARAM_HTML)[self::PARAM_LAYOUT_CONFIG];
         $this->htmlParts = $this->getHtmlParts();
         return $this;
     }
@@ -82,6 +83,7 @@ class Responsive extends \Pimvc\Layout implements responsiveLayoutInterface
                 self::PARAM_REQUEST => $this->app->getRequest(),
                 self::PARAM_BREADCRUMB => '', //Helper_Breadcrumb::get(),
                 'langSelector' => '', //(string) new Helper_Lang(),
+                'nav' => (isset($this->layoutParams['nav'])) ? (string) $this->layoutParams['nav'] : '',
                 self::PARAM_CONTENT => (isset($this->layoutParams[self::PARAM_CONTENT]))
                     ? (string) $this->layoutParams[self::PARAM_CONTENT]
                     : '',

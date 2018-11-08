@@ -129,6 +129,9 @@ class Lignes extends basicController
         $center = geoCenter::getFromAzimuts($markCenters);
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
         $mapOptions->zoom = 14;
+        $mapOptions
+                ->setBoundSouthWest([48.5516, 3.01025])
+                ->setBoundNorthEast([49.17991, 1.69739]);
         $map = (new OsmMap())
                 ->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}')
                 ->setMarkers($markers)
@@ -272,6 +275,9 @@ class Lignes extends basicController
 
         $center = geoCenter::getFromAzimuts($markCenters);
         $mapOptions = new OsmMapOptions($center[0], $center[1]);
+        $mapOptions
+                ->setBoundSouthWest([48.5516, 3.01025])
+                ->setBoundNorthEast([49.17991, 1.69739]);
         $map = (new OsmMap())
                 ->setLayer($this->baseUrl . '/metro/lignes/tiles/s/{s}/z/{z}/x/{x}/y/{y}')
                 ->setMarkers($markers)

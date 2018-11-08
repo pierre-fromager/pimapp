@@ -1,9 +1,11 @@
 <?php
+
 /**
  * App1\Tools\Mail\Sender
  *
  * is a tool to send smtp message through Nette\Mail
  */
+
 namespace App1\Tools\Mail;
 
 use Nette\Mail\Message;

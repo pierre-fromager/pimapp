@@ -8,6 +8,9 @@
 
 namespace App1\Views\Helpers\Bootstrap;
 
+use \Pimvc\Html\Element\Decorator as Deco;
+use \Pimvc\Views\Helpers\Glyph as glyphHelper;
+
 class Dropdown
 {
     const PARAM_EMPTY = '';
@@ -168,21 +171,21 @@ class Dropdown
      */
     private function getMainLink()
     {
-        $caret = (string) new Lib_Html_Element_Decorator(
+        $caret = (string) new Deco(
             self::TAG_B,
             self::PARAM_EMPTY,
             array(self::PARAM_CLASS => self::DROPDOWN_CARET_CLASS)
         );
-        return PHP_EOL . (string) new Lib_Html_Element_Decorator(
+        return PHP_EOL . (string) new Deco(
             self::TAG_A,
-            PHP_EOL . Helper_Glyph::get($this->icon) . $this->label . $caret,
+            PHP_EOL . glyphHelper::get($this->icon) . $this->label . $caret,
             array(
                 self::PARAM_HREF => '#'
                 , self::PARAM_CLASS => self::DROPDOWN_TOGGLE_CLASS
                 , self::PARAM_DATA_TOGGLE => self::DROPDOWN_CLASS
                 , self::PARAM_ID => $this->linkId
             )
-        ) . PHP_EOL;
+        );
     }
     
     /**
@@ -193,7 +196,7 @@ class Dropdown
      */
     private function getMenu($items)
     {
-        return (string) new \Pimvc\Html\Element\Decorator(
+        return (string) new Deco(
             self::TAG_UL,
             $items,
             array(
@@ -253,36 +256,36 @@ class Dropdown
      * _getWrapper
      *
      * @param string $content
-     * @return \Lib_Html_Element_Decorator
+     * @return string
      */
     private function _getWrapper($content)
     {
         $options = array(
             self::PARAM_CLASS => 'bs-multicolumn-wrapper ' . $this->multiColumnType
         );
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_DIV,
             $content,
             $options
-        ) . PHP_EOL;
+        );
     }
     
     /**
      * _getGroupedItem
      *
      * @param string $content
-     * @return \Lib_Html_Element_Decorator
+     * @return string
      */
     private function _getGroupedItem($content)
     {
         $options = array(
             self::PARAM_CLASS => 'bs-multicolumn-group-item'
         );
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_UL,
             $content,
             $options
-        ) . PHP_EOL;
+        );
     }
 
     /**
@@ -294,9 +297,9 @@ class Dropdown
      */
     private function getItem($label, $link)
     {
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_LI,
-            (string) new Lib_Html_Element_Decorator(
+            (string) new Deco(
                 self::TAG_A,
                 $label,
                 array(
@@ -306,7 +309,7 @@ class Dropdown
                 )
             ) . PHP_EOL,
             array(self::PARAM_CLASS => $this->itemClass)
-        ) . PHP_EOL;
+        );
     }
     
     /**
@@ -316,14 +319,14 @@ class Dropdown
      */
     private function getDivider()
     {
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_LI,
             self::PARAM_EMPTY,
             array(
                 self::PARAM_CLASS => self::DROPDOWN_DIVIDER_CLASS
                     . ' ' . $this->itemClass
             )
-        ) . PHP_EOL;
+        );
     }
     
     /**
@@ -334,7 +337,7 @@ class Dropdown
      */
     private function getHeader($label)
     {
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_LI,
             $label,
             array(
@@ -342,7 +345,7 @@ class Dropdown
                     . ' ' . $this->itemClass
                 , self::PARAM_ROLE => self::DROPDOWN_HEADER_ROLE
             )
-        ) . PHP_EOL;
+        );
     }
   
     /**
@@ -353,13 +356,13 @@ class Dropdown
      */
     private function getMain($mainContent)
     {
-        return (string) new Lib_Html_Element_Decorator(
+        return (string) new Deco(
             self::TAG_LI,
             $mainContent,
             array(
                 self::PARAM_ID => $this->id
                 , self::PARAM_CLASS => self::DROPDOWN_CLASS
             )
-        ) . PHP_EOL;
+        );
     }
 }

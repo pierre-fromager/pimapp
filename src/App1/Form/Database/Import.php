@@ -1,9 +1,11 @@
 <?php
+
 /**
  * App1\Form\Database\Import
  *
  * @author pierrefromager
  */
+
 namespace App1\Form\Database;
 
 use Pimvc\Form;
@@ -23,6 +25,7 @@ class Import extends Form
     const _SLOT = 'slot';
     const _TABLENAME = 'tablename';
     const _POOL_SIZE = 'poolsize';
+    const _LABEL = 'label';
 
     protected $isAdmin;
     protected $postedData;
@@ -62,7 +65,7 @@ class Import extends Form
         $this->setData(self::_SLOT, $this->getSlotList());
         $this->setType(self::_POOL_SIZE, 'select');
         $this->setData(self::_POOL_SIZE, $this->getPoolSize());
-
+        
         $this->_setWrappers();
         $this->setLabels($this->_getLabels());
         $this->setAlign('left');
@@ -131,8 +134,12 @@ class Import extends Form
      */
     private function getSlotList(): array
     {
-        $slots = array_keys($this->app->getConfig()->getSettings(self::_DB_POOL));
-        return \Pimvc\Tools\Arrayproto::getTupple($slots);
+        $slots = $this->app->getConfig()->getSettings(self::_DB_POOL);
+        $keys = array_keys($slots);
+        $values = array_map(function ($v) {
+            return $v[self::_LABEL];
+        }, $slots);
+        return array_combine($keys, $values);
     }
 
     /**

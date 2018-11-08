@@ -16,6 +16,7 @@ class Modal
     protected $title = '';
     protected $body = '';
     protected $url;
+    protected $content;
     protected $isExternal = false;
     protected static $counter = 0;
 
@@ -36,7 +37,7 @@ class Modal
     /**
      * setId
      *
-     * @param string $title
+     * @param string $id
      */
     public function setId($id)
     {
@@ -88,10 +89,9 @@ class Modal
                 ? file_get_contents($this->url, true)
                 : $this->body
         );
-        $this->content = (string) new \Pimvc\View(
-            $params,
-            __DIR__ . self::TEMPLATE_NAME
-        );
+        $this->content = (string) (new \Pimvc\View())
+                        ->setParams($params)
+                        ->setFilename(__DIR__ . self::TEMPLATE_NAME);
     }
 
     /**

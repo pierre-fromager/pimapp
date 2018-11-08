@@ -60,7 +60,7 @@ class Stations extends \Pimvc\Db\Model\Orm
      *
      * @param int $id
      * @param array $what
-     * @return \Model_Domain_Users
+     * @return array
      */
     public function getByH($h = '')
     {

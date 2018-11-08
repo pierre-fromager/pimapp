@@ -336,7 +336,7 @@ class Signature
      *
      * @param string $body
      * @param array $sHeaders
-     * @return type
+     * @return string
      */
     private function dkCanonicalizeNofws($body, $sHeaders)
     {

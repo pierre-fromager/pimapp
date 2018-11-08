@@ -8,6 +8,9 @@
 
 namespace App1\Views\Helpers\Bootstrap;
 
+use Pimvc\Views\Helpers\Collection\Css as cssCollection;
+use Pimvc\Views\Helpers\Collection\Js as jsCollection;
+
 class Slider
 {
     const JS_PATH = 'public/js/bootstrap/';
@@ -22,6 +25,7 @@ class Slider
     const OBSERVER_CLASS = '.slider';
     const OBSERVER_OPTIONS = 'change';
 
+    protected $content;
     protected $fields;
     protected $observableClass;
     protected $observableOptions;
@@ -159,17 +163,17 @@ class Slider
                 $jsCollection[] = self::JS_OBSERVER_SLIDER_PLUGIN;
             }
             foreach ($jsCollection as $jsRes) {
-                Helper_Collection_Js::add($jsRes);
+                jsCollection::add($jsRes);
             }
-            Helper_Collection_Js::save();
+            jsCollection::save();
             $cssPath = self::CSS_PATH;
             $cssCollection = array(
                 $cssPath . self::CSS_SLIDER_PLUGIN
             );
             foreach ($cssCollection as $cssRes) {
-                Helper_Collection_Css::add($cssRes);
+                cssCollection::add($cssRes);
             }
-            Helper_Collection_Css::save();
+            cssCollection::save();
             self::$hasRessource == true;
         }
     }

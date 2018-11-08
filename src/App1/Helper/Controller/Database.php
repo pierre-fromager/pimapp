@@ -1,4 +1,5 @@
 <?php
+
 /**
  * class App1\Helper\Controller\Database
  *
@@ -8,6 +9,7 @@
  * @copyright Pier-Infor
  * @version 1.0
  */
+
 namespace App1\Helper\Controller;
 
 use \Pimvc\Controller\Basic as basicController;
@@ -29,6 +31,10 @@ class Database extends basicController implements interfaceModelHelper
     const _LINK = 'link';
     const _ITEMS = 'items';
     const _TEXT = 'text';
+    const _ID = 'id';
+    const PARAM_TABLES_4D = 'tables-4d';
+    const LAYOUT_NAME = 'responsive';
+    const LABEL_GENERATE_CODE = 'Code';
 
     protected $baseUrl = '';
     protected $request = null;
@@ -55,8 +61,8 @@ class Database extends basicController implements interfaceModelHelper
         $actionName = $this->getApp()->getController()->getAction();
         $this->setAdapterFromAction($actionName);
         $this->setTableList();
-        if ($this->hasValue(self::PARAM_ID)) {
-            $id = $this->getParams(self::PARAM_ID);
+        if ($this->hasValue(self::_ID)) {
+            $id = $this->getParams(self::_ID);
             $tableListIds = array_flip($this->tableList);
             $this->currentTableName = $tableListIds[$id];
             unset($tableListIds);
@@ -115,7 +121,7 @@ class Database extends basicController implements interfaceModelHelper
      */
     private function initMysql($id, $actionName)
     {
-        $this->currentTableName = $this->getParams(self::PARAM_ID);
+        $this->currentTableName = $this->getParams(self::_ID);
         $modelHelper = new mysqlModelHelper($id);
         $this->indexes = $modelHelper->getIndexes();
         $relationWithLink = ($actionName == 'tablesmysql');
@@ -131,7 +137,7 @@ class Database extends basicController implements interfaceModelHelper
      */
     private function initPgsql($id, $actionName)
     {
-        $this->currentTableName = $this->getParams(self::PARAM_ID);
+        $this->currentTableName = $this->getParams(self::_ID);
         $modelHelper = new pgsqlModelHelper($id);
         $this->indexes = $modelHelper->getIndexes();
         $relationWithLink = ($actionName == 'tablespgsql');
@@ -212,9 +218,9 @@ class Database extends basicController implements interfaceModelHelper
     {
         $button = new bootstrapButton($label);
         $button->setDatalink($link)
-            ->setType($button::TYPE_BLOCK)
-            ->setExtraClass($button::TYPE_SUCCESS)
-            ->render();
+                ->setType($button::TYPE_BLOCK)
+                ->setExtraClass($button::TYPE_SUCCESS)
+                ->render();
         return (string) $button;
     }
 
@@ -227,7 +233,7 @@ class Database extends basicController implements interfaceModelHelper
     protected function getViewPath($actionName)
     {
         return $this->getApp()->getPath() . self::VIEW_DATABASE_PATH
-            . ucfirst($actionName) . '.php';
+                . ucfirst($actionName) . '.php';
     }
 
     /**
@@ -337,9 +343,9 @@ class Database extends basicController implements interfaceModelHelper
             $layoutParams['nav'] = $this->getNav();
         }
         $layout->setApp($this->getApp())
-            ->setName(self::LAYOUT_NAME)
-            ->setLayoutParams($layoutParams)
-            ->build();
+                ->setName(self::LAYOUT_NAME)
+                ->setLayoutParams($layoutParams)
+                ->build();
         return $layout;
     }
 }

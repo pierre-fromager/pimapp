@@ -42,21 +42,14 @@ class Pagesize
     public static function getCombo($url, $curent)
     {
         $pageSizes = array_combine(self::getData(), self::getData());
-        $selector = Tools_Urlselector::get(
+        $selector = \App1\Views\Helpers\Urlselector::get(
             'pageSize',
             $url,
             $pageSizes,
             $curent
         );
-        /*
-        $selector = new Helper_Select(
-            'pageSize'
-            , 'pageSize'
-            , $curent
-            , $pageSizes
-        );*/
+
         $result = (string) $selector;
-        //unset($selector);
         return $result;
     }
 }
