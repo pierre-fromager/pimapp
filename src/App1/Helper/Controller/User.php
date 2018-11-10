@@ -1,11 +1,12 @@
 <?php
 /**
- * Description of App1\Helper\Controller\Home
+ * Description of App1\Helper\Controller\User
  *
  * @author Pierre Fromager
  */
 namespace App1\Helper\Controller;
 
+use \App1\Model\Users as modelUser;
 use \Pimvc\Input\Filter as inputFilter;
 use \Pimvc\Tools\Assist\Session as sessionAssistTools;
 use \Pimvc\Input\Custom\Filters\Range as inputRange;
@@ -13,28 +14,31 @@ use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
 use \Pimvc\Controller\Basic as basicController;
 use \Pimvc\Tools\Session as sessionTools;
+use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 
 class User extends basicController
 {
 
+    use \App1\Helper\Reuse\Controller;
+
     const PUBLIC_CSS = '/public/css/';
     const PUBLIC_JS = '/public/js/';
-    const PARAM_ID = 'id';
-    const PARAM_ORDER = 'order';
-    const PARAM_NAME = 'name';
-    const PARAM_STATUS = 'status';
-    const PARAM_PROFIL = 'profil';
-    const PARAM_TOKEN = 'token';
-    const PARAM_EMAIL = 'email';
-    const PARAM_LOGIN = 'login';
-    const PARAM_PASSWORD = 'password';
-    const PARAM_TITLE = 'title';
+    const _ID = modelUser::PARAM_ID;
+    const _EMAIL = modelUser::PARAM_EMAIL;
+    const _PASSWORD = modelUser::PARAM_PASSWORD;
+    const _PROFIL = modelUser::PARAM_PROFIL;
+    const _STATUS = modelUser::PARAM_STATUS;
+    const _TOKEN = modelUser::PARAM_TOKEN;
+    const _LOGIN = modelUser::PARAM_LOGIN;
+    const _NAME = 'name';
+    const _TITLE = 'title';
+    const _ORDER = 'order';
     const VIEW_USER_PATH = '/Views/User/';
     const WILDCARD = '%';
     const PHP_EXT = '.php';
     const LAYOUT_NAME = 'responsive';
     const USER_MESSAGE_DISCONECTED = 'Vous êtes déconnecté.';
-    const PARAM_PAGESIZE = 'pagesize';
+    const _PAGESIZE = 'pagesize';
     const ERP_ASSIST_USER = 'user';
     const PARAM_RESET = 'reset';
     const AJAX_TERM = 'term';
@@ -61,7 +65,7 @@ class User extends basicController
     protected function init()
     {
         $this->modelConfig = $this->getApp()->getConfig()->getSettings('dbPool');
-        $this->userModel = new \App1\Model\Users($this->modelConfig);
+        $this->userModel = new modelUser($this->modelConfig);
         $this->baseUrl = $this->getApp()->getRequest()->getBaseUrl();
         $this->setAssets();
     }
@@ -77,11 +81,11 @@ class User extends basicController
         $isAuth = sessionTools::isAuth();
         $isPro = sessionTools::getProfil() === 'pro';
         $authLink = ($isAuth) ? [
-            self::PARAM_TITLE => 'Logout'
+            self::_TITLE => 'Logout'
             , 'icon' => 'fa fa-sign-out'
             , 'link' => $this->baseUrl . '/user/logout'
             ] : [
-            self::PARAM_TITLE => 'Login'
+            self::_TITLE => 'Login'
             , 'icon' => 'fa fa-sign-in'
             , 'link' => $this->baseUrl . '/user/login'
             ];
@@ -90,39 +94,44 @@ class User extends basicController
         if ($isAdmin) {
             $items += [
                 [
-                    self::PARAM_TITLE => 'Acl'
+                    self::_TITLE => 'Acl'
                     , 'icon' => 'fa fa-lock'
                     , 'link' => $this->baseUrl . '/acl/manage'
                 ],
                 [
-                    self::PARAM_TITLE => 'Password'
+                    self::_TITLE => 'Password'
                     , 'icon' => 'fa fa-lock'
                     , 'link' => $this->baseUrl . '/user/changepassword'
                 ],
                 [
-                    self::PARAM_TITLE => 'Database'
+                    self::_TITLE => 'Database'
                     , 'icon' => 'fa fa-database'
                     , 'link' => $this->baseUrl . '/database/tablesmysql'
+                ],
+                [
+                    self::_TITLE => 'Probes'
+                    , 'icon' => 'fa fa-compass'
+                    , 'link' => $this->baseUrl . '/probes/manage'
                 ],
             ];
         }
 
         if ($isAuth) {
             $authItems = [/* [
-                      self::PARAM_TITLE => 'Bizz Calc'
-                      , 'icon' => 'fa fa-calculator'
-                      , 'link' => $this->baseUrl . '/business/index'
-                      ],[
-                      self::PARAM_TITLE => 'Bizz Cra'
-                      , 'icon' => 'fa fa-calendar'
-                      , 'link' => $this->baseUrl . '/business/calendar'
-                      ] */];
+                  self::_TITLE => 'Bizz Calc'
+                  , 'icon' => 'fa fa-calculator'
+                  , 'link' => $this->baseUrl . '/business/index'
+                  ],[
+                  self::_TITLE => 'Bizz Cra'
+                  , 'icon' => 'fa fa-calendar'
+                  , 'link' => $this->baseUrl . '/business/calendar'
+                  ] */];
             $items = array_merge($items, $authItems);
         }
 
         array_push($items, $authLink);
         $navConfig = [
-            self::PARAM_TITLE => [
+            self::_TITLE => [
                 'text' => 'Pimapp',
                 'icon' => 'fa fa-home',
                 'link' => $this->baseUrl
@@ -133,17 +142,95 @@ class User extends basicController
     }
 
     /**
-     * setPageSize
+     * getEditLinks
      *
+     * @param int $uid
+     * @return string
      */
-    protected function setPageSize()
+    protected function getEditLinks(int $uid): string
     {
-        if ($this->getParams(self::PARAM_PAGESIZE)) {
-            sessionTools::set(
-                self::PARAM_PAGESIZE,
-                $this->getParams(self::PARAM_PAGESIZE)
-            );
-        }
+        $linkDetailId = ($this->hasValue(self::_ID)) ? '/id/' . $this->getParams(self::_ID) : '';
+        $manage = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
+            glyphHelper::SEARCH,
+            $this->baseUrl . '/user/manage',
+            [self::_TITLE => 'Comptes']
+        ) : '';
+        $detail = glyphHelper::getLinked(
+            glyphHelper::EYE_OPEN,
+            $this->baseUrl . '/user/detail/' . $linkDetailId,
+            [self::_TITLE => 'Détail']
+        );
+        $intervenant = glyphHelper::getLinked(
+            glyphHelper::FOLDER_OPEN,
+            $this->baseUrl . '/intervenant/edit/uid/' . $uid,
+            [self::_TITLE => 'Edition']
+        );
+        return $this->getWidgetLinkWrapper($manage . $detail . $intervenant);
+    }
+
+    /**
+     * getLoginLinks
+     *
+     * @return string
+     */
+    protected function getLoginLinks(): string
+    {
+        $registerLink = glyphHelper::getLinked(
+            glyphHelper::CERTIFICATE,
+            $this->baseUrl . '/user/register',
+            [self::_TITLE => 'Register']
+        );
+        $lostpasswdLink = glyphHelper::getLinked(
+            glyphHelper::LOCK,
+            $this->baseUrl . '/user/lostpassword',
+            [self::_TITLE => 'Lost password']
+        );
+        return $this->getWidgetLinkWrapper($registerLink . $lostpasswdLink);
+    }
+
+    /**
+     * getDetailLinks
+     *
+     * @return string
+     */
+    protected function getDetailLinks(): string
+    {
+        $linkEditId = ($this->hasValue(self::_ID)) ? '/id/' . $this->getParams(self::_ID) : '';
+        $manageButton = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
+            glyphHelper::SEARCH,
+            $this->baseUrl . '/user/manage' . $linkEditId,
+            array(self::_TITLE => 'Gestion des comptes')
+        ) : '';
+
+        $editLink = glyphHelper::getLinked(
+            glyphHelper::PENCIL,
+            $this->baseUrl . '/user/edit' . $linkEditId,
+            array(self::_TITLE => 'Edition du compte')
+        );
+
+        return $this->getWidgetLinkWrapper($manageButton . $editLink);
+    }
+
+    /**
+     * getLostPasswordLinks
+     *
+     * @return string
+     */
+    protected function getLostPasswordLinks(): string
+    {
+
+        $loginLink = glyphHelper::getLinked(
+            glyphHelper::LOG_IN,
+            $this->baseUrl . '/user/login',
+            ['title' => 'Se connecter']
+        );
+        $registerLink = glyphHelper::getLinked(
+            glyphHelper::CERTIFICATE,
+            $this->baseUrl . '/user/register',
+            ['title' => 'Enregistrement']
+        );
+
+        return $this->getWidgetLinkWrapper($loginLink . $registerLink);
     }
 
     /**
@@ -171,8 +258,8 @@ class User extends basicController
     {
         $integrity = true;
         if (!sessionTools::isAdmin()) {
-            $integrityOwner = sessionTools::isMine($params[self::PARAM_ID]);
-            $integrityProfil = (isset($params[self::PARAM_PROFIL])) ? sessionTools::getProfil() == $params[self::PARAM_PROFIL] : true;
+            $integrityOwner = sessionTools::isMine($params[self::_ID]);
+            $integrityProfil = (isset($params[self::_PROFIL])) ? sessionTools::getProfil() == $params[self::_PROFIL] : true;
             $integrity = ($integrityOwner && $integrityProfil);
         }
         return $integrity;
@@ -210,10 +297,10 @@ class User extends basicController
     protected function createUser()
     {
         $params = $this->getParams();
-        $params[self::PARAM_PROFIL] = 'user';
-        $params[self::PARAM_STATUS] = 'waiting';
-        $params[self::PARAM_EMAIL] = strtolower($params[self::PARAM_LOGIN]);
-        $params[self::PARAM_LOGIN] = strtolower($params[self::PARAM_LOGIN]);
+        $params[self::_PROFIL] = 'user';
+        $params[self::_STATUS] = 'waiting';
+        $params[self::_EMAIL] = strtolower($params[self::_LOGIN]);
+        $params[self::_LOGIN] = strtolower($params[self::_LOGIN]);
         $params['datec'] = \date('Y-m-d H:i:s');
         $domainUser = $this->userModel->getDomainInstance();
         $domainUser->hydrate($params);
@@ -235,14 +322,14 @@ class User extends basicController
         return new inputFilter(
             $this->getParams(),
             [
-            self::PARAM_ID => new inputRange([
+            self::_ID => new inputRange([
                 inputRange::MIN_RANGE => 1,
                 inputRange::MAX_RANGE => 10000,
                 inputRange::_DEFAULT => 800,
                 inputRange::CAST => inputRange::FILTER_INTEGER
-                    ]),
-            self::PARAM_EMAIL => FILTER_SANITIZE_STRING
-                ]
+                ]),
+            self::_EMAIL => FILTER_SANITIZE_STRING
+            ]
         );
     }
 
@@ -256,27 +343,10 @@ class User extends basicController
         return new inputFilter(
             $postedDatas,
             [
-            self::PARAM_LOGIN => FILTER_SANITIZE_EMAIL,
-            self::PARAM_PASSWORD => FILTER_SANITIZE_STRING,
-            self::PARAM_TOKEN => FILTER_SANITIZE_STRING
-                ]
+            self::_LOGIN => FILTER_SANITIZE_EMAIL,
+            self::_PASSWORD => FILTER_SANITIZE_STRING,
+            self::_TOKEN => FILTER_SANITIZE_STRING
+            ]
         );
-    }
-
-    /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => $content];
-        $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
-        return $layout;
     }
 }
