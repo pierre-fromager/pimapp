@@ -275,7 +275,7 @@ class Database extends basicController implements interfaceModelHelper
         array_push($items, $authLink);
         $navConfig = [
             self::_TITLE => [
-                self::_TEXT => 'Pimapp',
+                self::_TEXT => 'Home',
                 self::_ICON => 'fa fa-home',
                 self::_LINK => $this->baseUrl
             ],

@@ -7,10 +7,13 @@
 namespace App1\Controller;
 
 use App1\Helper\Controller\Home as HelperHomeController;
-use App1\Views\Helpers\Bootstrap\Nav as NavMenu;
+use \App1\Helper\Lang\IEntries as ILang;
 
-class Home extends HelperHomeController
+class Home extends HelperHomeController implements ILang
 {
+
+    use \App1\Helper\Reuse\Controller;
+
     /**
      * index
      *
@@ -18,13 +21,16 @@ class Home extends HelperHomeController
      */
     final public function index()
     {
-        $nav = (new NavMenu())->setParams($this->getNavConfig())->render();
         $viewParams = [
-            'nav' => (string) $nav,
-            'mainTitle' => 'Welcome To <b>Pimapp</b>',
-            'content' => 'propulsed by <b>Pimvc</b>'
+            'mainTitle' => $this->translate(ILang::__WELCOME_TO)
+            . ' Pimapp',
+            'content' => $this->translate(ILang::__PROPULSED_BY)
+            . ' <b>Pimvc</b>',
+            'fwk' => 'Pimvc',
+            'phpVersion' => PHP_VERSION
         ];
-        $view = $this->getView($viewParams, self::VIEW_INDEX);
-        return $this->getHtmlResponse($this->getLayout((string) $view));
+        return (string) $this->getLayout(
+                (string) $this->getView($viewParams, self::VIEW_INDEX)
+        );
     }
 }

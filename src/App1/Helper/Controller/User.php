@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Description of App1\Helper\Controller\User
  *
  * @author Pierre Fromager
  */
+
 namespace App1\Helper\Controller;
 
-use \App1\Model\Users as modelUser;
 use \Pimvc\Input\Filter as inputFilter;
-use \Pimvc\Tools\Assist\Session as sessionAssistTools;
-use \Pimvc\Input\Custom\Filters\Range as inputRange;
 use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
 use \Pimvc\Controller\Basic as basicController;
 use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
+use \Pimvc\Views\Helpers\Fa as faHelper;
+use \App1\Model\Users as modelUser;
+use \App1\Helper\Lang\IEntries as ILang;
 
 class User extends basicController
 {
@@ -23,16 +25,21 @@ class User extends basicController
 
     const PUBLIC_CSS = '/public/css/';
     const PUBLIC_JS = '/public/js/';
-    const _ID = modelUser::PARAM_ID;
-    const _EMAIL = modelUser::PARAM_EMAIL;
-    const _PASSWORD = modelUser::PARAM_PASSWORD;
-    const _PROFIL = modelUser::PARAM_PROFIL;
-    const _STATUS = modelUser::PARAM_STATUS;
-    const _TOKEN = modelUser::PARAM_TOKEN;
-    const _LOGIN = modelUser::PARAM_LOGIN;
+    const _ID = modelUser::_ID;
+    const _EMAIL = modelUser::_EMAIL;
+    const _PASSWORD = modelUser::_PASSWORD;
+    const _PROFIL = modelUser::_PROFIL;
+    const _STATUS = modelUser::_STATUS;
+    const _TOKEN = modelUser::_TOKEN;
+    const _LOGIN = modelUser::_LOGIN;
     const _NAME = 'name';
     const _TITLE = 'title';
+    const _ICON = 'icon';
+    const _LINK = 'link';
+    const _TEXT = 'text';
+    const _ITEMS = 'items';
     const _ORDER = 'order';
+    const _PAGE = 'page';
     const VIEW_USER_PATH = '/Views/User/';
     const WILDCARD = '%';
     const PHP_EXT = '.php';
@@ -79,64 +86,48 @@ class User extends basicController
     {
         $items = [];
         $isAuth = sessionTools::isAuth();
-        $isPro = sessionTools::getProfil() === 'pro';
-        $authLink = ($isAuth) ? [
-            self::_TITLE => 'Logout'
-            , 'icon' => 'fa fa-sign-out'
-            , 'link' => $this->baseUrl . '/user/logout'
-            ] : [
-            self::_TITLE => 'Login'
-            , 'icon' => 'fa fa-sign-in'
-            , 'link' => $this->baseUrl . '/user/login'
-            ];
-
+        $authLink = $this->menuAction(
+            ($isAuth) ? $this->translate(ILang::__LOGOUT) : $this->translate(ILang::__LOGIN),
+            ($isAuth) ? faHelper::getFontClass(faHelper::SIGN_OUT) : faHelper::getFontClass(faHelper::SIGN_IN),
+            ($isAuth) ? '/user/logout' : '/user/login'
+        );
         $isAdmin = sessionTools::isAdmin();
         if ($isAdmin) {
             $items += [
-                [
-                    self::_TITLE => 'Acl'
-                    , 'icon' => 'fa fa-lock'
-                    , 'link' => $this->baseUrl . '/acl/manage'
-                ],
-                [
-                    self::_TITLE => 'Password'
-                    , 'icon' => 'fa fa-lock'
-                    , 'link' => $this->baseUrl . '/user/changepassword'
-                ],
-                [
-                    self::_TITLE => 'Database'
-                    , 'icon' => 'fa fa-database'
-                    , 'link' => $this->baseUrl . '/database/tablesmysql'
-                ],
-                [
-                    self::_TITLE => 'Probes'
-                    , 'icon' => 'fa fa-compass'
-                    , 'link' => $this->baseUrl . '/probes/manage'
-                ],
+                $this->menuAction(
+                    $this->translate(ILang::__PERMISSIONS),
+                    faHelper::getFontClass(faHelper::LOCK),
+                    '/acl/manage'
+                ),
+                $this->menuAction(
+                    $this->translate(ILang::__CHANGE_PASSWORD),
+                    faHelper::getFontClass(faHelper::LOCK),
+                    '/user/changepassword'
+                ),
+                $this->menuAction(
+                    $this->translate(ILang::__DATABASE),
+                    faHelper::getFontClass(faHelper::DATABASE),
+                    '/database/tablesmysql'
+                ),
+                $this->menuAction(
+                    $this->translate(ILang::__SENSORS),
+                    faHelper::getFontClass(faHelper::COMPASS),
+                    '/probes/manage'
+                )
             ];
         }
-
         if ($isAuth) {
-            $authItems = [/* [
-                  self::_TITLE => 'Bizz Calc'
-                  , 'icon' => 'fa fa-calculator'
-                  , 'link' => $this->baseUrl . '/business/index'
-                  ],[
-                  self::_TITLE => 'Bizz Cra'
-                  , 'icon' => 'fa fa-calendar'
-                  , 'link' => $this->baseUrl . '/business/calendar'
-                  ] */];
+            $authItems = [];
             $items = array_merge($items, $authItems);
         }
-
         array_push($items, $authLink);
         $navConfig = [
             self::_TITLE => [
-                'text' => 'Pimapp',
-                'icon' => 'fa fa-home',
-                'link' => $this->baseUrl
+                self::_TEXT => $this->translate(ILang::__HOME),
+                self::_ICON => faHelper::getFontClass(faHelper::HOME),
+                self::_LINK => $this->baseUrl
             ],
-            'items' => $items
+            self::_ITEMS => $items
         ];
         return $navConfig;
     }
@@ -165,7 +156,13 @@ class User extends basicController
             $this->baseUrl . '/intervenant/edit/uid/' . $uid,
             [self::_TITLE => 'Edition']
         );
-        return $this->getWidgetLinkWrapper($manage . $detail . $intervenant);
+        $password = glyphHelper::getLinked(
+            glyphHelper::LOCK,
+            $this->baseUrl . '/user/changepassword',
+            [self::_TITLE => 'Change password']
+        );
+        $links = $manage . $detail . $intervenant . $password;
+        return $this->getWidgetLinkWrapper($links);
     }
 
     /**
@@ -199,15 +196,14 @@ class User extends basicController
         $manageButton = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
             glyphHelper::SEARCH,
             $this->baseUrl . '/user/manage' . $linkEditId,
-            array(self::_TITLE => 'Gestion des comptes')
+            [self::_TITLE => $this->translate(ILang::__USER_ACOUNT_MANAGEMENT)]
         ) : '';
 
         $editLink = glyphHelper::getLinked(
             glyphHelper::PENCIL,
             $this->baseUrl . '/user/edit' . $linkEditId,
-            array(self::_TITLE => 'Edition du compte')
+            [self::_TITLE => $this->translate(ILang::__USERS_EDIT_TITLE)]
         );
-
         return $this->getWidgetLinkWrapper($manageButton . $editLink);
     }
 
@@ -222,29 +218,14 @@ class User extends basicController
         $loginLink = glyphHelper::getLinked(
             glyphHelper::LOG_IN,
             $this->baseUrl . '/user/login',
-            ['title' => 'Se connecter']
+            [self::_TITLE => $this->translate(ILang::__LOGIN_LABEL)]
         );
         $registerLink = glyphHelper::getLinked(
             glyphHelper::CERTIFICATE,
             $this->baseUrl . '/user/register',
-            ['title' => 'Enregistrement']
+            [self::_TITLE => 'Enregistrement']
         );
-
         return $this->getWidgetLinkWrapper($loginLink . $registerLink);
-    }
-
-    /**
-     * getAssist
-     *
-     * @return array
-     */
-    protected function getAssist()
-    {
-        return sessionAssistTools::getSearch(
-            self::ERP_ASSIST_USER,
-            $this->getApp()->getRequest(),
-            $this->getParams(self::PARAM_RESET)
-        );
     }
 
     /**
@@ -313,27 +294,6 @@ class User extends basicController
     }
 
     /**
-     * getIndexInputFilter
-     *
-     * @return inputFilter
-     */
-    protected function getIndexInputFilter()
-    {
-        return new inputFilter(
-            $this->getParams(),
-            [
-            self::_ID => new inputRange([
-                inputRange::MIN_RANGE => 1,
-                inputRange::MAX_RANGE => 10000,
-                inputRange::_DEFAULT => 800,
-                inputRange::CAST => inputRange::FILTER_INTEGER
-                ]),
-            self::_EMAIL => FILTER_SANITIZE_STRING
-            ]
-        );
-    }
-
-    /**
      * getLoginInputFilter
      *
      * @return inputFilter
@@ -346,7 +306,7 @@ class User extends basicController
             self::_LOGIN => FILTER_SANITIZE_EMAIL,
             self::_PASSWORD => FILTER_SANITIZE_STRING,
             self::_TOKEN => FILTER_SANITIZE_STRING
-            ]
+                ]
         );
     }
 }

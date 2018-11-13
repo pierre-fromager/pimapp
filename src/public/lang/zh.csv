@@ -1,0 +1,24 @@
+langsrc,langdst,comment
+HOME,家,home
+AUTH_FAIL,验证失败,Fallo de autentificacion
+INVALID_CREDENTIAL,无效证件,Entrada incorrecta
+LOGIN,登录,Connexion
+LOGOUT,登出, de deco
+LOGIN_LABEL,进来,Se connecter
+EMAIL,电子邮件,Email
+USERS_EDIT_TITLE,用户编辑,User edit title
+CHANGE_PASSWORD,更改密码,password change
+USERS,用户,users
+USER_ACOUNT_MANAGEMENT,用户帐户管理,user management title
+LOST_PASSWORD,忘记密码,Mot de passe perdu
+PASSWORD,密码,Mot de passe
+WELCOME_TO,欢迎来到,Bienvenue sur
+PROPULSED_BY,推动,Propulsé par
+PERMISSIONS,权限,Acl
+LANG,语言,menu langue
+TRAIN,火车,lignes train idf
+DATABASE,数据库,base de données
+USERS,用户,Users
+SENSORS,传感器,Capteurs
+CRITERIAS,Critères,Critères
+COLUMNS,Colonnes,Colonnes

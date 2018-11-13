@@ -315,7 +315,7 @@ class Stations extends basicController
         array_push($items, $authLink);
         $navConfig = [
             self::PARAM_TITLE => [
-                'text' => 'Pimapp',
+                'text' => 'Home',
                 'icon' => 'fa fa-home',
                 'link' => $this->baseUrl
             ],

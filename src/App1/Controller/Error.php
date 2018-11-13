@@ -11,6 +11,7 @@ use \Pimvc\Controller\Basic as basicController;
 
 final class Error extends basicController
 {
+
     const VIEW_PATH = '/Views/Error/';
     const VIEW_FILE = 'Index.php';
     const LAYOUT_NAME = 'responsive';
@@ -54,12 +55,9 @@ final class Error extends basicController
         $errors = $this->getErrorParams();
         $errorCode = $errors[self::PARAM_ERRORS][0][self::PARAM_CODE];
         return ($this->isJsonContext()) ? $this->getJsonResponse($errors) : $this->getHtmlResponse(
-            $this->getLayout(
-                $this->getView($errors, $this->getErrorViewName())
-            ),
-            self::EMPTYS,
-            self::EMPTYS,
-            self::HTTP_CODE_ERRORS[$errorCode]
+                $this->getLayout(
+                    $this->getView($errors, $this->getErrorViewName())
+                ), self::EMPTYS, self::EMPTYS, self::HTTP_CODE_ERRORS[$errorCode]
         );
     }
 
@@ -157,7 +155,7 @@ final class Error extends basicController
     {
         return [
             'title' => [
-                'text' => 'Pimapp',
+                'text' => 'Home',
                 'icon' => 'fa fa-home',
                 'link' => $this->baseUrl
             ],

@@ -1,11 +1,12 @@
 <?php
-
 namespace App1\Helper\Reuse;
 
 use \Pimvc\Views\Helpers\Widgets\Standart as standartWidget;
 use \App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
 use \App1\Views\Helpers\Layouts\Responsive as responsiveLayout;
 use \Pimvc\Tools\Session as sessionTools;
+use \Pimvc\Tools\Assist\Session as sessionAssistTools;
+use \Pimvc\Html\Element\Decorator as htmlElement;
 
 trait Controller
 {
@@ -49,14 +50,15 @@ trait Controller
      */
     protected function getLayout($content, $nav = true)
     {
-        $layoutParams = ['content' => $content];
-        $layoutParams['nav'] = ($nav) ? $this->getNav() : '';
-
+        $layoutParams = [
+            'content' => $content,
+            'nav' => ($nav) ? $this->getNav() : ''
+        ];
         return (new responsiveLayout)
-                        ->setApp($this->getApp())
-                        ->setName(self::LAYOUT_NAME)
-                        ->setLayoutParams($layoutParams)
-                        ->build();
+                ->setApp($this->getApp())
+                ->setName(self::LAYOUT_NAME)
+                ->setLayoutParams($layoutParams)
+                ->build();
     }
 
     /**
@@ -77,18 +79,19 @@ trait Controller
      */
     protected function getWidgetLinkWrapper(string $content): string
     {
-        return '<div style="float:right">' . $content . '</div>';
+        return new htmlElement('div', $content, ['style' => 'float:right']);
     }
 
     /**
      * getListeTableResponsive
      *
-     * @param \Pimvc\Liste $liste
+     * @param mixed $liste
      * @return string
      */
-    protected function getListeTableResponsive(\Pimvc\Liste $liste): string
+    protected function getListeTableResponsive($liste): string
     {
-        return '<div class="table-responsive">' . (string) $liste . '</div>';
+        $stringList = ($liste instanceof \Pimvc\Liste ) ? (string) $liste : $liste;
+        return new htmlElement('div', $stringList, ['class' => 'table-responsive']);
     }
 
     /**
@@ -99,10 +102,32 @@ trait Controller
     {
         if ($this->getParams(self::_PAGESIZE)) {
             sessionTools::set(
-                self::_PAGESIZE,
-                $this->getParams(self::_PAGESIZE)
+                self::_PAGESIZE, $this->getParams(self::_PAGESIZE)
             );
         }
+    }
+
+    /**
+     * translate
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function translate(string $key): string
+    {
+        return $this->getApp()->translator->translate($key);
+    }
+
+    /**
+     * getAssist
+     *
+     * @return array
+     */
+    protected function getAssist($assistName)
+    {
+        return sessionAssistTools::getSearch(
+                $assistName, $this->getApp()->getRequest(), $this->getParams(self::PARAM_RESET)
+        );
     }
 
     /**

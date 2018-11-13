@@ -1,7 +1,9 @@
-body{
-   /* background: url(../img/feet.jpg) repeat-y;*/
-}
 
+html,
+body {
+    height: 100%;
+    /* The html and body elements cannot have any padding or margin. */
+}
 section{
     padding: 10px 10px 10px 10px ;
 }
@@ -42,7 +44,6 @@ h1{
     margin:0 0 0 0 ;
     padding-left: 10px;
 }
-
 
 a{
     color: black;
@@ -86,12 +87,21 @@ a{
     border-bottom-left-radius : 15px;
 }
 
+ul.nav.navbar-nav.navbar > li > a {
+    display: block !important;  
+}
+
+ul.nav.navbar-nav.navbar > li > a, .navbar-brand,section.widget > header > h3{
+    text-transform: capitalize;
+}
+
 a.anchor{
     display: block;
     position: relative;
     top: -50px;
     visibility: hidden;
 }
+
 /* SOCIAL */
 
 .twitter-color {
@@ -119,6 +129,10 @@ a.anchor{
     margin-top: 20px;
 }
 
+footer.section {
+    bottom: 0;
+}
+
 /* RESPONSIVE */
 
 @media screen and (max-width:1000px){
@@ -131,7 +145,6 @@ a.anchor{
     }
 
 }
-
 
 @media screen and (min-width: 200px) and (max-width: 321px) and (orientation:portrait) {
 

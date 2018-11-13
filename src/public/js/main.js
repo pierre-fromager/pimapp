@@ -1,3 +1,12 @@
+function stickyFooter() {
+    var docHeight = $(window).height();
+    var footerHeight = $('footer').height();
+    var footerTop = $('footer').position().top + footerHeight;
+    if (footerTop < docHeight) {
+        $('footer').css('margin-top', (docHeight - footerTop) - 70 + 'px');
+    }
+}
+
 $('document').ready(function () {
 
     $('.block-profil').hover(
@@ -30,25 +39,20 @@ $('document').ready(function () {
         }
     });
 
-    function stickyFooter() {
-        var docHeight = $(window).height();
-        var footerHeight = $('footer').height();
-        var footerTop = $('footer').position().top + footerHeight;
-        if (footerTop < docHeight) {
-            $('footer').css('margin-top', (docHeight - footerTop) - 70 + 'px');
-        }
-    }
+    $j('button.close').on('click', function (e) {
+        setTimeout(function () {stickyFooter()}, 200);
+    });
 
     stickyFooter();
-    
+
     $(window).resize(function () {
         stickyFooter();
     });
-    
+
     if (jQuery().chosen) {
         $j('.chosen').chosen();
     }
-    
+
     if (jQuery().datepicker) {
         $j('.datepicker').datepicker({
             autoclose: true,

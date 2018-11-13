@@ -9,41 +9,28 @@ namespace App1\Controller;
 use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Tools\Flash as flashTools;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
+use \Pimvc\Views\Helpers\Fa as faHelper;
 use \Pimvc\Tools\User\Auth as authTools;
 use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
-use App1\Form\Users\Search as searchUsersForm;
-use App1\Form\Users\Edit as editUsersForm;
-use App1\Form\Users\Password as passwordForm;
-use App1\Form\Users\Lostpassword as lostPasswordForm;
-use App1\Form\Users\Login as loginForm;
-use App1\Form\Users\Register as registerForm;
-use App1\Views\Helpers\Form\Search\Filter as formFilter;
-use App1\Tools\Mail\Sender as mailSender;
-use App1\Helper\Controller\User as helperUserController;
+use \App1\Form\Users\Search as searchUsersForm;
+use \App1\Form\Users\Edit as editUsersForm;
+use \App1\Form\Users\Password as passwordForm;
+use \App1\Form\Users\Lostpassword as lostPasswordForm;
+use \App1\Form\Users\Login as loginForm;
+use \App1\Form\Users\Register as registerForm;
+use \App1\Views\Helpers\Form\Search\Filter as formFilter;
+use \App1\Tools\Mail\Sender as mailSender;
+use \App1\Helper\Controller\User as helperUserController;
+use \App1\Helper\Lang\IEntries as ILang;
 
 final class User extends helperUserController
 {
 
-    /**
-     * user
-     *
-     * @return \Pimvc\Http\Response
-     */
-    final public function index()
-    {
-        $input = $this->getIndexInputFilter();
-        $transform = new \stdClass();
-        $transform->filter = $input->get();
-        $transform->data = $this->userModel->find(
-            [self::_ID, self::_EMAIL],
-            [
-                self::_ID . '#>' => (isset($input->id)) ? $input->id : 800
-                , self::_EMAIL => (isset($input->email)) ? self::WILDCARD . $input->email . self::WILDCARD : self::WILDCARD
-                ]
-        )->getRowset();
-        unset($input);
-        return $this->getJsonResponse($transform);
-    }
+    const __USER_MANAGE_TITLE = 'Gestion des comptes utilisateurs';
+    const __USER_LOSTPASSWORD_EMAIL_INVALID = 'Email invalide';
+    const __USER_EDIT_TITLE = 'Edition compte utilisateur';
+    const __USER_DETAIL_TITLE = 'Détail du compte utilisateur';
+    const __USER_EDIT_INTEG_ERROR = 'Vous ne pouvez pas modifier des informations qui ne vous appartiennent pas.';
 
     /**
      * login
@@ -58,28 +45,31 @@ final class User extends helperUserController
         $form = new loginForm((array) $inputLoginFilter);
         if ($inputLoginFilter->login && $inputLoginFilter->password || $inputLoginFilter->token) {
             $auth = new authTools(
-                $inputLoginFilter->login,
-                $inputLoginFilter->password,
-                $inputLoginFilter->token
+                $inputLoginFilter->login, $inputLoginFilter->password, $inputLoginFilter->token
             );
             if ($auth->isAllowed) {
-                $authAction = ($auth->profil === 'admin') ? 'user/manage' : 'user/edit';
-                return $this->redirect($this->baseUrl . '/' . $authAction);
+                $authAction = ($auth->profil === 'admin') ? '/user/manage' : '/user/edit';
+                return $this->redirect($this->baseUrl . $authAction);
             } else {
-                flashTools::addError('Authentication failed');
-                return $this->redirect($this->baseUrl . '/home');
+                flashTools::addError($this->translate(ILang::__AUTH_FAIL));
+            }
+        } else {
+            if ($this->isPost()) {
+                flashTools::addError($this->translate(ILang::__INVALID_CREDENTIAL));
             }
         }
         $view = $this->getView(
-            ['form' => (string) $form],
-            self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
+            ['form' => (string) $form], self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
         );
         unset($form);
         $widget = $this->getWidget(
-            '<span class="fa fa-sign-in"></span>Login' . $this->getLoginLinks(),
-            (string) $view
+            faHelper::get(faHelper::SIGN_IN)
+            . $this->translate(ILang::__LOGIN_LABEL)
+            . $this->getLoginLinks(), (string) $view
         );
-        return (string) $this->getLayout((string) $widget);
+        return $this->getHtmlResponse(
+                $this->getLayout((string) $widget), 'lastlogin', (new \DateTime())->format(('Y-m-d\TH:i:s.u'))
+        );
     }
 
     /**
@@ -105,17 +95,16 @@ final class User extends helperUserController
         $request = $this->getApp()->getRequest();
         $postedData = $request->get()[$request::REQUEST_P_REQUEST];
         $form = new registerForm($postedData);
-        $isPost = ($this->getApp()->getRequest()->getMethod() === 'POST');
-        if ($isPost) {
+        if ($this->isPost()) {
             if ($form->isValid()) {
                 $userExists = $this->userModel->userExists($this->getParams(self::_LOGIN));
                 if (!$userExists) {
                     $hasError = $this->createUser();
-                    $messageType = ($hasError) ? 'error' : 'info';
+                    $messageType = ($hasError) ? flashTools::FLASH_ERROR : flashTools::FLASH_SUCCESS;
                     $message = ($hasError) ? $this->userModel->getError() : self::USER_MESSAGE_REGISTRATION_SUCCESS;
                     flashTools::add($messageType, $message);
-                    $redirectAction = ($hasError) ? 'user/register/type/' . $this->getParams(self::_PROFIL) : 'user/login';
-                    $redirectUrl = $this->baseUrl . '/' . $redirectAction;
+                    $redirectAction = ($hasError) ? '/user/register/type/' . $this->getParams(self::_PROFIL) : '/user/login';
+                    $redirectUrl = $this->baseUrl . $redirectAction;
                     return $this->redirect($redirectUrl);
                 } else {
                     flashTools::addError(self::USER_MESSAGE_REGISTRATION_FAILED);
@@ -140,20 +129,18 @@ final class User extends helperUserController
     final public function manage()
     {
         $this->setPageSize();
-        $criterias = $this->getAssist();
+        $criterias = $this->getAssist(helperUserController::ERP_ASSIST_USER);
         $form = new searchUsersForm($criterias);
         $form->setEnableResetButton(true);
         $form->render();
-        $filter = formFilter::get((string) $form);
+        $filter = formFilter::get(
+                (string) $form, [self::_TITLE => $this->translate(ILang::__COLUMNS)]
+        );
         unset($form);
         $liste = new \Pimvc\Liste(
-            get_class($this->userModel),
-            'user/manage',
-            array_diff(
-                $this->userModel->getDomainInstance()->getVars(),
-                [self::_ID, self::_NAME, self::_LOGIN, self::_STATUS]
-            ),
-            [
+            get_class($this->userModel), 'user/manage', array_diff(
+                $this->userModel->getDomainInstance()->getVars(), [self::_ID, self::_NAME, self::_LOGIN, self::_STATUS]
+            ), [
             glyphToolbar::EXCLUDE_DETAIL => false
             , glyphToolbar::EXCLUDE_IMPORT => true
             , glyphToolbar::EXCLUDE_NEWSLETTER => true
@@ -161,11 +148,7 @@ final class User extends helperUserController
             , glyphToolbar::EXCLUDE_CLONE => false
             , glyphToolbar::EXCLUDE_PEOPLE => true
             , glyphToolbar::EXCLUDE_REFUSE => true
-            ],
-            $this->getParams('page'),
-            $criterias,
-            [],
-            [self::_ORDER => 'desc']
+            ], $this->getParams(self::_PAGE), $criterias, [], [self::_ORDER => 'desc']
         );
         $liste->setActionCondition([
             glyphToolbar::EXCLUDE_VALIDATE => [
@@ -179,9 +162,7 @@ final class User extends helperUserController
         }
         $liste->render();
         $widget = $this->getWidget(
-            glyphHelper::get(glyphHelper::SEARCH)
-            . 'Gestion des comptes utilisateurs',
-            $filter . $this->getListeTableResponsive($liste)
+            glyphHelper::get(glyphHelper::SEARCH) . $this->translate(ILang::__USER_ACOUNT_MANAGEMENT), $filter . $this->getListeTableResponsive($liste)
         );
         unset($liste);
         return (string) $this->getLayout((string) $widget);
@@ -226,8 +207,7 @@ final class User extends helperUserController
                 if (!$isAdmin) {
                     $integ = $this->checkIntegrity($postedDatas);
                     if (!$integ) {
-                        $message = 'Vous ne pouvez pas modifier des informations'
-                            . ' qui ne vous appartiennent pas.';
+                        $message = self::__USER_EDIT_INTEG_ERROR;
                         flashTools::addError($message);
                         return $this->redirect($this->baseUrl . '/user/detail');
                     }
@@ -237,8 +217,7 @@ final class User extends helperUserController
                     unset($postedDatas[\Pimvc\Form::FORM_XCSRF]);
                 }
                 $postedDatas[self::_TOKEN] = \Pimvc\Tools\User\Token::get(
-                    $postedDatas[self::_EMAIL],
-                    $postedDatas['password']
+                        $postedDatas[self::_EMAIL], $postedDatas[self::_PASSWORD]
                 );
                 $postedDatas['ip'] = $this->getApp()->getRequest()->getRemoteAddr();
                 $domainInstance = $this->userModel->getDomainInstance();
@@ -266,8 +245,7 @@ final class User extends helperUserController
         }
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::PENCIL)
-            . 'Edition du compte' . $this->getEditLinks($uid),
-            (string) $message
+            . $this->translate(ILang::__USERS_EDIT_TITLE) . $this->getEditLinks($uid), (string) $message
         );
         unset($form);
         unset($message);
@@ -281,10 +259,6 @@ final class User extends helperUserController
      */
     final public function detail()
     {
-        $message = 'Voici vos informations de compte,'
-            . ' pour les modifier cliquez sur &nbsp;'
-            . glyphHelper::get(glyphHelper::PENCIL) . '.';
-        flashTools::addInfo($message);
         $uid = ($this->hasValue(self::_ID)) ? $this->getParams(self::_ID) : sessionTools::getUid();
         $this->userModel->cleanRowset();
         $formDatas = (array) $this->userModel->getById($uid);
@@ -293,8 +267,7 @@ final class User extends helperUserController
         $form->render();
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::EYE_OPEN)
-            . 'Détail du compte' . $this->getDetailLinks(),
-            (string) $form
+            . self::__USER_DETAIL_TITLE . $this->getDetailLinks(), (string) $form
         );
         unset($form);
         return (string) $this->getLayout((string) $widget);
@@ -314,7 +287,7 @@ final class User extends helperUserController
             $this->userModel->bindWhere();
             $this->userModel->delete();
             $hasError = $this->userModel->hasError();
-            $messageType = ($hasError) ? 'error' : 'info';
+            $messageType = ($hasError) ? flashTools::FLASH_ERROR : flashTools::FLASH_SUCCESS;
             $message = ($hasError) ? self::USER_MESSAGE_DELETE_ERROR . $this->userModel->getError() : self::USER_MESSAGE_DELETE_SUCCESS;
             flashTools::add($messageType, $message);
             return $this->redirect($this->baseUrl . '/' . self::LIST_ACTION);
@@ -336,16 +309,15 @@ final class User extends helperUserController
             $userDatas = (array) $this->userModel->getById($uid);
             $newPassword = $postedDatas['newpassword1'];
             $doubleCheckPassword = ($newPassword == $postedDatas['newpassword2']);
-            $passwordCheck = ($userDatas['password'] == $this->getParams('oldpassword'));
+            $passwordCheck = ($userDatas[self::_PASSWORD] == $this->getParams('oldpassword'));
             if ($form->isValid() && $doubleCheckPassword && $passwordCheck) {
                 $userData = $this->userModel->getById($uid);
                 $this->userModel->setWhere([self::_ID => $uid]);
                 $this->userModel->bindWhere();
                 $updateData = array(
-                    'password' => $newPassword
-                    , 'token' => \Pimvc\Tools\User\Token::get(
-                        $postedDatas[self::_EMAIL],
-                        $postedDatas['password']
+                    self::_PASSWORD => $newPassword
+                    , self::_TOKEN => \Pimvc\Tools\User\Token::get(
+                        $postedDatas[self::_EMAIL], $postedDatas[self::_PASSWORD]
                     )
                 );
                 unset($userData);
@@ -363,8 +335,7 @@ final class User extends helperUserController
         }
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::LOCK)
-            . 'Changer mon mot de passe',
-            (string) $form
+            . 'Changer mon mot de passe', (string) $form
         );
         unset($form);
         return (string) $this->getLayout((string) $widget);
@@ -409,7 +380,7 @@ final class User extends helperUserController
                 flashTools::add($messageType, $message);
                 $content = (string) $form;
             } else {
-                flashTools::addError('Email invalide');
+                flashTools::addError(self::__USER_LOSTPASSWORD_EMAIL_INVALID);
                 $content = (string) $form;
             }
         } else {
@@ -418,8 +389,8 @@ final class User extends helperUserController
         unset($form);
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::LOCK)
-            . 'Mot de passe perdu' . $this->getLostPasswordLinks(),
-            $content
+            . $this->translate(ILang::__LOST_PASSWORD)
+            . $this->getLostPasswordLinks(), $content
         );
         return (string) $this->getLayout((string) $widget);
     }

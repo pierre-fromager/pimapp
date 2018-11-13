@@ -12,41 +12,16 @@ use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Tools\Flash as flashTools;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 use \Pimvc\Views\Helpers\Fa as faHelper;
-use \Pimvc\Views\Helpers\Widgets\Standart as widgetHelper;
 use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use App1\Form\Metro\Lignes\Search as searchMetroLignesForm;
 use App1\Form\Metro\Lignes\Edit as editMetroLignesForm;
 use App1\Form\Metro\Lignes\Itineraire as searchItiForm;
 use App1\Views\Helpers\Form\Search\Filter as formFilter;
-use App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
 use \App1\Model\Metro\Lignes as modelLignes;
 use \App1\Helper\Controller\Metro\Lignes as ControlerMetroLignesHelper;
 
 final class Lignes extends ControlerMetroLignesHelper
 {
-
-    /**
-     * user
-     *
-     * @return Response
-     */
-    final public function index()
-    {
-        /*
-          $input = $this->getIndexInputFilter();
-          $transform = new \stdClass();
-          $transform->filter = $input->get();
-          $transform->data = $this->lignesModel->find(
-          [self::PARAM_ID, self::PARAM_EMAIL],
-          [
-          self::PARAM_ID . '#>' => (isset($input->id)) ? $input->id : 800
-          , self::PARAM_EMAIL =>
-          (isset($input->email)) ? self::WILDCARD . $input->email . self::WILDCARD : self::WILDCARD
-          ]
-          )->getRowset();
-          unset($input); */
-        //$transform = return $this->getJsonResponse($transform);
-    }
 
     /**
      * manage
@@ -55,10 +30,10 @@ final class Lignes extends ControlerMetroLignesHelper
      */
     final public function manage()
     {
-        $hasContext = $this->hasValue('context');
         $this->setPageSize();
-        $criterias = $this->getAssist();
-
+        $criterias = $this->getAssist(
+            ControlerMetroLignesHelper::ERP_ASSIST_LIGNES
+        );
         $form = new searchMetroLignesForm($criterias);
         $form->setEnableResetButton(true);
         $form->render();
@@ -107,35 +82,21 @@ final class Lignes extends ControlerMetroLignesHelper
         }
         $liste->setActionPrefix('lignes/');
         $liste->setLabels(editMetroLignesForm::_getStaticLabels($withIcons = false));
-        if ($hasContext) {
-            $this->getJsonHeaders();
-            echo $liste->getJson();
-            die;
+        if ($this->hasValue('context')) {
+            return $this->getJsonResponse($liste->getJson());
         }
         $liste->setShowSql(false)->render();
-
         $stationsButton = glyphHelper::getLinked(
             glyphHelper::MAP_MARKER,
             $this->baseUrl . self::_URI_STATION_MANAGE,
-            array(self::PARAM_TITLE => 'Gestion stations')
+            array(self::_TITLE => 'Gestion stations')
         );
-        $widgetTitle = glyphHelper::get(glyphHelper::SEARCH)
+        $widget = $this->getWidget(glyphHelper::get(glyphHelper::SEARCH)
                 . 'Gestion lignes métro'
-                . '<div style="float:right">' . $stationsButton
-                . '</div>';
-        $widget = (new widgetHelper())
-                ->setTitle($widgetTitle)
-                ->setBody(
-                    $filter
-                    . '<div class="table-responsive">' . (string) $liste . '</div>'
-                );
-        unset($liste);
-        $widget->render();
-        $content = (string) $widget;
-        unset($widget);
-        $nav = (new bootstrapNav());
-        $nav->setParams($this->getNavConfig())->render();
-        return (string) $this->getLayout((string) $nav . (string) $content);
+                . $this->getWidgetLinkWrapper($stationsButton), $filter
+                . $this->getListeTableResponsive($liste));
+        unset($form, $liste);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
@@ -152,7 +113,6 @@ final class Lignes extends ControlerMetroLignesHelper
                 . '</h3>'
                 . $openCrit;
         if ($this->getParams(self::_HSRC) && $this->getParams(self::_HDST)) {
-            $hasContext = $this->hasValue('context');
             $isUnweighted = ($this->getParams(searchItiForm::_OPTIM) && $this->getParams(searchItiForm::_OPTIM) === 'unweighted');
             $r = ($isUnweighted) ? $this->searchUnweighted() : $this->searchWeighted();
             $hops = $r['hops'];
@@ -189,30 +149,23 @@ final class Lignes extends ControlerMetroLignesHelper
             );
             $itiTable->setId('itiTable');
             $itiTable->render();
-
-            if ($hasContext) {
-                $this->getJsonHeaders();
-                echo \json_encode((object) $r, JSON_PRETTY_PRINT);
-                die;
+            if ($this->hasValue('context')) {
+                return $this->getJsonResponse(
+                    \json_encode((object) $r, JSON_PRETTY_PRINT)
+                );
             }
-
             $widgetContent = $itiTable . '<br style="clear:both"/>'
                     . $this->searchMapOsm($r['hops'], $stasCouples, $r['distance']);
         }
-
-        $widgetTitle = faHelper::get(faHelper::CUBES)
-                . 'Recherche itinéraire'
-                . '<div style="float:right">' . $this->detailButtons() . '</div>';
         $form = new searchItiForm($this->getParams());
-        $widgetBody = '<div class="table-responsive">' . (string) $form . $widgetContent . '</div>';
-        $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody($widgetBody);
-        $widget->render();
-        $content = (string) $widget;
-        unset($widget);
+        $widget = $this->getWidget(faHelper::get(faHelper::CUBES)
+                . 'Recherche itinéraire' . $this->getWidgetLinkWrapper(
+                    $this->detailButtons()
+                ), $this->getListeTableResponsive(
+                    (string) $form . $widgetContent
+                ));
         unset($form);
-        $nav = (new bootstrapNav());
-        $nav->setParams($this->getNavConfig())->render();
-        return (string) $this->getLayout((string) $nav . (string) $content);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
@@ -255,12 +208,12 @@ final class Lignes extends ControlerMetroLignesHelper
      */
     final public function duplicate()
     {
-        $id = $this->getParams(self::PARAM_ID);
+        $id = $this->getParams(self::_ID);
         if ($id) {
             $userObject = $this->lignesModel->getById($id);
             unset($userObject->id);
             $this->lignesModel->save($userObject);
-            flashTools::addInfo('Ligne id ' . $id . ' dupliqué.');
+            flashTools::addInfo('Line id ' . $id . ' dupliqué.');
             $redirectUrl = $this->baseUrl . DIRECTORY_SEPARATOR . self::LIST_ACTION;
             return $this->redirect($redirectUrl);
         }
@@ -268,15 +221,15 @@ final class Lignes extends ControlerMetroLignesHelper
     }
 
     /**
-     * editAction
+     * edit
      *
-     * @return Response
+     * @return string
      */
     final public function edit()
     {
         $message = '';
         $this->lignesModel->cleanRowset();
-        $isPost = ($this->getApp()->getRequest()->getMethod() === 'POST');
+        $isPost = $this->isPost();
         $isAdmin = sessionTools::isAdmin();
         $postedDatas = ($isPost) ? $this->getParams() : (array) $this->lignesModel->getById($this->getParams('id'));
         $form = new editMetroLignesForm($postedDatas, $mode = '');
@@ -296,40 +249,26 @@ final class Lignes extends ControlerMetroLignesHelper
                     return $this->redirect($this->baseUrl . $redirectÀction);
                 }
             } else {
-                foreach ($form->getErrors() as $k => $v) {
-                    flashTools::addError($v);
+                $formErrors = $form->getErrors();
+                foreach ($formErrors as $k => $v) {
+                    flashTools::addError($k . ':' . $v);
                 }
                 $message = (string) $form;
             }
         } else {
             $message = (string) $form;
         }
-        $linkDetailId = ($this->hasValue(self::PARAM_ID)) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
-        $linkManage = ($isAdmin) ? glyphHelper::getLinked(
-            glyphHelper::SEARCH,
-            $this->baseUrl . self::LIST_ACTION,
-            [self::PARAM_TITLE => 'Recherche de lignes']
-        ) : '';
-        $linkDetail = glyphHelper::getLinked(
-            glyphHelper::EYE_OPEN,
-            $this->baseUrl . self::DETAIL_ACTION . $linkDetailId,
-            [self::PARAM_TITLE => 'Détail']
+        $widget = $this->getWidget(
+            glyphHelper::get(glyphHelper::PENCIL)
+                . 'Edition du tronçon' . $this->getEditLinks(),
+            (string) $message
         );
-        $links = '<div style="float:right">'
-                . $linkManage
-                . $linkDetail
-                . '</div>';
-        $widgetTitle = glyphHelper::get(glyphHelper::PENCIL)
-                . 'Edition du tronçon' . $links;
-        $widget = (new widgetHelper())->setTitle($widgetTitle)->setBody((string) $message);
-        $widget->render();
-        $nav = (new bootstrapNav());
-        $nav->setParams($this->getNavConfig())->render();
-        return (string) $this->getLayout((string) $nav . (string) $widget);
+        unset($form);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
-     * detailAction
+     * detail
      *
      * @return Response
      */
@@ -339,37 +278,29 @@ final class Lignes extends ControlerMetroLignesHelper
         $this->lignesModel->cleanRowset();
         $id = $this->getParams('id');
         $formDatas = $this->lignesModel->getById($id);
-        $form = new \App1\Form\Metro\Lignes\Edit(
-            $formDatas,
-            $id,
-            $mode = 'readonly'
-        );
+        $form = new editMetroLignesForm($formDatas, $id, $mode = 'readonly');
         $form->setEnableButtons(false);
         $form->render();
-
-        $widgetTitle = glyphHelper::get(glyphHelper::EYE_OPEN)
-                . 'Détail du tronçon' . $this->detailButtons();
-        $widget = (new widgetHelper())
-                ->setTitle($widgetTitle)
-                ->setBody((string) $form . $this->detailMapOsm($formDatas));
-        $widget->render();
-        $detailContent = (string) $widget;
-        unset($widget);
-        $nav = (new bootstrapNav());
-        $nav->setParams($this->getNavConfig())->render();
-        return (string) $this->getLayout((string) $nav . $detailContent);
+        $widget = $this->getWidget(
+            glyphHelper::get(glyphHelper::EYE_OPEN)
+                . 'Détail du tronçon'
+                . $this->detailButtons(),
+            (string) $form . $this->detailMapOsm($formDatas)
+        );
+        unset($form);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
-     * deleteAction
+     * delete
      *
      * @return array
      */
     final public function delete()
     {
-        if ($this->hasValue(self::PARAM_ID)) {
+        if ($this->hasValue(self::_ID)) {
             $this->lignesModel->cleanRowset();
-            $where = [self::PARAM_ID => $this->getParams(self::PARAM_ID)];
+            $where = [self::_ID => $this->getParams(self::_ID)];
             $this->lignesModel->setWhere($where);
             $this->lignesModel->bindWhere();
             $this->lignesModel->delete();

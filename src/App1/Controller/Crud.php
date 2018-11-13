@@ -1,11 +1,9 @@
 <?php
-
 /**
  * Description of App1\Controller\Crud
  *
  * @author Pierre Fromager
  */
-
 namespace App1\Controller;
 
 use \Pimvc\Tools\Flash as flashTools;
@@ -32,10 +30,8 @@ final class Crud extends helperCrudController
         $criterias = [self::_SLOT => $this->slot, self::_TABLE => $this->table];
         $form = new tableSelectForm($criterias);
         $linkManage = ($ready) ? glyphHelper::getLinked(
-            glyphHelper::SEARCH,
-            $this->baseUrl . DIRECTORY_SEPARATOR . 'crud/manage',
-            [self::_TITLE => 'Crud manager']
-        ) : '';
+                glyphHelper::SEARCH, $this->baseUrl . DIRECTORY_SEPARATOR . 'crud/manage', [self::_TITLE => 'Crud manager']
+            ) : '';
         $table = '';
         if ($this->fields) {
             $tableDatas = $this->fields->toArray();
@@ -48,13 +44,11 @@ final class Crud extends helperCrudController
         $title = 'Database table selection';
         $widgetTile = ($ready) ? $title . $this->getWidgetLinkWrapper($linkManage) : $title;
         $widget = $this->getWidget(
-            faHelper::get(faHelper::DATABASE) . $widgetTile,
-            (string) $form . $table
+            faHelper::get(faHelper::DATABASE) . $widgetTile, (string) $form . $table
         );
         unset($form, $table);
         flashTools::add(
-            ($ready) ? flashTools::FLASH_SUCCESS : flashTools::FLASH_WARNING,
-            ($ready) ? 'Ready to CRUD' : 'Missing param'
+            ($ready) ? flashTools::FLASH_SUCCESS : flashTools::FLASH_WARNING, ($ready) ? 'Ready to CRUD' : 'Missing param'
         );
         $view = $this->getView(['content' => (string) $widget], self::VIEW_INDEX);
         unset($widget);
@@ -79,13 +73,10 @@ final class Crud extends helperCrudController
         $filter = formFilter::get((string) $form);
         unset($form);
         $liste = $this->getListe($this->crudInstance, $criterias, $fieldList);
-        $widgetTitle = glyphHelper::get(glyphHelper::SEARCH)
-                . 'Gestion Crud ( ' . $this->table . ' )'
-                . $this->getManageLinks();
-
         $widget = $this->getWidget(
-            $widgetTitle,
-            $filter . $this->getListeTableResponsive($liste)
+            glyphHelper::get(glyphHelper::SEARCH)
+            . 'Gestion Crud ( ' . $this->table . ' )'
+            . $this->getManageLinks(), $filter . $this->getListeTableResponsive($liste)
         );
         unset($filter);
         unset($liste);
@@ -123,8 +114,8 @@ final class Crud extends helperCrudController
         $title = ($mode) ? 'Detail' : 'Edition';
         $glyph = ($mode) ? glyphHelper::EYE_OPEN : glyphHelper::PENCIL;
         $widgetTitle = glyphHelper::get($glyph)
-                . $title . ' ' . $this->table
-                . $this->getEditLinks($mode);
+            . $title . ' ' . $this->table
+            . $this->getEditLinks($mode);
 
         $widget = $this->getWidget($widgetTitle, (string) $form);
         unset($form);
@@ -139,8 +130,8 @@ final class Crud extends helperCrudController
     final public function detail()
     {
         $redirectUrl = $this->baseUrl . '/crud/edit/id/'
-                . $this->getParams(self::_ID)
-                . '/mode/detail';
+            . $this->getParams(self::_ID)
+            . '/mode/detail';
         return $this->redirect($redirectUrl);
     }
 

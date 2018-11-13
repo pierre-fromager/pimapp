@@ -8,9 +8,13 @@ namespace App1\Helper\Controller;
 
 use \Pimvc\Controller\Basic as basicController;
 use \Pimvc\Tools\Session as sessionTools;
+use Pimvc\Views\Helpers\Fa as faHelper;
+use \App1\Helper\Lang\IEntries as ILang;
 
-class Home extends basicController
+class Home extends basicController implements ILang
 {
+
+    use \App1\Helper\Reuse\Controller;
 
     const PARAM_HTML = 'html';
     const PARAM_NAV = 'nav';
@@ -45,33 +49,58 @@ class Home extends basicController
         $isAdmin = sessionTools::isAdmin();
         $items = [];
         $authLink = $this->menuAction(
-            ($isAuth) ? 'Logout' : 'Login',
-            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
+            ($isAuth) ? $this->translate(ILang::__LOGOUT) : $this->translate(ILang::__LOGIN),
+            ($isAuth) ? faHelper::getFontClass(faHelper::SIGN_OUT) : faHelper::getFontClass(faHelper::SIGN_IN),
             ($isAuth) ? '/user/logout' : '/user/login'
         );
         $freeItems = [
-            $this->menuAction('Change lang', 'fa fa-language', '/lang/change'),
-            $this->menuAction('Lignes', 'fa fa-subway', '/metro/lignes/manage')
+            $this->menuAction(
+                $this->translate(ILang::__LANG),
+                faHelper::getFontClass(faHelper::LANGUAGE),
+                '/lang/change'
+            ),
+            $this->menuAction(
+                $this->translate(ILang::__TRAIN),
+                faHelper::getFontClass(faHelper::SUBWAY),
+                '/metro/lignes/manage'
+            )
         ];
         $items = array_merge($items, $freeItems);
         if ($isAdmin) {
             $adminItems = [
-                $this->menuAction('Acl', 'fa fa-lock', '/acl/manage'),
-                $this->menuAction('Database', 'fa fa-database', '/database/tablesmysql'),
+                $this->menuAction(
+                    $this->translate(ILang::__PERMISSIONS),
+                    faHelper::getFontClass(faHelper::LOCK),
+                    '/acl/manage'
+                ),
+                $this->menuAction(
+                    $this->translate(ILang::__DATABASE),
+                    faHelper::getFontClass(faHelper::DATABASE),
+                    '/database/tablesmysql'
+                ),
+                $this->menuAction(
+                    $this->translate(ILang::__SENSORS),
+                    faHelper::getFontClass(faHelper::COMPASS),
+                    '/probes/manage'
+                )
             ];
             $items = array_merge($items, $adminItems);
         }
         if ($isAuth) {
             $authItems = [
-                $this->menuAction('User', 'fa fa-user', '/user/edit'),
+                $this->menuAction(
+                    $this->translate(ILang::__USERS),
+                    faHelper::getFontClass(faHelper::USER),
+                    '/user/edit'
+                )
             ];
             $items = array_merge($items, $authItems);
         }
         array_push($items, $authLink);
         $navConfig = [
             self::_TITLE => [
-                self::_TEXT => 'Pimapp',
-                self::_ICON => 'fa fa-home',
+                self::_TEXT => $this->translate(ILang::__HOME),
+                self::_ICON => faHelper::getFontClass(faHelper::HOME),
                 self::_LINK => $this->baseUrl
             ],
             self::_ITEMS => $items
@@ -90,26 +119,9 @@ class Home extends basicController
     private function menuAction($title, $icon, $action)
     {
         return [
-            self::_TITLE => $title
+            self::_TITLE => ucfirst($title)
             , self::_ICON => $icon
             , self::_LINK => $this->baseUrl . $action
         ];
-    }
-
-    /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => (string) $content];
-        $layout->setApp($this->getApp())
-            ->setName(self::LAYOUT_NAME)
-            ->setLayoutParams($layoutParams)
-            ->build();
-        return $layout;
     }
 }

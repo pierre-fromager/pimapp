@@ -11,7 +11,7 @@ namespace App1\Helper\Controller\Metro;
 use \Pimvc\Input\Filter as inputFilter;
 use \Pimvc\Input\Custom\Filters\Range as inputRange;
 use \Pimvc\Tools\Session as sessionTools;
-use \Pimvc\Tools\Assist\Session as sessionAssistTools;
+
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
@@ -27,45 +27,39 @@ use \Pimvc\Views\Helpers\Gis\Osm\Marker as OsmMarker;
 use App1\Model\Metro\Lignes as modelLignes;
 use App1\Model\Metro\Stations as modelStations;
 use App1\Helper\Format\Metro\Lignes\Colors as helperMetroLigneColors;
+use \App1\Helper\Lang\IEntries as ILang;
 
 class Lignes extends basicController
 {
 
+    use \App1\Helper\Reuse\Controller;
+
     const PUBLIC_CSS = '/public/css/';
     const PUBLIC_JS = '/public/js/';
-    const PARAM_ID = 'id';
+    const _ID = 'id';
+    const _PAGESIZE = 'pagesize';
     const PARAM_ORDER = 'order';
-    const PARAM_NAME = 'name';
-    const PARAM_STATUS = 'status';
-    const PARAM_PROFIL = 'profil';
-    const PARAM_TOKEN = 'token';
-    const PARAM_EMAIL = 'email';
-    const PARAM_LOGIN = 'login';
-    const PARAM_PASSWORD = 'password';
-    const PARAM_TITLE = 'title';
     const PARAM_ICON = 'icon';
     const PARAM_LINK = 'link';
     const WILDCARD = '%';
     const PHP_EXT = '.php';
     const LAYOUT_NAME = 'responsive';
     const PARAM_CONTENT = 'content';
-    const USER_MESSAGE_DISCONECTED = 'Vous êtes déconnecté.';
-    const PARAM_PAGESIZE = 'pagesize';
-    const ERP_ASSIST_USER = 'metroLignes';
     const ERP_ASSIST_LIGNES = 'assist-metro-lignes';
     const PARAM_RESET = 'reset';
     const AJAX_TERM = 'term';
     const LIST_ACTION = '/metro/lignes/manage';
     const DETAIL_ACTION = '/metro/lignes/detail';
     const SEARCH_ACTION = '/metro/lignes/search';
-    const USER_MESSAGE_VALDATED = 'Mise à jour effectuée.';
-    const USER_MESSAGE_REGISTRATION_INVALID = 'Les champs obligatoires n\'ont pas été saisis correctement.';
-    const FORM_INCOMPLETE_MESSAGE = 'Formulaire incomplet.';
-    const USER_MESSAGE_DELETE_SUCCESS = 'Enregistrement supprimé';
     const _URI_STATION_MANAGE = '/metro/stations/manage';
     const _HSRC = modelLignes::_HSRC;
     const _HDST = modelLignes::_HDST;
     const _ICON_GIS = '/public/img/gis/icon/pin.png';
+    const _TITLE = 'title';
+    const _ICON = 'icon';
+    const _LINK = 'link';
+    const _ITEMS = 'items';
+    const _TEXT = 'text';
 
     protected $modelConfig;
     protected $lignesModel;
@@ -203,18 +197,18 @@ class Lignes extends basicController
      */
     protected function detailButtons()
     {
-        $readyLink = $this->hasValue(self::PARAM_ID) && sessionTools::isAdmin();
-        $linkEditId = ($readyLink) ? '/id/' . $this->getParams(self::PARAM_ID) : '';
+        $readyLink = $this->hasValue(self::_ID) && sessionTools::isAdmin();
+        $linkEditId = ($readyLink) ? '/id/' . $this->getParams(self::_ID) : '';
         $editButton = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
             glyphHelper::PENCIL,
             $this->baseUrl . '/metro/lignes/edit' . $linkEditId,
-            [self::PARAM_TITLE => 'Edition ligne']
+            [self::_TITLE => 'Edition ligne']
         ) : '';
 
         $manageButton = glyphHelper::getLinked(
             glyphHelper::SEARCH,
             $this->baseUrl . self::LIST_ACTION . $linkEditId,
-            [self::PARAM_TITLE => 'Recherche lignes']
+            [self::_TITLE => 'Recherche lignes']
         );
 
         $links = '<div style="float:right">'
@@ -288,23 +282,6 @@ class Lignes extends basicController
     }
 
     /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => $content];
-        $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
-        return $layout;
-    }
-
-    /**
      * getNavConfig
      *
      * @return array
@@ -314,26 +291,22 @@ class Lignes extends basicController
         $items = [];
         $isAuth = sessionTools::isAuth();
         $isPro = sessionTools::getProfil() === 'pro';
-        $authLink = ($isAuth) ? [
-            self::PARAM_TITLE => 'Logout'
-            , self::PARAM_ICON => 'fa fa-sign-out'
-            , self::PARAM_LINK => $this->baseUrl . '/user/logout'
-                ] : [
-            self::PARAM_TITLE => 'Login'
-            , self::PARAM_ICON => 'fa fa-sign-in'
-            , self::PARAM_LINK => $this->baseUrl . '/user/login'
-                ];
+        $authLink = $this->menuAction(
+            ($isAuth) ? $this->translate(ILang::__LOGOUT) : $this->translate(ILang::__LOGIN),
+            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
+            ($isAuth) ? '/user/logout' : '/user/login'
+        );
 
         $isAdmin = sessionTools::isAdmin();
         if ($isAdmin) {
             $items += [
                 [
-                    self::PARAM_TITLE => 'Acl'
+                    self::_TITLE => 'Acl'
                     , self::PARAM_ICON => 'fa fa-lock'
                     , self::PARAM_LINK => $this->baseUrl . '/acl/manage'
                 ],
                 [
-                    self::PARAM_TITLE => 'Database'
+                    self::_TITLE => 'Database'
                     , self::PARAM_ICON => 'fa fa-database'
                     , self::PARAM_LINK => $this->baseUrl . '/database/tablesmysql'
                 ]
@@ -342,12 +315,12 @@ class Lignes extends basicController
 
         $freeItems = [
             [
-                self::PARAM_TITLE => 'Stations'
+                self::_TITLE => 'Stations'
                 , self::PARAM_ICON => 'fa fa-subway'
                 , self::PARAM_LINK => $this->baseUrl . self::_URI_STATION_MANAGE
             ],
             [
-                self::PARAM_TITLE => 'Itinéraires'
+                self::_TITLE => 'Itinéraires'
                 , self::PARAM_ICON => 'fa fa-subway'
                 , self::PARAM_LINK => $this->baseUrl . self::SEARCH_ACTION
             ]
@@ -361,8 +334,8 @@ class Lignes extends basicController
 
         array_push($items, $authLink);
         $navConfig = [
-            self::PARAM_TITLE => [
-                'text' => 'Pimapp',
+            self::_TITLE => [
+                'text' => 'Home',
                 self::PARAM_ICON => 'fa fa-home',
                 self::PARAM_LINK => $this->baseUrl
             ],
@@ -371,32 +344,21 @@ class Lignes extends basicController
         return $navConfig;
     }
 
-    /**
-     * setPageSize
-     *
-     */
-    protected function setPageSize()
+    protected function getEditLinks()
     {
-        if ($this->getParams(self::PARAM_PAGESIZE)) {
-            sessionTools::set(
-                self::PARAM_PAGESIZE,
-                $this->getParams(self::PARAM_PAGESIZE)
-            );
-        }
-    }
-
-    /**
-     * getAssist
-     *
-     * @return array
-     */
-    protected function getAssist()
-    {
-        return sessionAssistTools::getSearch(
-            self::ERP_ASSIST_LIGNES,
-            $this->getApp()->getRequest(),
-            $this->getParams(self::PARAM_RESET)
+        $isAdmin = sessionTools::isAdmin();
+        $linkDetailId = ($this->hasValue(self::_ID)) ? '/id/' . $this->getParams(self::_ID) : '';
+        $linkManage = ($isAdmin) ? glyphHelper::getLinked(
+            glyphHelper::SEARCH,
+            $this->baseUrl . self::LIST_ACTION,
+            [self::_TITLE => 'Recherche de lignes']
+        ) : '';
+        $linkDetail = glyphHelper::getLinked(
+            glyphHelper::EYE_OPEN,
+            $this->baseUrl . self::DETAIL_ACTION . $linkDetailId,
+            [self::_TITLE => 'Détail']
         );
+        return $this->getWidgetLinkWrapper($linkManage . $linkDetail);
     }
 
     /**
@@ -464,7 +426,7 @@ class Lignes extends basicController
         return new inputFilter(
             $this->getParams(),
             [
-            self::PARAM_ID => new inputRange([
+            self::_ID => new inputRange([
                 inputRange::MIN_RANGE => 1,
                 inputRange::MAX_RANGE => 10000,
                 inputRange::_DEFAULT => 800,

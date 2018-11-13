@@ -13,10 +13,13 @@ use App1\Tools\Lang as toolsLang;
 use Pimvc\Tools\Session as sessionTools;
 use Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use Pimvc\Views\Helpers\Collection\Js as jsCollection;
-use \Pimvc\Views\Helpers\Widgets\Standart as widgetHelper;
+use Pimvc\Views\Helpers\Fa as faHelper;
+use \App1\Helper\Lang\IEntries as ILang;
 
 class Lang extends basicController
 {
+
+    use \App1\Helper\Reuse\Controller;
 
     const ERROR_READING = 'Une erreur s\'est produite lors de la lecture, merci de vérifier le fichier (entetes, données)';
     const CSV_DONE = 'Les données ont bien été enregistrées';
@@ -36,6 +39,10 @@ class Lang extends basicController
     const LAYOUT_NAME = 'responsive';
     const PUBLIC_CSS = '/public/css/';
     const PUBLIC_JS = '/public/js/';
+    const CHANGE_WRAPPER = 'col-sm-4';
+    const CHANGE_PARA = 'text-center';
+    const _NAME = 'name';
+    const _LABEL = 'label';
 
     protected $langs = [];
     protected $locale;
@@ -49,65 +56,12 @@ class Lang extends basicController
     protected function init()
     {
         $this->baseUrl = $this->getApp()->getRequest()->getBaseUrl();
-        $this->getApp()->setLocale('ru-RU');
         $this->locale = $this->getApp()->getLocale();
         $this->getApp()->setTranslator();
         $this->translator = $this->getApp()->getTranslator();
         $this->langs = $this->getApp()->getConfig()->getSettings('app')['langs'];
         $this->request = $this->getApp()->getRequest()->get();
         $this->initAssets();
-    }
-
-    /**
-     * isPost
-     *
-     * @return boolean
-     */
-    protected function isPost()
-    {
-        return ($this->getApp()->getRequest()->getMethod() === 'POST');
-    }
-
-    /**
-     * getWidget
-     *
-     * @return \App1\Views\Helper\Bootstrap\Nav
-     */
-    protected function getWidget($title, $content)
-    {
-        return (new widgetHelper())
-                        ->setTitle($title)
-                        ->setBody((string) $content)
-                        ->render();
-    }
-
-    /**
-     * getNav
-     *
-     * @return \App1\Views\Helper\Bootstrap\Nav
-     */
-    protected function getNav()
-    {
-        return (new \App1\Views\Helpers\Bootstrap\Nav())
-                        ->setParams($this->getNavConfig())
-                        ->render();
-    }
-
-    /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content, $nav = true)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => ($nav) ? $this->getNav() . $content : $content];
-        $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
-        return $layout;
     }
 
     /**
@@ -121,13 +75,30 @@ class Lang extends basicController
     }
 
     /**
+     * getChangeLinks
+     *
+     * @return string
+     */
+    protected function getChangeLinks(): string
+    {
+        $langLinks = '';
+        foreach ($this->langs as $lang) {
+            $url = $this->baseUrl . '/lang/change/name/' . $lang[self::_NAME];
+            $link = '<a href="' . $url . '">' . $lang[self::_LABEL] . '</a>';
+            $p = '<p class="' . self::CHANGE_PARA . '">' . $link . '</p>';
+            $langLinks .= '<div class="' . self::CHANGE_WRAPPER . '">' . $p . '</div>';
+        }
+        return $langLinks;
+    }
+
+    /**
      * getNavConfig
      *
      * @return array
      */
-    private function getNavConfig()
+    protected function getNavConfig()
     {
-        $lgIcon = 'fa fa-language';
+        $lgIcon = faHelper::getFontClass(faHelper::LANGUAGE);
         $freeItems = [
             $this->menuAction('Change lang', $lgIcon, self::_CHANGE_ACTION),
         ];
@@ -142,8 +113,8 @@ class Lang extends basicController
         }
         return [
             self::_TITLE => [
-                self::_TEXT => 'Pimapp',
-                self::_ICON => 'fa fa-home',
+                self::_TEXT => $this->translate(ILang::__HOME),
+                self::_ICON => faHelper::getFontClass(faHelper::HOME),
                 self::_LINK => $this->baseUrl
             ],
             self::_ITEMS => $items
@@ -163,22 +134,5 @@ class Lang extends basicController
         cssCollection::save();
         jsCollection::add(self::PUBLIC_JS . 'sortable.js');
         jsCollection::save();
-    }
-
-    /**
-     * menuAction
-     *
-     * @param string $title
-     * @param string $icon
-     * @param string $action
-     * @return array
-     */
-    private function menuAction($title, $icon, $action)
-    {
-        return [
-            self::_TITLE => $title
-            , self::_ICON => $icon
-            , self::_LINK => $this->baseUrl . $action
-        ];
     }
 }

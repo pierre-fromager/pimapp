@@ -1,9 +1,7 @@
 <?php
-
 /**
  *  App1\Controller\Lang
  */
-
 namespace App1\Controller;
 
 use App1\Tools\File\Upload as toolsFileUpload;
@@ -12,12 +10,11 @@ use App1\Helper\Controller\Lang as langHelperController;
 use App1\Views\Helpers\Select as selectHelper;
 use Pimvc\Views\Helpers\Fa as faHelper;
 use Pimvc\Tools\Flash as flashTools;
+use \App1\Helper\Lang\IEntries as ILang;
 
 class Lang extends langHelperController
 {
 
-    const _LABEL = 'label';
-    const _NAME = 'name';
     const _LANG = 'lang';
     const _TMP_NAME = 'tmp_name';
     const _VIEW_IMPORT = '/Views/Lang/Import.php';
@@ -48,17 +45,10 @@ class Lang extends langHelperController
             }
             return $this->redirect($this->baseUrl);
         }
-        $langLinks = '';
-        foreach ($this->langs as $lang) {
-            $langLinks .= '<div class="col-sm-4"><p class="text-center"><a href="'
-                    . $this->baseUrl . '/lang/change/name/' . $lang[self::_NAME]
-                    . '">' . $lang[self::_LABEL] . '</a></p></div>';
-        }
         $widget = $this->getWidget(
-            faHelper::get(faHelper::LANGUAGE) . 'Choose langue',
-            $langLinks . '<br style="clear:both"/>'
+            faHelper::get(faHelper::LANGUAGE) . 'Choose langue', $this->getChangeLinks() . '<br style="clear:both"/>'
         );
-        return (string) $this->getLayout((string) $widget, true);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
@@ -77,9 +67,8 @@ class Lang extends langHelperController
                 flashTools::addError(toolsFileUpload::getErrorMessage($errorCode));
             }
             if (!langTools::import(
-                $lang,
-                $_FILES[self::_FILENAME][self::_TMP_NAME]
-            )
+                    $lang, $_FILES[self::_FILENAME][self::_TMP_NAME]
+                )
             ) {
                 $errorCode = langTools::getError();
                 flashTools::addError(toolsFileUpload::getErrorMessage($errorCode));
@@ -92,27 +81,22 @@ class Lang extends langHelperController
             $langOptions[$label] = $name;
         }
         $langSelector = new selectHelper(
-            self::_LANG,
-            self::_LANG,
-            '',
-            $langOptions
+            self::_LANG, self::_LANG, '', $langOptions
         );
         $viewPath = $this->getApp()->getPath() . self::_VIEW_IMPORT;
         $langView = (new \Pimvc\View())
-                ->setFilename($viewPath)
-                ->setParams([
-                    'langSelector' => $langSelector,
-                    'baseurl' => $this->baseUrl,
-                    'import_action' => self::_IMPORT_ACTION,
-                    'max_file_size' => self::UPLOAD_MAX_FILESIZE
-                ])
-                ->render();
-        $widgetContent = (string) $langView;
+            ->setFilename($viewPath)
+            ->setParams([
+                'langSelector' => $langSelector,
+                'baseurl' => $this->baseUrl,
+                'import_action' => self::_IMPORT_ACTION,
+                'max_file_size' => self::UPLOAD_MAX_FILESIZE
+            ])
+            ->render();
         $widget = $this->getWidget(
-            faHelper::get(faHelper::LANGUAGE) . 'Import langue',
-            $widgetContent
+            faHelper::get(faHelper::LANGUAGE) . 'Import langue', (string) $langView
         );
-        return (string) $this->getLayout((string) $widget, true);
+        return (string) $this->getLayout((string) $widget);
     }
 
     /**
@@ -135,15 +119,11 @@ class Lang extends langHelperController
             $langList[$langDefinition[self::_LABEL]] = $langDefinition[self::_NAME];
         }
         $widgetContent = \Pimvc\Views\Helpers\Urlselector::get(
-            'langExportSelector',
-            $url . '/lang/',
-            $langList,
-            $lang
-        ) . '<br style="clear:both"/>';
+                'langExportSelector', $url . '/lang/', $langList, $lang
+            ) . '<br style="clear:both"/>';
         $widget = $this->getWidget(
-            faHelper::get(faHelper::LANGUAGE) . 'Export langue',
-            $widgetContent
+            faHelper::get(faHelper::LANGUAGE) . 'Export langue', $widgetContent
         );
-        return (string) $this->getLayout((string) $widget, true);
+        return (string) $this->getLayout((string) $widget);
     }
 }

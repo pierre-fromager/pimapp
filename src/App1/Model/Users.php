@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of user
+ * Description of App1\Model\Users
  *
  * @author pierrefromager
  */
@@ -8,22 +8,24 @@ namespace App1\Model;
 
 class Users extends \Pimvc\Model\Users
 {
+
     const USERS_STATUS_VALID = 'valid';
     const USERS_STATUS_WAITING = 'waiting';
+    const _SN = 'sn';
 
     protected $_slot = 'db1';
     protected $_name = 'user';
     protected $_primary = 'id';
     protected $_alias = 'users';
     protected $userInfoFields = array(
-        'id'
+        self::_ID
         //, 'iid'
-        , 'name'
-        , 'email'
-        , 'password'
-        , 'profil'
-        , 'status'
-        , 'sn'
+        , self::_NAME
+        , self::_EMAIL
+        , self::_PASSWORD
+        , self::_PROFIL
+        , self::_STATUS
+        , self::_SN
     );
 
     /**
@@ -45,12 +47,8 @@ class Users extends \Pimvc\Model\Users
     public function getRolesDash()
     {
         return $this->find(
-            [self::PARAM_PROFIL],
-            [],
-            [],
-            [],
-            self::PARAM_PROFIL
-        )->getRowsetAsArray();
+                [self::_PROFIL], [], [], [], self::_PROFIL
+            )->getRowsetAsArray();
     }
 
     /**
@@ -106,11 +104,7 @@ class Users extends \Pimvc\Model\Users
         $groupBy = $expr;
         $exprAlias = self::MODEL_ALIAS . $alias;
         $this->find(
-            [$expr . $exprAlias],
-            $where,
-            [$alias => 'asc'],
-            $limit,
-            $groupBy
+            [$expr . $exprAlias], $where, [$alias => 'asc'], $limit, $groupBy
         );
         return $this->getRowsetAsArray();
     }

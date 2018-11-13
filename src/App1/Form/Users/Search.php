@@ -8,6 +8,8 @@ namespace App1\Form\Users;
 
 use Pimvc\Form;
 use App1\Form\Users\Edit as editUsersForm;
+use App1\Helper\Lang\IEntries as ILang;
+use App1\Model\Users as modelUser;
 
 class Search extends Form
 {
@@ -15,6 +17,9 @@ class Search extends Form
     const USER_SEARCH_FORM_NAME = 'user-search';
     const USER_SEARCH_FORM_METHOD = 'POST';
     const USER_FORM_DECORATOR_BREAK = '<br style="clear:both">';
+
+    protected $app;
+    protected $baseUrl;
 
     /**
      * @see __construct
@@ -24,12 +29,12 @@ class Search extends Form
      */
     public function __construct($postedDatas)
     {
-        $formAction = \Pimvc\App::getInstance()->getRequest()->getBaseUrl()
-            . self::USER_SEARCH_ACTION;
+        $this->app = \Pimvc\App::getInstance();
+        $this->baseUrl = $this->app->getRequest()->getBaseUrl();
         parent::__construct(
             $this->_getFields(),
             self::USER_SEARCH_FORM_NAME,
-            $formAction,
+            $this->baseUrl . self::USER_SEARCH_ACTION,
             self::USER_SEARCH_FORM_METHOD,
             $postedDatas
         );
@@ -43,9 +48,9 @@ class Search extends Form
             , 'valid' => 'Validé'
         ));
         $this->setExtra('gsm', self::USER_FORM_DECORATOR_BREAK);
-        $this->setAction($formAction);
         $this->_setWrappers();
         $this->setSearchMode('true');
+        $this->setSearchWrapperTitle($this->translate(ILang::__CRITERIAS));
         $this->render();
         return $this;
     }
@@ -127,5 +132,16 @@ class Search extends Form
         $this->setClass('sexe', $formControl);
         $this->setWrapperClass('reference', $cols2);
         $this->setClass('reference', $formControl);
+    }
+
+    /**
+     * translate
+     *
+     * @param string $key
+     * @return string
+     */
+    private function translate(string $key): string
+    {
+        return $this->app->getTranslator()->translate($key);
     }
 }

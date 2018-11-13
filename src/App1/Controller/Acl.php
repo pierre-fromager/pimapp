@@ -1,6 +1,7 @@
 <?php
 /**
- * class AclController
+ * App1\Controller\Acl
+ *
  * is a controller for acls management.
  *
  * @author Pierre Fromager <pf@pier-infor.fr>
@@ -9,16 +10,26 @@
  */
 namespace App1\Controller;
 
-use Pimvc\Tools\Acl as aclTools;
+use \Pimvc\Tools\Acl as aclTools;
 use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
-use Pimvc\Tools\Session as sessionTools;
+use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Views\Helpers\Acl as aclHelper;
 use \Pimvc\Controller\Basic as basicController;
+use Pimvc\Views\Helpers\Fa as faHelper;
+use \App1\Helper\Lang\IEntries as ILang;
 
 class Acl extends basicController
 {
+
+    use \App1\Helper\Reuse\Controller;
+
     const ACL_FORBIDEN = 'Accés non autorisé.';
     const LAYOUT_NAME = 'responsive';
+    const _TITLE = 'title';
+    const _ICON = 'icon';
+    const _LINK = 'link';
+    const _ITEMS = 'items';
+    const _TEXT = 'text';
 
     protected $controllerPath = '';
     protected $controllerFileList = array();
@@ -51,15 +62,17 @@ class Acl extends basicController
         cssCollection::save();
         $params = self::ACL_FORBIDEN;
         if (sessionTools::isAdmin()) {
-            $aclHelper = new aclHelper($this->ressources);
-            $params = (string) $aclHelper;
+            $aclHelper = (new aclHelper($this->ressources))
+                ->setTitle('Gestion des droits')
+                ->render();
+            $cr = '<br style="clear:both"/>';
+            $params = (string) $aclHelper . $cr;
+            unset($aclHelper);
         }
         if ($errors = $this->aclTools->getErrors()) {
             $params = $errors[0];
         }
-        $nav = (new \App1\Views\Helpers\Bootstrap\Nav());
-        $nav->setParams($this->getNavConfig())->render();
-        return (string) $this->getLayout((string) $nav . $params);
+        return (string) $this->getLayout((string) $params);
     }
 
     /**
@@ -77,11 +90,11 @@ class Acl extends basicController
             $acl = $this->aclTools->get($controller, $action, $role);
             $this->aclTools->set($controller, $action, $role, $this->toggleAcl($acl));
             $acl = $this->aclTools->get($controller, $action, $role);
-            $jsonAclParams = array(
+            $jsonAclParams = [
                 'acl_enable' => $acl
                 , 'acl_disable' => $this->toggleAcl($acl)
                 , 'success' => $this->isValid($acl)
-            );
+            ];
             return $this->getJsonResponse($jsonAclParams);
         }
         return array('content' => $content);
@@ -116,26 +129,8 @@ class Acl extends basicController
     private function isValid($acl)
     {
         return in_array(
-            $acl,
-            [aclTools::ACL_ALLOW, aclTools::ACL_DENY]
+            $acl, [aclTools::ACL_ALLOW, aclTools::ACL_DENY]
         );
-    }
-
-    /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    private function getLayout($content)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => $content];
-        $layout->setApp($this->getApp())
-            ->setName(self::LAYOUT_NAME)
-            ->setLayoutParams($layoutParams)
-            ->build();
-        return $layout;
     }
 
     /**
@@ -156,12 +151,12 @@ class Acl extends basicController
     private function getNavConfig()
     {
         return [
-            'title' => [
-                'text' => 'Pimapp',
-                'icon' => 'fa fa-home',
-                'link' => $this->baseUrl
+            self::_TITLE => [
+                self::_TEXT => $this->translate(ILang::__HOME),
+                self::_ICON => faHelper::getFontClass(faHelper::HOME),
+                self::_LINK => $this->baseUrl
             ],
-            'items' => []
+            self::_ITEMS => []
         ];
     }
 }

@@ -5,17 +5,21 @@
  *
  * @author pierrefromager
  */
+
 namespace App1\Views\Helpers\Form\Search;
+
+use \Pimvc\Html\Element\Decorator as htmlElement;
 
 class Filter
 {
+
     const DECORATOR_ICON = 'i';
     const DECORATOR_WRAPPER_TITLE = 'div';
     const DECORATOR_TITLE = 'span';
     const DECORATOR_TARGET = self::DECORATOR_TITLE;
-    const PARAM_TITLE = 'title';
-    const PARAM_ID = 'id';
-    const PARAM_CLASS = 'class';
+    const _TITLE = 'title';
+    const _ID = 'id';
+    const _CLASS = 'class';
     const PARAM_GLYPHICON = 'glyphicon';
     const DEFAULT_ID = 'toogle-filtrer';
     const ID_MORE = 'moreAction';
@@ -29,7 +33,7 @@ class Filter
     const DEFAULT_CLASS_UP = '';
     const DEFAULT_CLASS_DOWN = 'glyphicon-chevron-down';
     const DEFAULT_SPACE = ' ';
-    
+
     private static $options;
     private static $title;
     private static $id;
@@ -42,33 +46,26 @@ class Filter
      * @param string $content
      * @return string
      */
-    public static function get($content, $options = array())
+    public static function get($content, $options = [])
     {
         self::$content = $content;
         self::setOptions($options);
         return self::$content . self::getHeader();
     }
-    
+
     /**
      * setOptions
      *
      */
     private static function setOptions($options)
     {
-        self::$options[self::PARAM_TITLE] = (isset($options[self::PARAM_TITLE]))
-            ? $options[self::PARAM_TITLE]
-            : self::DEFAULT_TITLE;
-        self::$options[self::PARAM_ID] = (isset($options[self::PARAM_ID]))
-            ? $options[self::PARAM_ID]
-            : self::DEFAULT_ID;
-        self::$options[self::PARAM_CLASS] = (isset($options[self::PARAM_CLASS]))
-            ? $options[self::PARAM_CLASS]
-            : self::DEFAULT_CLASS;
-        self::$title = self::$options[self::PARAM_TITLE];
-        self::$id = self::$options[self::PARAM_ID];
-        self::$class = self::$options[self::PARAM_CLASS];
+        self::$options[self::_TITLE] = (isset($options[self::_TITLE])) ? $options[self::_TITLE] : self::DEFAULT_TITLE;
+        self::$options[self::_ID] = (isset($options[self::_ID])) ? $options[self::_ID] : self::DEFAULT_ID;
+        self::$options[self::_CLASS] = (isset($options[self::_CLASS])) ? $options[self::_CLASS] : self::DEFAULT_CLASS;
+        self::$title = self::$options[self::_TITLE];
+        self::$id = self::$options[self::_ID];
+        self::$class = self::$options[self::_CLASS];
     }
-
 
     /**
      * getHeader
@@ -78,22 +75,22 @@ class Filter
     private static function getHeader()
     {
         return self::getTitle()
-            . '<div id="filtrer" class="row-fluid">'
-            . PHP_EOL
-            . '<div class="colonnes">' . PHP_EOL
-            . self::getLinkLess(self::getLeft())
-            . self::getTarget()
-            . '<a id="' . self::ID_MORE . '" class="' . self::DEFAULT_CLASS_BUTTON . '">'
-            . PHP_EOL . self::getRight() . PHP_EOL
-            . '</a>'
-            . PHP_EOL
-            . '</div>'
-            . PHP_EOL
-            . '<div class="donnees">'
-            . PHP_EOL . '</div>'. PHP_EOL . '</div>' . PHP_EOL;
+                . '<div id="filtrer" class="row-fluid">'
+                . PHP_EOL
+                . '<div class="colonnes">' . PHP_EOL
+                . self::getLinkLess(self::getLeft())
+                . self::getTarget()
+                . '<a id="' . self::ID_MORE . '" class="' . self::DEFAULT_CLASS_BUTTON . '">'
+                . PHP_EOL . self::getRight() . PHP_EOL
+                . '</a>'
+                . PHP_EOL
+                . '</div>'
+                . PHP_EOL
+                . '<div class="donnees">'
+                . PHP_EOL . '</div>' . PHP_EOL . '</div>' . PHP_EOL;
         ;
     }
-    
+
     /**
      * getIcon
      *
@@ -102,16 +99,16 @@ class Filter
      */
     private static function getIcon($class)
     {
-        $iconClass= self::PARAM_GLYPHICON . self::DEFAULT_SPACE . $class;
-        $options = array(self::PARAM_CLASS => $iconClass);
-        $span = new \Pimvc\Html\Element\Decorator(
+        $iconClass = self::PARAM_GLYPHICON . self::DEFAULT_SPACE . $class;
+        $options = array(self::_CLASS => $iconClass);
+        $span = new htmlElement(
             self::DECORATOR_ICON,
             self::DEFAULT_SPACE,
             $options
         );
         return (string) $span;
     }
-    
+
     /**
      * getLinkLess
      *
@@ -120,11 +117,11 @@ class Filter
      */
     private static function getLinkLess($content)
     {
-        $options = array(
-            self::PARAM_ID => self::ID_LESS
-            , self::PARAM_CLASS => self::DEFAULT_CLASS_BUTTON
-        );
-        $link = new \Pimvc\Html\Element\Decorator(
+        $options = [
+            self::_ID => self::ID_LESS
+            , self::_CLASS => self::DEFAULT_CLASS_BUTTON
+        ];
+        $link = new htmlElement(
             'a',
             $content,
             $options
@@ -139,22 +136,22 @@ class Filter
      */
     private static function getTitle()
     {
-        $spanTitle = new \Pimvc\Html\Element\Decorator(
+        $spanTitle = new htmlElement(
             self::DECORATOR_TITLE,
-            self::$title
+            ucfirst(self::$title)
         );
         $wrapperOption = array(
-            self::PARAM_ID => self::$id
-            , self::PARAM_CLASS => 'row-fluid'
+            self::_ID => self::$id
+            , self::_CLASS => 'row-fluid'
         );
-        $wrapperTitle = new \Pimvc\Html\Element\Decorator(
+        $wrapperTitle = new htmlElement(
             self::DECORATOR_WRAPPER_TITLE,
             $spanTitle . PHP_EOL . self::getOpen() . PHP_EOL,
             $wrapperOption
         );
         return (string) $wrapperTitle;
     }
-     
+
     /**
      * getTarget
      *
@@ -162,8 +159,8 @@ class Filter
      */
     private static function getTarget()
     {
-        $options = array(self::PARAM_ID => self::DEFAULT_TARGET_ID);
-        $span = new \Pimvc\Html\Element\Decorator(
+        $options = [self::_ID => self::DEFAULT_TARGET_ID];
+        $span = new htmlElement(
             self::DECORATOR_ICON,
             self::DEFAULT_SPACE,
             $options
@@ -180,7 +177,7 @@ class Filter
     {
         return self::getIcon(self::DEFAULT_CLASS_DOWN);
     }
-    
+
     /**
      * getLeft
      *
@@ -190,7 +187,7 @@ class Filter
     {
         return self::getIcon(self::DEFAULT_CLASS_LEFT);
     }
-    
+
     /**
      * getRight
      *
