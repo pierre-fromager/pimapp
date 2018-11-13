@@ -39,7 +39,10 @@ class Database extends databaseHelperController
     final public function tables4d()
     {
         $content = \App1\Views\Helpers\Urlselector::get(
-                self::PARAM_TABLES_4D, $this->baseUrl . 'database/tables4d/id/', $this->tableList, $this->getParams(self::_ID)
+            self::PARAM_TABLES_4D,
+            $this->baseUrl . 'database/tables4d/id/',
+            $this->tableList,
+            $this->getParams(self::_ID)
         );
 
         if ($this->hasValue(self::_ID)) {
@@ -49,16 +52,20 @@ class Database extends databaseHelperController
             $link = $this->baseUrl . 'database/gencode4d/id/'
                 . $this->getParams(self::_ID);
             $button = $this->getButton(
-                    self::LABEL_GENERATE_CODE, $link
-                ) . $this->getButton(
-                    'Liste', $this->baseUrl . self::LIST_ACTION . '/model/' . $tableName . 's'
+                self::LABEL_GENERATE_CODE,
+                $link
+            ) . $this->getButton(
+                'Liste',
+                $this->baseUrl . self::LIST_ACTION . '/model/' . $tableName . 's'
             );
 
             $content .= $button;
 
             if ($this->indexes) {
                 $helper = new \Pimvc\Views\Helpers\Table(
-                    'Indexes ' . $this->currentTableName, array(self::_ID, 'Nom', self::PARAM_TYPE, 'Unicité'), $this->indexes
+                    'Indexes ' . $this->currentTableName,
+                    array(self::_ID, 'Nom', self::PARAM_TYPE, 'Unicité'),
+                    $this->indexes
                 );
                 $helper->setId('indexesColumns-table');
                 $helper->setClass('table-6 managetable');
@@ -68,7 +75,9 @@ class Database extends databaseHelperController
 
             if ($this->relations) {
                 $helper = new \Pimvc\Views\Helpers\Table(
-                    'Relations ' . $this->currentTableName, array('Pk', 'Table', 'Fk', 'Cascade'), $this->relations
+                    'Relations ' . $this->currentTableName,
+                    array('Pk', 'Table', 'Fk', 'Cascade'),
+                    $this->relations
                 );
                 $helper->setId('colonnes-relations');
                 $helper->setClass('table-6 managetable');
@@ -78,7 +87,9 @@ class Database extends databaseHelperController
 
             // Colonnes
             $helper = new \Pimvc\Views\Helpers\Table(
-                'Colonnes ' . $this->currentTableName, array(self::_ID, 'Nom', 'Type 4d', 'Type Pdo', 'Longeur'), $this->columns
+                'Colonnes ' . $this->currentTableName,
+                array(self::_ID, 'Nom', 'Type 4d', 'Type Pdo', 'Longeur'),
+                $this->columns
             );
 
             $helper->setId('colonnes-table');
@@ -113,7 +124,10 @@ class Database extends databaseHelperController
         $content = '<h1><span class="fa fa-database"></span>&nbsp;Tables Pgsql</h1>';
         $targetUrl = $this->baseUrl . '/database/tablespgsql/id/';
         $content .= \App1\Views\Helpers\Urlselector::get(
-                'tables-pgsql', $targetUrl, $this->tableList, $this->getParams(self::_ID)
+            'tables-pgsql',
+            $targetUrl,
+            $this->tableList,
+            $this->getParams(self::_ID)
         );
         $viewParams = [
             'nav' => (string) $this->getNav()
@@ -132,15 +146,19 @@ class Database extends databaseHelperController
     {
         $content = '<h1><span class="fa fa-database"></span>&nbsp;Tables Mysql</h1>'
             . \App1\Views\Helpers\Urlselector::get(
-                self::PARAM_TABLES_4D, $this->baseUrl . '/database/tablesmysql/id/', $this->tableList, $this->getParams(self::_ID)
-        );
+                self::PARAM_TABLES_4D,
+                $this->baseUrl . '/database/tablesmysql/id/',
+                $this->tableList,
+                $this->getParams(self::_ID)
+            );
 
         if ($this->hasValue(self::_ID)) {
             $tabParams = array();
             $link = $this->baseUrl . '/database/gencodemysql/id/'
                 . $this->getParams(self::_ID);
             $button = $this->getButton(
-                self::LABEL_GENERATE_CODE . ' Mysql generation', $link
+                self::LABEL_GENERATE_CODE . ' Mysql generation',
+                $link
             );
 
             $helper = new \Pimvc\Views\Helpers\Table();
@@ -196,7 +214,10 @@ class Database extends databaseHelperController
     {
         $modelSuffix = ($this->hasValue('suffix')) ? $this->getParams('suffix') : 'Proscope_';
         $content = \App1\Views\Helpers\Urlselector::get(
-                self::PARAM_TABLES_4D, $this->baseUrl . 'database/gencode4d/id/', $this->tableList, $this->getParams(self::_ID)
+            self::PARAM_TABLES_4D,
+            $this->baseUrl . 'database/gencode4d/id/',
+            $this->tableList,
+            $this->getParams(self::_ID)
         );
         if ($this->hasValue(self::_ID)) {
             $link = $this->baseUrl . 'database/tables4d/id/'
@@ -206,12 +227,18 @@ class Database extends databaseHelperController
             $tabParams = array();
             $tableList = array_flip($this->tableList);
             $tabParams['Domain'] = \Pimvc\Db\Generate\Domain::get(
-                    $tableList[$this->getParams(self::_ID)], $this->columns, $this->indexes, $this->relations
+                $tableList[$this->getParams(self::_ID)],
+                $this->columns,
+                $this->indexes,
+                $this->relations
             );
 
             $tableList = array_flip($this->tableList);
             $tabParams['Model'] = \Pimvc\Db\Generate\Model::get(
-                    self::PDO_ADPATER_4D, $tableList[$this->getParams(self::_ID)], $this->indexes, $this->relations
+                self::PDO_ADPATER_4D,
+                $tableList[$this->getParams(self::_ID)],
+                $this->indexes,
+                $this->relations
             );
             $tabs = new bootstrapTab($tabParams);
             $tabs->setSelected('Domain')
@@ -236,7 +263,10 @@ class Database extends databaseHelperController
     final public function gencodemysql()
     {
         $content = \App1\Views\Helpers\Urlselector::get(
-                self::PARAM_TABLES_4D, $this->baseUrl . '/database/gencodemysql/id/', $this->tableList, $this->getParams(self::_ID)
+            self::PARAM_TABLES_4D,
+            $this->baseUrl . '/database/gencodemysql/id/',
+            $this->tableList,
+            $this->getParams(self::_ID)
         );
         if ($this->hasValue(self::_ID)) {
             $tabsParams = [];
@@ -244,10 +274,16 @@ class Database extends databaseHelperController
                 . $this->currentTableName;
             $button = $this->getButton('Back to Mysl model', $link);
             $tabsParams['Domain'] = \Pimvc\Db\Generate\Domain::get(
-                    $this->currentTableName, $this->columns, $this->indexes, $this->relations
+                $this->currentTableName,
+                $this->columns,
+                $this->indexes,
+                $this->relations
             );
             $tabsParams['Model'] = \Pimvc\Db\Generate\Model::get(
-                    self::PDO_ADPATER_MYSQL, $this->currentTableName, $this->indexes, $this->relations
+                self::PDO_ADPATER_MYSQL,
+                $this->currentTableName,
+                $this->indexes,
+                $this->relations
             );
 
             $tabs = new bootstrapTab($tabsParams);
@@ -274,7 +310,9 @@ class Database extends databaseHelperController
         $formAction = $this->baseUrl . '/database/uploadcsv';
         $docPath = $this->getDocumentPath();
         $form = new uploadForm(
-            $this->getParams(), $formAction, self::FORM_FILE_MAX_FILESIZE
+            $this->getParams(),
+            $formAction,
+            self::FORM_FILE_MAX_FILESIZE
         );
         $form->_setDestination($docPath)
             ->_setMaxsize(self::FORM_FILE_MAX_FILESIZE)
@@ -328,7 +366,7 @@ class Database extends databaseHelperController
             } else {
                 $headers = array_keys($parser->data[0]);
                 $normalizedHeaders = FieldNormalizer::normalizeFieldsName(
-                        $headers
+                    $headers
                 );
                 $mapperHeader = array_combine($headers, $normalizedHeaders);
                 $fields = new dbFields();
@@ -340,7 +378,9 @@ class Database extends databaseHelperController
                 }
                 $forge = new dbForge($this->getParams('slot'));
                 $forge->tableCreate(
-                    $this->getParams('tablename'), $fields, true
+                    $this->getParams('tablename'),
+                    $fields,
+                    true
                 );
                 sleep(1);
                 unset($headers);
@@ -412,7 +452,9 @@ class Database extends databaseHelperController
                     for ($c = 0; $c < $dc; $c++) {
                         $response->datas[] = $parser->data[$c];
                         $resok = $forge->tableInsert(
-                            $tablename, $response->headers, $parser->data[$c]
+                            $tablename,
+                            $response->headers,
+                            $parser->data[$c]
                         );
                         if (!$resok) {
                             $response->linesError[] = $parser->offset + $c;

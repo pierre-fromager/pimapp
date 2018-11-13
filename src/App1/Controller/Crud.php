@@ -30,8 +30,10 @@ final class Crud extends helperCrudController
         $criterias = [self::_SLOT => $this->slot, self::_TABLE => $this->table];
         $form = new tableSelectForm($criterias);
         $linkManage = ($ready) ? glyphHelper::getLinked(
-                glyphHelper::SEARCH, $this->baseUrl . DIRECTORY_SEPARATOR . 'crud/manage', [self::_TITLE => 'Crud manager']
-            ) : '';
+            glyphHelper::SEARCH,
+            $this->baseUrl . DIRECTORY_SEPARATOR . 'crud/manage',
+            [self::_TITLE => 'Crud manager']
+        ) : '';
         $table = '';
         if ($this->fields) {
             $tableDatas = $this->fields->toArray();
@@ -44,11 +46,13 @@ final class Crud extends helperCrudController
         $title = 'Database table selection';
         $widgetTile = ($ready) ? $title . $this->getWidgetLinkWrapper($linkManage) : $title;
         $widget = $this->getWidget(
-            faHelper::get(faHelper::DATABASE) . $widgetTile, (string) $form . $table
+            faHelper::get(faHelper::DATABASE) . $widgetTile,
+            (string) $form . $table
         );
         unset($form, $table);
         flashTools::add(
-            ($ready) ? flashTools::FLASH_SUCCESS : flashTools::FLASH_WARNING, ($ready) ? 'Ready to CRUD' : 'Missing param'
+            ($ready) ? flashTools::FLASH_SUCCESS : flashTools::FLASH_WARNING,
+            ($ready) ? 'Ready to CRUD' : 'Missing param'
         );
         $view = $this->getView(['content' => (string) $widget], self::VIEW_INDEX);
         unset($widget);
@@ -76,7 +80,8 @@ final class Crud extends helperCrudController
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::SEARCH)
             . 'Gestion Crud ( ' . $this->table . ' )'
-            . $this->getManageLinks(), $filter . $this->getListeTableResponsive($liste)
+            . $this->getManageLinks(),
+            $filter . $this->getListeTableResponsive($liste)
         );
         unset($filter);
         unset($liste);

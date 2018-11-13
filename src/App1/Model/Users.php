@@ -47,8 +47,12 @@ class Users extends \Pimvc\Model\Users
     public function getRolesDash()
     {
         return $this->find(
-                [self::_PROFIL], [], [], [], self::_PROFIL
-            )->getRowsetAsArray();
+            [self::_PROFIL],
+            [],
+            [],
+            [],
+            self::_PROFIL
+        )->getRowsetAsArray();
     }
 
     /**
@@ -104,7 +108,11 @@ class Users extends \Pimvc\Model\Users
         $groupBy = $expr;
         $exprAlias = self::MODEL_ALIAS . $alias;
         $this->find(
-            [$expr . $exprAlias], $where, [$alias => 'asc'], $limit, $groupBy
+            [$expr . $exprAlias],
+            $where,
+            [$alias => 'asc'],
+            $limit,
+            $groupBy
         );
         return $this->getRowsetAsArray();
     }

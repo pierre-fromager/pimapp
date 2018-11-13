@@ -30,7 +30,7 @@ class Home extends HelperHomeController implements ILang
             'phpVersion' => PHP_VERSION
         ];
         return (string) $this->getLayout(
-                (string) $this->getView($viewParams, self::VIEW_INDEX)
+            (string) $this->getView($viewParams, self::VIEW_INDEX)
         );
     }
 }

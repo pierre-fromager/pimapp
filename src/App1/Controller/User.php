@@ -45,7 +45,9 @@ final class User extends helperUserController
         $form = new loginForm((array) $inputLoginFilter);
         if ($inputLoginFilter->login && $inputLoginFilter->password || $inputLoginFilter->token) {
             $auth = new authTools(
-                $inputLoginFilter->login, $inputLoginFilter->password, $inputLoginFilter->token
+                $inputLoginFilter->login,
+                $inputLoginFilter->password,
+                $inputLoginFilter->token
             );
             if ($auth->isAllowed) {
                 $authAction = ($auth->profil === 'admin') ? '/user/manage' : '/user/edit';
@@ -59,16 +61,20 @@ final class User extends helperUserController
             }
         }
         $view = $this->getView(
-            ['form' => (string) $form], self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
+            ['form' => (string) $form],
+            self::VIEW_USER_PATH . ucfirst(__FUNCTION__) . self::PHP_EXT
         );
         unset($form);
         $widget = $this->getWidget(
             faHelper::get(faHelper::SIGN_IN)
             . $this->translate(ILang::__LOGIN_LABEL)
-            . $this->getLoginLinks(), (string) $view
+            . $this->getLoginLinks(),
+            (string) $view
         );
         return $this->getHtmlResponse(
-                $this->getLayout((string) $widget), 'lastlogin', (new \DateTime())->format(('Y-m-d\TH:i:s.u'))
+            $this->getLayout((string) $widget),
+            'lastlogin',
+            (new \DateTime())->format(('Y-m-d\TH:i:s.u'))
         );
     }
 
@@ -134,13 +140,18 @@ final class User extends helperUserController
         $form->setEnableResetButton(true);
         $form->render();
         $filter = formFilter::get(
-                (string) $form, [self::_TITLE => $this->translate(ILang::__COLUMNS)]
+            (string) $form,
+            [self::_TITLE => $this->translate(ILang::__COLUMNS)]
         );
         unset($form);
         $liste = new \Pimvc\Liste(
-            get_class($this->userModel), 'user/manage', array_diff(
-                $this->userModel->getDomainInstance()->getVars(), [self::_ID, self::_NAME, self::_LOGIN, self::_STATUS]
-            ), [
+            get_class($this->userModel),
+            'user/manage',
+            array_diff(
+                $this->userModel->getDomainInstance()->getVars(),
+                [self::_ID, self::_NAME, self::_LOGIN, self::_STATUS]
+            ),
+            [
             glyphToolbar::EXCLUDE_DETAIL => false
             , glyphToolbar::EXCLUDE_IMPORT => true
             , glyphToolbar::EXCLUDE_NEWSLETTER => true
@@ -148,7 +159,11 @@ final class User extends helperUserController
             , glyphToolbar::EXCLUDE_CLONE => false
             , glyphToolbar::EXCLUDE_PEOPLE => true
             , glyphToolbar::EXCLUDE_REFUSE => true
-            ], $this->getParams(self::_PAGE), $criterias, [], [self::_ORDER => 'desc']
+            ],
+            $this->getParams(self::_PAGE),
+            $criterias,
+            [],
+            [self::_ORDER => 'desc']
         );
         $liste->setActionCondition([
             glyphToolbar::EXCLUDE_VALIDATE => [
@@ -162,7 +177,8 @@ final class User extends helperUserController
         }
         $liste->render();
         $widget = $this->getWidget(
-            glyphHelper::get(glyphHelper::SEARCH) . $this->translate(ILang::__USER_ACOUNT_MANAGEMENT), $filter . $this->getListeTableResponsive($liste)
+            glyphHelper::get(glyphHelper::SEARCH) . $this->translate(ILang::__USER_ACOUNT_MANAGEMENT),
+            $filter . $this->getListeTableResponsive($liste)
         );
         unset($liste);
         return (string) $this->getLayout((string) $widget);
@@ -217,7 +233,8 @@ final class User extends helperUserController
                     unset($postedDatas[\Pimvc\Form::FORM_XCSRF]);
                 }
                 $postedDatas[self::_TOKEN] = \Pimvc\Tools\User\Token::get(
-                        $postedDatas[self::_EMAIL], $postedDatas[self::_PASSWORD]
+                    $postedDatas[self::_EMAIL],
+                    $postedDatas[self::_PASSWORD]
                 );
                 $postedDatas['ip'] = $this->getApp()->getRequest()->getRemoteAddr();
                 $domainInstance = $this->userModel->getDomainInstance();
@@ -245,7 +262,8 @@ final class User extends helperUserController
         }
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::PENCIL)
-            . $this->translate(ILang::__USERS_EDIT_TITLE) . $this->getEditLinks($uid), (string) $message
+            . $this->translate(ILang::__USERS_EDIT_TITLE) . $this->getEditLinks($uid),
+            (string) $message
         );
         unset($form);
         unset($message);
@@ -267,7 +285,8 @@ final class User extends helperUserController
         $form->render();
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::EYE_OPEN)
-            . self::__USER_DETAIL_TITLE . $this->getDetailLinks(), (string) $form
+            . self::__USER_DETAIL_TITLE . $this->getDetailLinks(),
+            (string) $form
         );
         unset($form);
         return (string) $this->getLayout((string) $widget);
@@ -317,7 +336,8 @@ final class User extends helperUserController
                 $updateData = array(
                     self::_PASSWORD => $newPassword
                     , self::_TOKEN => \Pimvc\Tools\User\Token::get(
-                        $postedDatas[self::_EMAIL], $postedDatas[self::_PASSWORD]
+                        $postedDatas[self::_EMAIL],
+                        $postedDatas[self::_PASSWORD]
                     )
                 );
                 unset($userData);
@@ -335,7 +355,8 @@ final class User extends helperUserController
         }
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::LOCK)
-            . 'Changer mon mot de passe', (string) $form
+            . 'Changer mon mot de passe',
+            (string) $form
         );
         unset($form);
         return (string) $this->getLayout((string) $widget);
@@ -390,7 +411,8 @@ final class User extends helperUserController
         $widget = $this->getWidget(
             glyphHelper::get(glyphHelper::LOCK)
             . $this->translate(ILang::__LOST_PASSWORD)
-            . $this->getLostPasswordLinks(), $content
+            . $this->getLostPasswordLinks(),
+            $content
         );
         return (string) $this->getLayout((string) $widget);
     }

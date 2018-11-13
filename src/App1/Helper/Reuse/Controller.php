@@ -102,7 +102,8 @@ trait Controller
     {
         if ($this->getParams(self::_PAGESIZE)) {
             sessionTools::set(
-                self::_PAGESIZE, $this->getParams(self::_PAGESIZE)
+                self::_PAGESIZE,
+                $this->getParams(self::_PAGESIZE)
             );
         }
     }
@@ -126,7 +127,9 @@ trait Controller
     protected function getAssist($assistName)
     {
         return sessionAssistTools::getSearch(
-                $assistName, $this->getApp()->getRequest(), $this->getParams(self::PARAM_RESET)
+            $assistName,
+            $this->getApp()->getRequest(),
+            $this->getParams(self::PARAM_RESET)
         );
     }
 

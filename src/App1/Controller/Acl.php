@@ -129,7 +129,8 @@ class Acl extends basicController
     private function isValid($acl)
     {
         return in_array(
-            $acl, [aclTools::ACL_ALLOW, aclTools::ACL_DENY]
+            $acl,
+            [aclTools::ACL_ALLOW, aclTools::ACL_DENY]
         );
     }
 
