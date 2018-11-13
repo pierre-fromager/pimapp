@@ -71,24 +71,40 @@ composer dump-autoload -a
 
 * Landing page.
 
+### Lang (i18n)
+
+* Multilang ready (.csv).
+* Autoselect language from request.
+* Whole app translation in progress.
+
 ### Database
 
 * Model code generator.
 * Model Domain code generator.
+* Auto create tables from imported .csv files.
+* Sqlite,Mysql,Pgsql ready.
 
 ### Acl
 
 * Acl front manager.
+
+### File
+
+* Remote file browser.
 
 ### Metro
 
 #### Lignes
 
 * Path search (graph method weighted or not).
-* Crud complete.
 * Gis use OpenStreetMap.
 
 #### Stations
 
-* Crud complete.
 * Gis use OpenStreetMap.
+
+### Crud
+
+* Complete CRUD from a single generic controller.
+* Deep database meta's inspection for agnostic Field(s) usage.
+* Sqlite,Mysql,Pgsql supported.
