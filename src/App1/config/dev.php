@@ -23,7 +23,7 @@ return [
         'mailer' => include 'dev/mailer.php',
     ],
     'request' => [
-        'scheme' => 'http',
+        'scheme' => 'https',
         'hostname' => '',
     ],
     'jwt' => [

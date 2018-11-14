@@ -7,40 +7,40 @@ return [
         'label' => 'Mysql System',
         'name' => 'information_schema',
         'host' => $localhost,
-        'user' => 'pierre',
+        'user' => 'logindev',
         'port' => '3306',
-        'password' => 'pierre'
+        'password' => 'passworddev'
     ],
     'db1' => [
         'adapter' => \Pimvc\Db\Model\Core::MODEL_ADAPTER_MYSQL,
         'label' => 'Pimapp Db',
         'name' => 'pimapp',
         'host' => $localhost,
-        'user' => 'pierre',
+        'user' => 'logindev',
         'port' => '3306',
-        'password' => 'pierre'
+        'password' => 'passworddev'
     ],
     'db10' => [
         'adapter' => \Pimvc\Db\Model\Core::MODEL_ADAPTER_PGSQL,
         'label' => 'Pgsql System',
         'name' => 'postgres',
         'host' => $localhost,
-        'user' => 'postgres',
+        'user' => 'logindev',
         'port' => '5432',
-        'password' => 'pierre'
+        'password' => 'passworddev'
     ],
     'db11' => [
         'adapter' => \Pimvc\Db\Model\Core::MODEL_ADAPTER_PGSQL,
         'label' => 'Pimapp Pg',
         'name' => 'pimapp',
         'host' => $localhost,
-        'user' => 'pierre',
+        'user' => 'logindev',
         'port' => '5432',
-        'password' => 'pierre'
+        'password' => 'passworddev'
     ],
     'db20' => [
         'adapter' => \Pimvc\Db\Model\Core::MODEL_ADAPTER_SQLITE,
-        'label' => 'Pimapp Sqlite Logger',
+        'label' => 'Pimapp Sqlite Sample',
         'name' => 'logger',
         'file' => '/var/www/sqlite/logger'
     ],

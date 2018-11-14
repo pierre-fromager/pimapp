@@ -2,6 +2,8 @@
 
 **Sample App with Pimvc**
 
+## [Live version](https://pimgit.pier-infor)
+
 ## Requirements
 
 * php version >= 5.6.3
