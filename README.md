@@ -108,8 +108,10 @@ Check composer hook @src\App1\Commands\Composer\Installer for deploy triggering.
 
 Security policy allowed for non (CN,UA,TW,RU,VN,HK) countries, sorry for others.
 
- * [Live version](https://pimgit.pier-infor.fr)
- * [Roadmap version](https://pimapp.pier-infor.fr)
+ * [Live](https://pimgit.pier-infor.fr)
+ * [Fwk stable](https://github.com/pierre-fromager/pimvc)
+ * [Roadmap](https://pimapp.pier-infor.fr)
+ * [Fwk nightly build](https://gogs.pier-infor.fr/pf.pier-infor.fr/pimvc)
 
 ## Tricks
 
