@@ -12,7 +12,7 @@
 ```bash
 git clone https://github.com/pierre-fromager/pimapp.git
 cd pimapp
-composer run install
+composer install
 chmod -R 777 src/App1/cache
 chmod -R 777 src/App1/log
 ```
