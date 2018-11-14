@@ -2,8 +2,6 @@
 
 **Sample App with Pimvc**
 
-## [Live version](https://pimgit.pier-infor)
-
 ## Requirements
 
 * php version >= 5.6.3
@@ -29,22 +27,17 @@ Create a virtual host with DocumentRoot to src.
 
 Add  RewriteEngine to on.
 
-### Dev
+### Autoloading & deploy
 
-Using autoloader first cache level.
+Use autoloader cache level with -o or -a option (PSR-4).
 
 ```bash
 composer dump-autoload -o
 ```
-
-### Prod
-
-Using autoloader second cache level.
-
-```bash
-composer dump-autoload -a
-```
-
+Keep in mind autoload dumping must be done after each change on envs.
+Prefer -a for prod (hard caching) -o for dev (smart caching).
+Check composer hook @src\App1\Commands\Composer\Installer for deploy triggering.
+ 
 ## Features
 
 ### Http middlewares
@@ -77,7 +70,7 @@ composer dump-autoload -a
 
 * Multilang ready (.csv).
 * Autoselect language from request.
-* Whole app translation in progress.
+* Content translation in progress.
 
 ### Database
 
@@ -99,14 +92,53 @@ composer dump-autoload -a
 #### Lignes
 
 * Path search (graph method weighted or not).
-* Gis use OpenStreetMap.
+* use OpenStreetMap.
 
 #### Stations
 
-* Gis use OpenStreetMap.
+* use OpenStreetMap.
 
 ### Crud
 
 * Complete CRUD from a single generic controller.
 * Deep database meta's inspection for agnostic Field(s) usage.
 * Sqlite,Mysql,Pgsql supported.
+
+## Links
+
+Security policy allowed for non (CN,UA,TW,RU,VN,HK) countries, sorry for others.
+
+ * [Live version](https://pimgit.pier-infor.fr)
+ * [Roadmap version](https://pimapp.pier-infor.fr)
+
+## Tricks
+
+### Front
+
+#### Osm
+
+because of query cache mechanism involved, add symlink as below :
+
+```bash
+cd src/public/img/gis
+ln -s ../../../App1/cache/img/gis/osm/metro ./osm
+```
+
+#### Styles
+
+* Adapt src/public/css/main.css
+
+#### Behaviours
+
+* Adapt src/public/js/main.js
+
+### Back
+
+Configuration is easy, all can be found in src/App1/config.
+
+#### Envs
+
+* dev.php: is the main entry for dev conf, check dev folder for detail.
+* prod.php: is the main entry for dev conf, check prod folder for detail.
+
+Env strategy can be set from get_env using .htaccess or .user.ini file and changed in index.php.
