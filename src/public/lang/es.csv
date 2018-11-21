@@ -5,8 +5,23 @@ INVALID_CREDENTIAL,Entrada incorrecta,Entrada incorrecta
 LOGIN,Login,Connexion
 LOGOUT,Cerrar sesión, de deco
 LOGIN_LABEL,Iniciar sesión,Se connecter
-EMAIL,E-mail,Email
+USERS,Usuarios,Users
+USER_ACOUNT_MANAGEMENT,Gestión de cuentas de usuario,user management title
+USERS_EDIT_TITLE,Edición de cuenta de usuario,User edit title
+USER_SIGNIN,ingresar,Users
+USER_SIGNUP,registrarse,Users
+USER_EDIT_INTEG_ERROR,No puedes editar información que no te pertenece,__USER_EDIT_INTEG_ERROR
+USER_DETAIL_TITLE,Detalle de cuenta de usuario,__USER_DETAIL_TITLE
+USER_EDIT_TITLE,Editar cuenta de usuario,__USER_EDIT_TITLE
+USER_MESSAGE_REGISTRATION_SUCCESS,registro exitoso,;
+USER_MESSAGE_REGISTRATION_FAIL,Dirección de correo electrónico ya utilizada,
+USER_MESSAGE_DISCONECTED,Estas desconectado,
+USER_MESSAGE_CONNECTED,estás conectado,
+USER_ACOUNT_ENABLE,Cuenta de usuario activada,
 LOST_PASSWORD,Contraseña perdida,Mot de passe perdu
+USER_CHANGE_PASSWORD_SUCCESS,La contraseña se ha cambiado correctamente,
+USER_CHANGE_PASSWORD_ERROR,,
+EMAIL,correo electrónico,Email
 CHANGE_PASSWORD,Cambio de contraseña,password change
 PASSWORD,Contraseña,Mot de passe
 WELCOME_TO,Bienvenido a,Bienvenue sur
@@ -15,6 +30,7 @@ PERMISSIONS,Permisos,Acl
 LANG,lengua,changer langue nav
 TRAIN,tren,lignes train idf
 DATABASE,base de datos,base de données
-USER_ACOUNT_MANAGEMENT,Gestion des comptes utilisateur,user management title
-USERS,Usuarios,Users
+CRITERIAS,criterios,Critères
+COLUMNS,columnas,Colonnes
+CHOOSE_LANG,elige lengua,choose lang
 SENSORS,Sensores,Capteurs

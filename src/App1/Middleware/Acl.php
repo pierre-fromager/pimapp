@@ -1,5 +1,4 @@
 <?php
-
 namespace App1\Middleware;
 
 class Acl implements \Pimvc\Http\Interfaces\Layer
@@ -13,11 +12,11 @@ class Acl implements \Pimvc\Http\Interfaces\Layer
     const ACL_DEBUG = true;
 
     private $app;
-    private $aclTools;
     private $controller;
     private $action;
     private $role;
     private $allowed;
+    private $aclTools;
 
     /**
      * peel
@@ -30,6 +29,16 @@ class Acl implements \Pimvc\Http\Interfaces\Layer
     {
         $this->process();
         return $next($object);
+    }
+
+    /**
+     * getRessources
+     *
+     * @return array
+     */
+    public function getRessources(): array
+    {
+        return $this->aclTools->getRessources();
     }
 
     /**
@@ -88,7 +97,7 @@ class Acl implements \Pimvc\Http\Interfaces\Layer
     private function getNsControllerName($controller)
     {
         $nsc = $this->aclTools->getNamespaceCtrlPrefix()
-                . self::ACL_BS . str_replace(self::ACL_SL, self::ACL_BS, $controller);
+            . self::ACL_BS . str_replace(self::ACL_SL, self::ACL_BS, $controller);
         $nscparts = array_map(self::ACL_TRANSFO, explode(self::ACL_BS, $nsc));
         $nsc = implode(self::ACL_BS, $nscparts);
         return $nsc;
@@ -109,7 +118,7 @@ class Acl implements \Pimvc\Http\Interfaces\Layer
                 'action' => $this->action,
                 'role' => $this->role,
                 'allow' => $this->allowed
-                    ]
+                ]
             );
         }
     }

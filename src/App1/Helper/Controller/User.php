@@ -1,11 +1,9 @@
 <?php
-
 /**
  * Description of App1\Helper\Controller\User
  *
  * @author Pierre Fromager
  */
-
 namespace App1\Helper\Controller;
 
 use \Pimvc\Input\Filter as inputFilter;
@@ -13,9 +11,11 @@ use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
 use \Pimvc\Controller\Basic as basicController;
 use \Pimvc\Tools\Session as sessionTools;
+use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 use \Pimvc\Views\Helpers\Fa as faHelper;
 use \App1\Model\Users as modelUser;
+use \App1\Form\Users\Edit as editUsersForm;
 use \App1\Helper\Lang\IEntries as ILang;
 
 class User extends basicController
@@ -53,9 +53,6 @@ class User extends basicController
     const DETAIL_ACTION = 'user/detail';
     const LIST_MODEL = 'Users';
     const USER_MESSAGE_VALDATED = 'Mise à jour effectuée.';
-    const USER_MESSAGE_REGISTRATION_SUCCESS = 'Enregistrement réussi.';
-    const USER_MESSAGE_REGISTRATION_FAILED = 'Adresse email déjà utilisée.';
-    const USER_MESSAGE_REGISTRATION_INVALID = 'Les champs obligatoires n\'ont pas été saisis correctement.';
     const FORM_INCOMPLETE_MESSAGE = 'Formulaire incomplet.';
     const USER_MESSAGE_DELETE_SUCCESS = 'Enregistrement supprimé';
     const MAIL_MESSAGE_NOTIFY_COMPLETE = 'Un email vous a été adressé contenant les informations nécessaires.';
@@ -71,7 +68,7 @@ class User extends basicController
      */
     protected function init()
     {
-        $this->modelConfig = $this->getApp()->getConfig()->getSettings('dbPool');
+        $this->modelConfig = $this->getConfigSettings('dbPool');
         $this->userModel = new modelUser($this->modelConfig);
         $this->baseUrl = $this->getApp()->getRequest()->getBaseUrl();
         $this->setAssets();
@@ -108,11 +105,6 @@ class User extends basicController
                     $this->translate(ILang::__DATABASE),
                     faHelper::getFontClass(faHelper::DATABASE),
                     '/database/tablesmysql'
-                ),
-                $this->menuAction(
-                    $this->translate(ILang::__SENSORS),
-                    faHelper::getFontClass(faHelper::COMPASS),
-                    '/probes/manage'
                 )
             ];
         }
@@ -133,6 +125,46 @@ class User extends basicController
     }
 
     /**
+     * getManageList
+     *
+     * @param array $criterias
+     * @return \Pimvc\Liste
+     */
+    protected function getManageList(array $criterias)
+    {
+        $liste = new \Pimvc\Liste(
+            get_class($this->userModel),
+            'user/manage',
+            array_diff(
+                $this->userModel->getDomainInstance()->getVars(),
+                [self::_ID, self::_NAME, self::_LOGIN, self::_STATUS]
+            ),
+            [
+            glyphToolbar::EXCLUDE_DETAIL => false
+            , glyphToolbar::EXCLUDE_IMPORT => true
+            , glyphToolbar::EXCLUDE_NEWSLETTER => true
+            , glyphToolbar::EXCLUDE_PDF => true
+            , glyphToolbar::EXCLUDE_CLONE => false
+            , glyphToolbar::EXCLUDE_PEOPLE => true
+            , glyphToolbar::EXCLUDE_REFUSE => true
+            ],
+            $this->getParams(self::_PAGE),
+            $criterias,
+            [],
+            [self::_ORDER => 'desc']
+        );
+        $liste->setActionCondition([
+            glyphToolbar::EXCLUDE_VALIDATE => [
+                'key' => self::_STATUS, 'value' => 'valid'
+            ]
+        ]);
+        $liste->setLabels(editUsersForm::_getStaticLabels($withIcons = false));
+        $liste->setFormater(self::_PROFIL, 'Helper_Format_Roles::getFliped');
+        $liste->render();
+        return $liste;
+    }
+
+    /**
      * getEditLinks
      *
      * @param int $uid
@@ -144,24 +176,25 @@ class User extends basicController
         $manage = (sessionTools::isAdmin()) ? glyphHelper::getLinked(
             glyphHelper::SEARCH,
             $this->baseUrl . '/user/manage',
-            [self::_TITLE => 'Comptes']
+            [self::_TITLE => $this->translate(ILang::__USER_ACOUNT_MANAGEMENT)]
         ) : '';
         $detail = glyphHelper::getLinked(
             glyphHelper::EYE_OPEN,
             $this->baseUrl . '/user/detail/' . $linkDetailId,
             [self::_TITLE => 'Détail']
         );
-        $intervenant = glyphHelper::getLinked(
-            glyphHelper::FOLDER_OPEN,
-            $this->baseUrl . '/intervenant/edit/uid/' . $uid,
-            [self::_TITLE => 'Edition']
-        );
+        /*
+          $intervenant = glyphHelper::getLinked(
+          glyphHelper::FOLDER_OPEN,
+          $this->baseUrl . '/intervenant/edit/uid/' . $uid,
+          [self::_TITLE => 'Edition']
+          ); */
         $password = glyphHelper::getLinked(
             glyphHelper::LOCK,
             $this->baseUrl . '/user/changepassword',
-            [self::_TITLE => 'Change password']
+            [self::_TITLE => $this->translate(ILang::__CHANGE_PASSWORD)]
         );
-        $links = $manage . $detail . $intervenant . $password;
+        $links = $manage . $detail . $password;
         return $this->getWidgetLinkWrapper($links);
     }
 
@@ -175,12 +208,12 @@ class User extends basicController
         $registerLink = glyphHelper::getLinked(
             glyphHelper::CERTIFICATE,
             $this->baseUrl . '/user/register',
-            [self::_TITLE => 'Register']
+            [self::_TITLE => $this->translate(ILang::__USERS_SIGN_UP)]
         );
         $lostpasswdLink = glyphHelper::getLinked(
             glyphHelper::LOCK,
             $this->baseUrl . '/user/lostpassword',
-            [self::_TITLE => 'Lost password']
+            [self::_TITLE => $this->translate(ILang::__LOST_PASSWORD)]
         );
         return $this->getWidgetLinkWrapper($registerLink . $lostpasswdLink);
     }
@@ -218,12 +251,12 @@ class User extends basicController
         $loginLink = glyphHelper::getLinked(
             glyphHelper::LOG_IN,
             $this->baseUrl . '/user/login',
-            [self::_TITLE => $this->translate(ILang::__LOGIN_LABEL)]
+            [self::_TITLE => $this->translate(ILang::__USERS_SIGN_IN)]
         );
         $registerLink = glyphHelper::getLinked(
             glyphHelper::CERTIFICATE,
             $this->baseUrl . '/user/register',
-            [self::_TITLE => 'Enregistrement']
+            [self::_TITLE => $this->translate(ILang::__USERS_SIGN_UP)]
         );
         return $this->getWidgetLinkWrapper($loginLink . $registerLink);
     }
@@ -306,7 +339,7 @@ class User extends basicController
             self::_LOGIN => FILTER_SANITIZE_EMAIL,
             self::_PASSWORD => FILTER_SANITIZE_STRING,
             self::_TOKEN => FILTER_SANITIZE_STRING
-                ]
+            ]
         );
     }
 }

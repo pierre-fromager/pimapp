@@ -5,7 +5,22 @@ INVALID_CREDENTIAL,Incorrect entry,Incorrect entry
 LOGIN,Login,Connexion
 LOGOUT,Logout,se deco
 LOGIN_LABEL,Sign in,Se connecter
+USERS,Users,Users
+USER_ACOUNT_MANAGEMENT,User account management,user management title
+USERS_EDIT_TITLE,Edition compte utilisateur,User edit title
+USER_SIGNIN,sign in,Users
+USER_SIGNUP,sign up,Users
+USER_EDIT_INTEG_ERROR,You can not edit information that does not belong to you,__USER_EDIT_INTEG_ERROR
+USER_DETAIL_TITLE,User account detail,__USER_DETAIL_TITLE
+USER_EDIT_TITLE,User account edit,__USER_EDIT_TITLE
+USER_MESSAGE_REGISTRATION_SUCCESS,successful registration,;
+USER_MESSAGE_REGISTRATION_FAIL,Email address already used,
+USER_MESSAGE_DISCONECTED,You are disconnected,
+USER_MESSAGE_CONNECTED,You are connected,
+USER_ACOUNT_ENABLE,User account activated,
 LOST_PASSWORD,Lost password,Mot de passe perdu
+USER_CHANGE_PASSWORD_SUCCESS,The password has been successfully changed,
+USER_CHANGE_PASSWORD_ERROR,,
 EMAIL,Email,Email
 PASSWORD,Password,Mot de passe
 CHANGE_PASSWORD,Password change,password change
@@ -15,6 +30,8 @@ PERMISSIONS,Permissions,Acl
 LANG,Language,changer langue nav
 TRAIN,train,lignes train idf
 DATABASE,database,base de données
-USER_ACOUNT_MANAGEMENT,User account management,user management title
-USERS,Users,Users
 SENSORS,Sensors,Capteurs
+MAIL_SENT_SUCCESS,Email sent with success,mail sent ok
+MAIL_SENT_ERROR,Error sending email,mail sent error
+ACL_MANAGER,Permissions management,Acl manager title
+ACL,Permissions,acl

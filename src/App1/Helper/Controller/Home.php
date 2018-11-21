@@ -77,11 +77,6 @@ class Home extends basicController implements ILang
                     $this->translate(ILang::__DATABASE),
                     faHelper::getFontClass(faHelper::DATABASE),
                     '/database/tablesmysql'
-                ),
-                $this->menuAction(
-                    $this->translate(ILang::__SENSORS),
-                    faHelper::getFontClass(faHelper::COMPASS),
-                    '/probes/manage'
                 )
             ];
             $items = array_merge($items, $adminItems);

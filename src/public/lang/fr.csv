@@ -5,8 +5,24 @@ INVALID_CREDENTIAL,Saisie incorrecte,Saisie incorrecte
 LOGIN,Connexion,Connexion
 LOGOUT,Déconnexion,Deco
 LOGIN_LABEL,Se connecter,Se connecter
+USERS,Utilisateurs,Users
+USER_ACOUNT_MANAGEMENT,Gestion des comptes utilisateur,user management title
+USERS_EDIT_TITLE,Edition compte utilisateur,User edit title
+USER_SIGNIN,Se connecter,Users
+USER_SIGNUP,s'inscrire,Users
+USER_EDIT_INTEG_ERROR,Vous ne pouvez pas modifier des informations qui ne vous appartiennent pas.,__USER_EDIT_INTEG_ERROR
+USER_DETAIL_TITLE,Détail du compte utilisateur,__USER_DETAIL_TITLE
+USER_EDIT_TITLE,Edition compte utilisateur,__USER_EDIT_TITLE
+USER_MESSAGE_REGISTRATION_SUCCESS,Inscription réussie,;
+USER_MESSAGE_REGISTRATION_FAIL,Adresse email déjà utilisée,
+USER_MESSAGE_DISCONECTED,Vous êtes déconnecté,
+USER_MESSAGE_CONNECTED,Vous êtes connecté,
+USER_ACOUNT_ENABLE,Compte utilisateur activé,
 LOST_PASSWORD,Mot de passe perdu,Mot de passe perdu
+USER_CHANGE_PASSWORD_SUCCESS,Le mot de passe a correctement été changé,
+USER_CHANGE_PASSWORD_ERROR,,
 EMAIL,Courriel,Email
+INCORRECT_EMAIL,Courriel incorrect,Email
 PASSWORD,Mot de passe,Mot de passe
 CHANGE_PASSWORD,Changer mot de passe,password change
 WELCOME_TO,Bienvenue sur,Bienvenue sur
@@ -15,10 +31,11 @@ PERMISSIONS,Permissions,Acl
 LANG,Langue,changer langue nav
 TRAIN,lignes,lignes train idf
 DATABASE,base de données,base de données
-USER_ACOUNT_MANAGEMENT,Gestion des comptes utilisateur,user management title
-USERS_EDIT_TITLE,Edition compte utilisateur,User edit title
-USERS,Utilisateurs,Users
-USER_SIGNIN,Utilisateurs,Users
 SENSORS,Sondes,Capteurs
 CRITERIAS,Critères,Critères
 COLUMNS,Colonnes,Colonnes
+CHOOSE_LANG,Choisir une langue,Colonnes
+MAIL_SENT_SUCCESS,Courriel envoyé avec success,mail sent ok
+MAIL_SENT_ERROR,Erreur d'envoi du courriel,mail sent error
+ACL_MANAGER,Gestion des permissions
+ACL,Permissions

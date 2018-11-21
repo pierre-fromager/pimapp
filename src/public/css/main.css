@@ -95,6 +95,10 @@ ul.nav.navbar-nav.navbar > li > a, .navbar-brand,section.widget > header > h3{
     text-transform: capitalize;
 }
 
+.form-element-wrapper > p, .form-submit {
+    text-transform: capitalize;
+}
+
 a.anchor{
     display: block;
     position: relative;

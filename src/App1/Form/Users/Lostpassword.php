@@ -9,18 +9,19 @@
 namespace App1\Form\Users;
 
 use Pimvc\Form;
+use App1\Helper\Lang\IEntries as ILang;
 
 class Lostpassword extends Form
 {
 
     const PWD_ACTION = '/user/lostpassword';
-    const EMAIL_VALIDATOR = 'isemail';
     const PWD_METHOD = 'post';
     const PWD_FORM_NAME = 'user-lostpwd';
     const PWD_FORM_WIDTH = 300;
-    const PWD_PARAM_EMAIL = 'email';
-    const PWD_TYPE_EMAIL = self::PWD_PARAM_EMAIL;
+    const _EMAIL = 'email';
+    const _WIDTH = 'width';
 
+    private $app;
     protected $baseUrl = '';
 
     /**
@@ -31,22 +32,21 @@ class Lostpassword extends Form
      */
     public function __construct($postedDatas)
     {
-        $this->baseUrl = \Pimvc\App::getInstance()->getRequest()->getBaseUrl();
+        $this->app = \Pimvc\App::getInstance();
+        $this->baseUrl = $this->app->getRequest()->getBaseUrl();
         parent::__construct(
             $this->_getFields(),
             self::PWD_FORM_NAME,
             $this->baseUrl . self::PWD_ACTION,
             self::PWD_METHOD,
             $postedDatas,
-            array()
+            []
         );
         $this->setAlign('normal');
         $this->setLabels($this->_getLabels());
         $this->setValidators($this->_getValidators());
-        $this->setOptions(['width' => self::PWD_FORM_WIDTH]);
-        $this->setFormWrapperId('wrapper-form-lost-password');
-        $this->setWrapperClass('email', 'form-element-wrapper col-sm-12');
-        $this->setClass('email', 'form-control');
+        $this->setOptions([self::_WIDTH => self::PWD_FORM_WIDTH]);
+        $this->setWrappers();
         $this->setTypes($this->_getTypes());
         $this->setsectionsize(3);
         $this->render();
@@ -64,13 +64,24 @@ class Lostpassword extends Form
     }
 
     /**
+     * setWrappers
+     *
+     */
+    private function setWrappers()
+    {
+        $this->setFormWrapperId('wrapper-form-lost-password');
+        $this->setWrapperClass('email', 'form-element-wrapper col-sm-12');
+        $this->setClass('email', 'form-control');
+    }
+
+    /**
      * _getLabels
      *
      * @return array
      */
     private function _getLabels()
     {
-        return [self::PWD_PARAM_EMAIL => 'Adresse Email'];
+        return [self::_EMAIL => $this->translate(ILang::__EMAIL)];
     }
 
     /**
@@ -80,7 +91,7 @@ class Lostpassword extends Form
      */
     private function _getFields()
     {
-        return [self::PWD_PARAM_EMAIL];
+        return [self::_EMAIL];
     }
 
     /**
@@ -91,7 +102,7 @@ class Lostpassword extends Form
     private function _getValidators()
     {
         $fields = $this->_getFields();
-        $validatorsName = array_fill(0, count($fields), self::EMAIL_VALIDATOR);
+        $validatorsName = array_fill(0, count($fields), 'isemail');
         $validators = array_combine($fields, $validatorsName);
         return $validators;
     }
@@ -104,8 +115,19 @@ class Lostpassword extends Form
     private function _getTypes()
     {
         $fields = $this->_getFields();
-        $typesName = array_fill(0, count($fields), self::PWD_TYPE_EMAIL);
+        $typesName = array_fill(0, count($fields), self::_EMAIL);
         $types = array_combine($fields, $typesName);
         return $types;
+    }
+
+    /**
+     * translate
+     *
+     * @param string $key
+     * @return string
+     */
+    private function translate(string $key): string
+    {
+        return $this->app->getTranslator()->translate($key);
     }
 }

@@ -5,6 +5,7 @@ return [
     'username' => 'account@domain.tld',
     'password' => 'account.domain.tld.password',
     'secure' => 'ssl',
+    'from' => 'sender.account@domain.tld',
     'dkim' => [
         'selector' => 'selector',
         'domain' => 'example.fr',

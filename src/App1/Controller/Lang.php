@@ -46,7 +46,7 @@ class Lang extends langHelperController
             return $this->redirect($this->baseUrl);
         }
         $widget = $this->getWidget(
-            faHelper::get(faHelper::LANGUAGE) . 'Choose langue',
+            faHelper::get(faHelper::LANGUAGE) . $this->translate(ILang::__CHOOSE_LANG),
             $this->getChangeLinks() . '<br style="clear:both"/>'
         );
         return (string) $this->getLayout((string) $widget);

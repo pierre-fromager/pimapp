@@ -2,11 +2,12 @@
 namespace App1\Helper\Reuse;
 
 use \Pimvc\Views\Helpers\Widgets\Standart as standartWidget;
-use \App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
-use \App1\Views\Helpers\Layouts\Responsive as responsiveLayout;
 use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Tools\Assist\Session as sessionAssistTools;
 use \Pimvc\Html\Element\Decorator as htmlElement;
+use \App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
+use \App1\Views\Helpers\Layouts\Responsive as responsiveLayout;
+use \App1\Tools\Mail\Sender as mailSender;
 
 trait Controller
 {
@@ -141,12 +142,54 @@ trait Controller
      * @param string $action
      * @return array
      */
-    private function menuAction($title, $icon, $action)
+    protected function menuAction($title, $icon, $action)
     {
         return [
             self::_TITLE => $title
             , self::_ICON => $icon
             , self::_LINK => $this->baseUrl . $action
         ];
+    }
+
+    /**
+     * sendMail
+     *
+     * @param string $from
+     * @param string $to
+     * @param string $subject
+     * @param string $content
+     * @return string
+     */
+    protected function sendMail(string $from, string $to, string $subject, string $content): string
+    {
+        $mailSender = (new mailSender)->setFrom($from)->setTo($to)->setSubject($subject)->setBody($content);
+        $mailError = '';
+        try {
+            $mailSender->send();
+        } catch (\Exception $ex) {
+            $mailError = $ex->getMessage();
+        }
+        return $mailError;
+    }
+
+    /**
+     * getConfigSettings
+     *
+     * @param type $entry
+     * @return array
+     */
+    protected function getConfigSettings(string $entry)
+    {
+        return $this->getApp()->getConfig()->getSettings($entry);
+    }
+
+    /**
+     * getAcls
+     *
+     * @return array
+     */
+    protected function getAcls(): array
+    {
+        return $this->getApp()->middlewareItems['acl']->getRessources()[get_called_class()];
     }
 }

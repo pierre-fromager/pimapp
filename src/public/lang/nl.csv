@@ -6,11 +6,13 @@ LOGIN,login,Connexion
 LOGOUT,logout, de deco
 LOGIN_LABEL,instappen,Se connecter
 USERS,gebruikers,users
-USERS_EDIT_TITLE,gebruiker bewerken,User edit title
-CHANGE_PASSWORD,wachtwoord wijzigen,password change
 USER_ACOUNT_MANAGEMENT,gebruikersaccountmanager,user management title
-EMAIL,e-mail,Email
+USERS_EDIT_TITLE,gebruiker bewerken,User edit title
+USER_SIGNIN,Utilisateurs,Users
+CHANGE_PASSWORD,wachtwoord wijzigen,password change
 LOST_PASSWORD,wachtwoord verloren,Mot de passe perdu
+EMAIL,e-mail,Email
+INCORRECT_EMAIL,Courriel incorrect,Email
 PASSWORD,wachtwoord,Mot de passe
 WELCOME_TO,welkom bij,Bienvenue sur
 PROPULSED_BY,voortgestuwd door,Propulsé par
@@ -21,3 +23,4 @@ DATABASE,databank,base de données
 SENSORS,sensors,sensors
 CRITERIAS,criteria,Critères
 COLUMNS,kolommen,Colonnes
+CHOOSE_LANG,Choisir une langue,Colonnes,Colonnes

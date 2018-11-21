@@ -1,13 +1,12 @@
 <?php
-
 /**
  * Description of App1\Helper\Lang\IEntries
  */
-
 namespace App1\Helper\Lang;
 
 interface IEntries
 {
+
     const __HOME = 'HOME';
     const __AUTH_FAIL = 'AUTH_FAIL';
     const __INVALID_CREDENTIAL = 'INVALID_CREDENTIAL';
@@ -18,16 +17,34 @@ interface IEntries
     const __CHANGE_PASSWORD = 'CHANGE_PASSWORD';
     const __PASSWORD = 'PASSWORD';
     const __EMAIL = 'EMAIL';
+    const __INCORRECT_EMAIL = 'INCORRECT_EMAIL';
     const __WELCOME_TO = 'WELCOME_TO';
     const __PROPULSED_BY = 'PROPULSED_BY';
     const __PERMISSIONS = 'PERMISSIONS';
     const __LANG = 'LANG';
+    const __CHOOSE_LANG = 'CHOOSE_LANG';
     const __TRAIN = 'TRAIN';
     const __DATABASE = 'DATABASE';
     const __USER_ACOUNT_MANAGEMENT = 'USER_ACOUNT_MANAGEMENT';
     const __USERS = 'USERS';
     const __USERS_EDIT_TITLE = 'USERS_EDIT_TITLE';
+    const __USERS_SIGN_IN = 'USER_SIGNIN';
+    const __USERS_SIGN_UP = 'USER_SIGNUP';
+    const __USER_EDIT_INTEG_ERROR = 'USER_EDIT_INTEG_ERROR';
+    const __USER_EDIT_TITLE = 'USER_EDIT_TITLE';
+    const __USER_DETAIL_TITLE = 'USER_DETAIL_TITLE';
+    const __USER_MESSAGE_REGISTRATION_SUCCESS = 'USER_MESSAGE_REGISTRATION_SUCCESS';
+    const __USER_MESSAGE_REGISTRATION_FAIL = 'USER_MESSAGE_REGISTRATION_FAIL';
+    const __USER_MESSAGE_DISCONECTED = 'USER_MESSAGE_DISCONECTED';
+    const __USER_MESSAGE_CONNECTED = 'USER_MESSAGE_CONECTED';
+    const __USER_ACOUNT_ENABLE = 'USER_ACOUNT_ENABLE';
+    const __USER_CHANGE_PASSWORD_SUCCESS = 'USER_CHANGE_PASSWORD_SUCCESS';
+    const __USER_CHANGE_PASSWORD_ERROR = 'USER_CHANGE_PASSWORD_ERROR';
+    const __MAIL_SENT_SUCCESS = 'MAIL_SENT_SUCCESS';
+    const __MAIL_SENT_ERROR = 'MAIL_SENT_ERROR';
     const __SENSORS = 'SENSORS';
     const __CRITERIAS = 'CRITERIAS';
     const __COLUMNS = 'COLUMNS';
+    const __ACL_MANAGER = 'ACL_MANAGER';
+    const __ACL = 'ACL';
 }
