@@ -79,8 +79,10 @@ class Acl implements \Pimvc\Http\Interfaces\Layer
     {
         $this->role = \Pimvc\Tools\Session::getProfil();
         $prerouting = $this->app->getRouter()->compile();
-        if (is_null($prerouting) || count($prerouting) === 1) {
+        if (is_null($prerouting) || count($prerouting) === 0) {
             $prerouting[0] = self::ACL_DEFAULT_CONTROLLER;
+            $prerouting[1] = self::ACL_DEFAULT_ACTION;
+        } elseif (count($prerouting) === 1) {
             $prerouting[1] = self::ACL_DEFAULT_ACTION;
         }
         list($this->controller, $this->action) = $prerouting;
