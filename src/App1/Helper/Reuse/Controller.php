@@ -24,7 +24,7 @@ trait Controller
      */
     protected function getNav()
     {
-        return (new bootstrapNav)->setParams($this->getNavConfig())->render();
+        return (new bootstrapNav)->setParams($this->getNavConfig())->render()->translate();
     }
 
     /**
@@ -121,6 +121,17 @@ trait Controller
     }
 
     /**
+     * transMark
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function transMark(string $key): string
+    {
+        return bootstrapNav::transMark($key);
+    }
+
+    /**
      * getAssist
      *
      * @return array
@@ -144,11 +155,7 @@ trait Controller
      */
     protected function menuAction($title, $icon, $action)
     {
-        return [
-            self::_TITLE => $title
-            , self::_ICON => $icon
-            , self::_LINK => $this->baseUrl . $action
-        ];
+        return bootstrapNav::menuAction($title, $icon, $action);
     }
 
     /**
@@ -190,6 +197,36 @@ trait Controller
      */
     protected function getAcls(): array
     {
-        return $this->getApp()->middlewareItems['acl']->getRessources()[get_called_class()];
+        return $this->getApp()->middlewareItems['acl']->getRessources();
+    }
+
+    /**
+     * getCalledNamespace
+     *
+     * @return string
+     */
+    protected function getCalledNamespace(): string
+    {
+        return str_replace(
+            '/',
+            '\\',
+            dirname(str_replace('\\', '/', static::class))
+        );
+    }
+
+    /**
+     * getControllerNamespace
+     *
+     * @return string
+     */
+    protected function getControllerNamespace(): string
+    {
+        return $this->getApp()->path . self::_NAMESPACE;
+        /*
+          return str_replace(
+          '/',
+          '\\',
+          dirname(str_replace('\\', '/', static::class))
+          ); */
     }
 }

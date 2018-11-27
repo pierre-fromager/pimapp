@@ -6,7 +6,7 @@ LOGIN,Connexion,Connexion
 LOGOUT,Déconnexion,Deco
 LOGIN_LABEL,Se connecter,Se connecter
 USERS,Utilisateurs,Users
-USER_ACOUNT_MANAGEMENT,Gestion des comptes utilisateur,user management title
+USER_ACOUNT_MANAGEMENT,Gestion utilisateur,user management title
 USERS_EDIT_TITLE,Edition compte utilisateur,User edit title
 USER_SIGNIN,Se connecter,Users
 USER_SIGNUP,s'inscrire,Users
@@ -32,10 +32,15 @@ LANG,Langue,changer langue nav
 TRAIN,lignes,lignes train idf
 DATABASE,base de données,base de données
 SENSORS,Sondes,Capteurs
+SENSORS_CONFIG,Sondes config,Capteurs config
 CRITERIAS,Critères,Critères
 COLUMNS,Colonnes,Colonnes
 CHOOSE_LANG,Choisir une langue,Colonnes
 MAIL_SENT_SUCCESS,Courriel envoyé avec success,mail sent ok
 MAIL_SENT_ERROR,Erreur d'envoi du courriel,mail sent error
-ACL_MANAGER,Gestion des permissions
-ACL,Permissions
+METRO_LINES_MANAGEMENT,Lignes,Lignes,
+METRO_LINES_SEARCH,Itinéraires,
+METRO_STATIONS_MANAGEMENT,Stations,
+ACL_MANAGER,Gestion des permissions,
+ACL,Permissions,
+CRUD_MANAGEMENT,Crud,

@@ -67,11 +67,14 @@
         "test": [
             "phpunit --bootstrap tests/bootstrap.php tests/*.php"
         ],
+         "testpreg": [
+            "phpunit --bootstrap tests/bootstrap.php tests/TestPreg.php"
+        ],
         "checklint": [
             "phpcs --standard=PSR2 --warning-severity=0 --extensions=php src/*"
         ],
         "lint": [
-            "phpcbf --standard=PSR2 --warning-severity=0 --extensions=php src/* tests/*"
+            "phpcbf --encoding=utf-8 --standard=PSR2 --warning-severity=0 --extensions=php src/* tests/*"
         ]
     }
 }
