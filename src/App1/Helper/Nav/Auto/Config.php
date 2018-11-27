@@ -1,10 +1,10 @@
 <?php
-
 namespace App1\Helper\Nav\Auto;
 
 use \Pimvc\Views\Helpers\Fa as faHelper;
 use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Tools\Acl as aclTools;
+use \Pimvc\Controller as AbstractController;
 use \App1\Helper\Lang\IEntries as ILang;
 use \App1\Views\Helpers\Bootstrap\Nav;
 use \App1\Helper\Nav\Icon;
@@ -28,18 +28,14 @@ class Config
     protected $config;
     protected $app;
     protected $baseUrl;
-    protected $calledNamespace;
 
     /**
      * __construct
      *
-     * @param string $calledNamespace
-     * @param array $actionFilter
      * @return $this
      */
-    public function __construct(string $calledNamespace)
+    public function __construct()
     {
-        $this->calledNamespace = $calledNamespace;
         $this->app = \Pimvc\App::getInstance();
         $this->baseUrl = $this->app->getRequest()->getBaseUrl();
         $this->actionFilter = [];
@@ -68,24 +64,24 @@ class Config
         $this->prepareAcls();
         $this->config = [];
         $p = sessionTools::getProfil();
-        $parts = explode(self::DELIM, $this->calledNamespace);
-        $cns = implode(self::DELIM, array_slice($parts, 0, 2)) . self::DELIM;
-        $cnsLen = strlen($cns);
+        $cnsLen = $this->getControllerRootNamespaceLen() + 1;
         foreach ($this->acls as $controller => $actions) {
             foreach ($actions as $action => $roles) {
-                if ($this->matchFilter($action) && $roles[$p] == aclTools::ACL_ALLOW) {
+                if ($roles[$p] == aclTools::ACL_ALLOW) {
                     $link = self::SL . strtolower(
                         substr(
                             str_replace(self::DELIM, self::SL, $controller),
                             $cnsLen
                         ) . self::SL . $action
                     );
-                    $this->config[] = Nav::menuAction(
-                        Title::get($link),
-                        Icon::get($link),
-                        $link,
-                        $this->baseUrl
-                    );
+                    if ($this->matchFilter($link)) {
+                        $this->config[] = Nav::menuAction(
+                            Title::get($link),
+                            Icon::get($link),
+                            $link,
+                            $this->baseUrl
+                        );
+                    }
                 }
             }
         }
@@ -173,5 +169,16 @@ class Config
             self::MATCH_START . $regAction . self::MATCH_END,
             $action
         );
+    }
+
+    /**
+     * getControllerRootNamespaceLen
+     *
+     * @return string
+     */
+    protected function getControllerRootNamespaceLen(): int
+    {
+        $rootNs = explode('\\', static::class)[0] . '\\' . AbstractController::_NAMESPACE;
+        return strlen($rootNs);
     }
 }
