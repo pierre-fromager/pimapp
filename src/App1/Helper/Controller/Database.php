@@ -3,7 +3,7 @@
 /**
  * class App1\Helper\Controller\Database
  *
- * is a controller for database table description and code generation.
+ * is a controller helper for database table description and code generation.
  *
  * @author Pierre Fromager <pf@pier-infor.fr>
  * @copyright Pier-Infor
@@ -13,28 +13,31 @@
 namespace App1\Helper\Controller;
 
 use \Pimvc\Controller\Basic as basicController;
-use \Pimvc\Tools\Session as sessionTools;
-use Pimvc\Views\Helpers\Collection\Css as cssCollection;
-use Pimvc\Views\Helpers\Collection\Js as jsCollection;
+use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
+use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
+use \Pimvc\Helper\Model\Mysql as mysqlModelHelper;
+use \Pimvc\Helper\Model\Fourd as fourdModelHelper;
+use \Pimvc\Helper\Model\Pgsql as pgsqlModelHelper;
+use \Pimvc\Helper\Model\IHelper as interfaceModelHelper;
+use \Pimvc\Helper\Db\Field\Name\Normalize as FieldNormalizer;
 use \App1\Views\Helpers\Bootstrap\Button as bootstrapButton;
-use \Pimvc\Views\Helpers\Widgets\Standart as widgetHelper;
-use Pimvc\Helper\Model\Mysql as mysqlModelHelper;
-use Pimvc\Helper\Model\Fourd as fourdModelHelper;
-use Pimvc\Helper\Model\Pgsql as pgsqlModelHelper;
-use Pimvc\Helper\Model\IHelper as interfaceModelHelper;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Database extends basicController implements interfaceModelHelper
 {
 
-    const _TITLE = 'title';
-    const _ICON = 'icon';
-    const _LINK = 'link';
-    const _ITEMS = 'items';
-    const _TEXT = 'text';
+    use \App1\Helper\Reuse\Controller;
+
     const _ID = 'id';
     const PARAM_TABLES_4D = 'tables-4d';
     const LAYOUT_NAME = 'responsive';
     const LABEL_GENERATE_CODE = 'Code';
+    const DOCUMENT_MIME_CSV = 'text/csv';
+    const DOCUMENT_MIME_QIF = 'application/octet-stream';
+    const DOCUMENT_UPLOAD_EXTRA = 'Le fichier doit porter les extensions suivantes ';
+    const FORM_FILE_MAX_FILESIZE = 52428800;
+    const DOCUMENT_PATH = 'cache/documents/';
+    const UPLOAD_SUCCESS = 'Upload successful for ';
 
     protected $baseUrl = '';
     protected $request = null;
@@ -83,7 +86,9 @@ class Database extends basicController implements interfaceModelHelper
     private function initAssets()
     {
         $cssPath = '/public/css/';
-        $cssAssets = ['tables/table-6.css', 'widget.css', 'spinkit/cube-grid.css'];
+        $cssAssets = [
+            'tables/table-6.css', 'widget.css', 'spinkit/cube-grid.css'
+        ];
         for ($c = 0; $c < count($cssAssets); $c++) {
             cssCollection::add($cssPath . $cssAssets[$c]);
         }
@@ -186,6 +191,80 @@ class Database extends basicController implements interfaceModelHelper
     }
 
     /**
+     * qif2csv
+     *
+     * @param string $filename
+     * @return string
+     */
+    protected function qif2csv(string $filename): string
+    {
+        $qif = (new \App1\Helper\File\Import\Qif($filename))->parse();
+        $csv = new \Pimvc\File\Csv\Parser();
+        $csv->delimiter = ';';
+        $csv->outputDelimiter = ';';
+        $qifData = $qif->asArray();
+        $csv->inputEncoding = 'UTF-8';
+        $csv->outputEncoding = 'UTF-8';
+        $csv->titles = array_keys($qifData[0]);
+        $csv->fields = array_keys($qifData[0]);
+        $csv->data = $qifData;
+        $csvFilename = dirname($filename) . '/' . substr(basename($filename), 0, -3) . 'csv';
+        $csv->save($csvFilename);
+        return $csvFilename;
+    }
+
+    /**
+     * postProcessUploadCsv
+     *
+     * @param string $filename
+     */
+    protected function postProcessUploadCsv(string $filename)
+    {
+        $format = substr($filename, -3);
+        if ($format === 'qif') {
+            $filename = $this->qif2csv($filename);
+        }
+        $csvContent = preg_replace(
+            '/^[ \t]*[\r\n]+/m',
+            '',
+            file_get_contents($filename)
+        );
+        file_put_contents($filename, $this->removeUtf8Bom($csvContent));
+    }
+
+    /**
+     * csvInfo
+     *
+     * @param string $filename
+     * @return array
+     */
+    protected function csvInfo(string $filename): array
+    {
+        $filterName = \App1\Helper\Stream\Filter\Csv::MODE_COUNT;
+        stream_filter_register(
+            \App1\Helper\Stream\Filter\Csv::MODE_ALL,
+            \App1\Helper\Stream\Filter\Csv::class
+        );
+        $filter = 'php://filter/read=' . $filterName . '/resource=file://' . $filename;
+        $content = file_get_contents($filter);
+        $result = \json_decode($content, true);
+        unset($content);
+        return (is_null($result)) ? [] : $result;
+    }
+
+    /**
+     * removeUtf8Bom
+     *
+     * @param string $text
+     * @return string
+     */
+    private function removeUtf8Bom(string $text): string
+    {
+        $bom = pack('H*', 'EFBBBF');
+        return preg_replace("/^$bom/", '', $text);
+    }
+
+    /**
      * getConscolumn
      *
      * @param string $contrainName
@@ -243,109 +322,63 @@ class Database extends basicController implements interfaceModelHelper
      */
     protected function getNavConfig()
     {
-        $isAuth = sessionTools::isAuth();
-        $isAdmin = sessionTools::isAdmin();
-        $items = [];
-        $authLink = $this->menuAction(
-            ($isAuth) ? 'Logout' : 'Login',
-            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
-            ($isAuth) ? '/user/logout' : '/user/login'
-        );
-        $freeItems = [
-            $this->menuAction('Change lang', 'fa fa-language', '/lang/change'),
+        $filter = [
+            '(acl.*)\/(.*)(ge)$',
+            '(user.*)\/(.*)(it)$',
+            //'(database.*)\/((?!async)csv)$',
+            '(database.*)\/((im)|(up))',
+            '(database.*)\/(.*)(ex|ge|il|it|rd|er)$',
+            '(database.*)\/(tables(?!4d))',
+            '(crud.*)\/(.*)(ge)$'
         ];
-        $items = array_merge($items, $freeItems);
-        if ($isAdmin) {
-            $adminItems = [
-                $this->menuAction('Mysql', 'fa fa-database', '/database/tablesmysql'),
-                $this->menuAction('Pgsql', 'fa fa-database', '/database/tablespgsql'),
-                //$this->menuAction('4d', 'fa fa-database', '/database/tables4d'),
-                $this->menuAction('Crud', 'fa fa-cog', '/crud'),
-                $this->menuAction('Csv upload', 'fa fa-file', '/database/uploadcsv'),
-                $this->menuAction('Csv import', 'fa fa-file-text', '/database/importcsv'),
-            ];
-            $items = array_merge($items, $adminItems);
-        }
-        if ($isAuth) {
-            $authItems = [
-                $this->menuAction('User', 'fa fa-user', '/user/edit'),
-            ];
-            $items = array_merge($items, $authItems);
-        }
-        array_push($items, $authLink);
-        $navConfig = [
-            self::_TITLE => [
-                self::_TEXT => 'Home',
-                self::_ICON => 'fa fa-home',
-                self::_LINK => $this->baseUrl
-            ],
-            self::_ITEMS => $items
-        ];
-        return $navConfig;
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**
-     * menuAction
+     * getNormalizedHeaders
      *
-     * @param string $title
-     * @param string $icon
-     * @param string $action
+     * @param string $filepath
+     * @param string $delimiter
      * @return array
      */
-    private function menuAction($title, $icon, $action)
+    protected function getNormalizedHeaders(string $filepath, string $delimiter): array
     {
-        return [
-            self::_TITLE => $title
-            , self::_ICON => $icon
-            , self::_LINK => $this->baseUrl . $action
-        ];
+        $parser = new \Pimvc\File\Csv\Parser();
+        $parser->delimiter = $delimiter;
+        $parser->offset = 0;
+        $parser->limit = 1;
+        $parser->parse($filepath);
+        $headers = $parser->titles;
+        unset($parser);
+        return FieldNormalizer::normalizeFieldsName($headers);
     }
 
     /**
-     * getWidget
+     * getPath
      *
-     * @return Pimvc\Views\Helpers\Widget
+     * @return string
      */
-    protected function getWidget($title, $content, $id = '')
+    protected function getDocumentPath()
     {
-        $widget = (new widgetHelper())->setTitle($title);
-        if ($id) {
-            $widget->setBodyOptions(['id' => $id, 'class' => 'body']);
+        $documentPath = $this->getApp()->getPath() . self::DOCUMENT_PATH;
+        if (!file_exists($documentPath)) {
+            mkdir($documentPath, 0777, true);
         }
-        $widget->setBody((string) $content);
-        $widget->render();
-        return (string) $widget;
+        return $documentPath;
     }
 
     /**
-     * getNav
+     * countFileLines
      *
-     * @return \App1\Views\Helper\Bootstrap\Nav
+     * @param string $filename
+     * @return int
      */
-    protected function getNav()
+    protected function countFileLines($filename): int
     {
-        $nav = (new \App1\Views\Helpers\Bootstrap\Nav());
-        $nav->setParams($this->getNavConfig())->render();
-        return $nav;
-    }
-
-    /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content, $nav = true)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => $content];
-        if ($nav) {
-            $layoutParams['nav'] = $this->getNav();
-        }
-        $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
-        return $layout;
+        $fh = new \SplFileObject($filename, 'r');
+        $fh->seek(PHP_INT_MAX);
+        $nbLine = $fh->key();
+        unset($fh);
+        return (int) $nbLine;
     }
 }

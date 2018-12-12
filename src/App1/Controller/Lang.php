@@ -26,7 +26,7 @@ class Lang extends langHelperController
      */
     final public function index()
     {
-        return $this->redirect($this->baseUrl . '/lang/change');
+        return $this->redirect($this->baseUrl . '/lang/manage');
     }
 
     /**
@@ -34,7 +34,7 @@ class Lang extends langHelperController
      *
      * @return array
      */
-    final public function change()
+    final public function manage()
     {
         if ($wanted = $this->getParams(self::_NAME)) {
             foreach ($this->langs as $langCode => $langName) {
@@ -43,7 +43,6 @@ class Lang extends langHelperController
                     $this->getApp()->setLocale($locale);
                 }
             }
-            return $this->redirect($this->baseUrl);
         }
         $widget = $this->getWidget(
             faHelper::get(faHelper::LANGUAGE) . $this->translate(ILang::__CHOOSE_LANG),

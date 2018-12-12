@@ -66,6 +66,10 @@ final class Crud extends helperCrudController
      */
     final public function manage()
     {
+        $ready = ($this->slot && $this->table && $this->tableExists === true);
+        if (!$ready) {
+            return $this->redirect($this->baseUrl . '/crud/index');
+        }
         $this->setPageSize();
         $fieldList = array_map(function (modelField $v) {
             return $v->getName();

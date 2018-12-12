@@ -1,4 +1,5 @@
 <?php
+
 namespace App1\Helper\Nav\Auto;
 
 use \Pimvc\Views\Helpers\Fa as faHelper;
@@ -64,14 +65,14 @@ class Config
         $this->prepareAcls();
         $this->config = [];
         $p = sessionTools::getProfil();
-        $cnsLen = $this->getControllerRootNamespaceLen() + 1;
+        $crnsLen = strlen($this->getControllerRootNamespace()) + 1;
         foreach ($this->acls as $controller => $actions) {
             foreach ($actions as $action => $roles) {
                 if ($roles[$p] == aclTools::ACL_ALLOW) {
                     $link = self::SL . strtolower(
                         substr(
                             str_replace(self::DELIM, self::SL, $controller),
-                            $cnsLen
+                            $crnsLen
                         ) . self::SL . $action
                     );
                     if ($this->matchFilter($link)) {
@@ -132,18 +133,21 @@ class Config
     protected function prepareAcls()
     {
         $this->acls = $this->getAcls();
+        unset($this->acls[$this->getCurrentController()][$this->getCurrentAction()]);
         $apis = array_filter(array_keys($this->acls), function ($v) {
             return strpos($v, self::API_PREFIX) !== false;
         });
         foreach ($apis as $api) {
             unset($this->acls[$api]);
         }
+        $defaultAction = strtolower(AbstractController::DEFAULT_ACTION);
         unset(
             $this->acls[\App1\Controller\Error::class],
-            $this->acls[\App1\Controller\Home::class],
+            $this->acls[\App1\Controller\Home::class][$defaultAction],
             $this->acls[\App1\Controller\User::class][self::_LOGIN],
             $this->acls[\App1\Controller\User::class][self::_LOGOUT]
         );
+        ksort($this->acls);
     }
 
     /**
@@ -172,13 +176,33 @@ class Config
     }
 
     /**
-     * getControllerRootNamespaceLen
+     * getControllerRootNamespace
      *
      * @return string
      */
-    protected function getControllerRootNamespaceLen(): int
+    protected function getControllerRootNamespace(): string
     {
-        $rootNs = explode('\\', static::class)[0] . '\\' . AbstractController::_NAMESPACE;
-        return strlen($rootNs);
+        return explode(self::DELIM, static::class)[0]
+                . self::DELIM . AbstractController::_NAMESPACE;
+    }
+
+    /**
+     * getCurrentController
+     *
+     * @return string
+     */
+    protected function getCurrentController(): string
+    {
+        return $this->getControllerRootNamespace() . self::DELIM . $this->app->getController()->getName();
+    }
+
+    /**
+     * getCurrentAction
+     *
+     * @return string
+     */
+    protected function getCurrentAction(): string
+    {
+        return strtolower($this->app->getController()->getAction());
     }
 }

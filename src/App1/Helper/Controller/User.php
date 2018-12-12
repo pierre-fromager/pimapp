@@ -13,7 +13,7 @@ use \Pimvc\Controller\Basic as basicController;
 use \Pimvc\Tools\Session as sessionTools;
 use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
-use \Pimvc\Views\Helpers\Fa as faHelper;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 use \App1\Model\Users as modelUser;
 use \App1\Form\Users\Edit as editUsersForm;
 use \App1\Helper\Lang\IEntries as ILang;
@@ -32,12 +32,8 @@ class User extends basicController
     const _STATUS = modelUser::_STATUS;
     const _TOKEN = modelUser::_TOKEN;
     const _LOGIN = modelUser::_LOGIN;
-    const _NAME = 'name';
     const _TITLE = 'title';
-    const _ICON = 'icon';
-    const _LINK = 'link';
-    const _TEXT = 'text';
-    const _ITEMS = 'items';
+    const _NAME = 'name';
     const _ORDER = 'order';
     const _PAGE = 'page';
     const VIEW_USER_PATH = '/Views/User/';
@@ -79,49 +75,16 @@ class User extends basicController
      *
      * @return array
      */
-    protected function getNavConfig()
+    protected function getNavConfig(): array
     {
-        $items = [];
-        $isAuth = sessionTools::isAuth();
-        $authLink = $this->menuAction(
-            ($isAuth) ? $this->translate(ILang::__LOGOUT) : $this->translate(ILang::__LOGIN),
-            ($isAuth) ? faHelper::getFontClass(faHelper::SIGN_OUT) : faHelper::getFontClass(faHelper::SIGN_IN),
-            ($isAuth) ? '/user/logout' : '/user/login'
-        );
-        $isAdmin = sessionTools::isAdmin();
-        if ($isAdmin) {
-            $items += [
-                $this->menuAction(
-                    $this->translate(ILang::__PERMISSIONS),
-                    faHelper::getFontClass(faHelper::LOCK),
-                    '/acl/manage'
-                ),
-                $this->menuAction(
-                    $this->translate(ILang::__CHANGE_PASSWORD),
-                    faHelper::getFontClass(faHelper::LOCK),
-                    '/user/changepassword'
-                ),
-                $this->menuAction(
-                    $this->translate(ILang::__DATABASE),
-                    faHelper::getFontClass(faHelper::DATABASE),
-                    '/database/tablesmysql'
-                )
-            ];
-        }
-        if ($isAuth) {
-            $authItems = [];
-            $items = array_merge($items, $authItems);
-        }
-        array_push($items, $authLink);
-        $navConfig = [
-            self::_TITLE => [
-                self::_TEXT => $this->translate(ILang::__HOME),
-                self::_ICON => faHelper::getFontClass(faHelper::HOME),
-                self::_LINK => $this->baseUrl
-            ],
-            self::_ITEMS => $items
+        $filter = [
+            '(user)\/(.*)(ge|il|it|rd|er)$',
+            '(acl)\/(.*)(ge)$',
+            '(metro)\/(lignes)\/(.*)(ch)$',
+            '(crud)\/(.*)(ge)$',
+            '(probes)\/(.*)(ge)$',
         ];
-        return $navConfig;
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**
@@ -247,7 +210,6 @@ class User extends basicController
      */
     protected function getLostPasswordLinks(): string
     {
-
         $loginLink = glyphHelper::getLinked(
             glyphHelper::LOG_IN,
             $this->baseUrl . '/user/login',

@@ -11,7 +11,6 @@ namespace App1\Helper\Controller\Metro;
 use \Pimvc\Input\Filter as inputFilter;
 use \Pimvc\Input\Custom\Filters\Range as inputRange;
 use \Pimvc\Tools\Session as sessionTools;
-
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
@@ -24,10 +23,10 @@ use \Pimvc\Views\Helpers\Gis\Osm\Map as OsmMap;
 use \Pimvc\Views\Helpers\Gis\Osm\Options as OsmMapOptions;
 use \Pimvc\Views\Helpers\Gis\Osm\Marker\Options as OsmMarkerOptions;
 use \Pimvc\Views\Helpers\Gis\Osm\Marker as OsmMarker;
-use App1\Model\Metro\Lignes as modelLignes;
-use App1\Model\Metro\Stations as modelStations;
-use App1\Helper\Format\Metro\Lignes\Colors as helperMetroLigneColors;
-use \App1\Helper\Lang\IEntries as ILang;
+use \App1\Model\Metro\Lignes as modelLignes;
+use \App1\Model\Metro\Stations as modelStations;
+use \App1\Helper\Format\Metro\Lignes\Colors as helperMetroLigneColors;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Lignes extends basicController
 {
@@ -73,8 +72,8 @@ class Lignes extends basicController
     protected function init()
     {
         $this->modelConfig = $this->getApp()->getConfig()->getSettings('dbPool');
-        $this->lignesModel = new \App1\Model\Metro\Lignes($this->modelConfig);
-        $this->stationsModel = new \App1\Model\Metro\Stations($this->modelConfig);
+        $this->lignesModel = new modelLignes($this->modelConfig);
+        $this->stationsModel = new modelStations($this->modelConfig);
         $this->baseUrl = $this->getApp()->getRequest()->getBaseUrl();
         $this->setAssets();
     }
@@ -286,65 +285,23 @@ class Lignes extends basicController
      *
      * @return array
      */
-    protected function getNavConfig()
+    protected function getNavConfig(): array
     {
-        $items = [];
-        $isAuth = sessionTools::isAuth();
-        $isPro = sessionTools::getProfil() === 'pro';
-        $authLink = $this->menuAction(
-            ($isAuth) ? $this->translate(ILang::__LOGOUT) : $this->translate(ILang::__LOGIN),
-            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
-            ($isAuth) ? '/user/logout' : '/user/login'
-        );
-
-        $isAdmin = sessionTools::isAdmin();
-        if ($isAdmin) {
-            $items += [
-                [
-                    self::_TITLE => 'Acl'
-                    , self::PARAM_ICON => 'fa fa-lock'
-                    , self::PARAM_LINK => $this->baseUrl . '/acl/manage'
-                ],
-                [
-                    self::_TITLE => 'Database'
-                    , self::PARAM_ICON => 'fa fa-database'
-                    , self::PARAM_LINK => $this->baseUrl . '/database/tablesmysql'
-                ]
-            ];
-        }
-
-        $freeItems = [
-            [
-                self::_TITLE => 'Stations'
-                , self::PARAM_ICON => 'fa fa-subway'
-                , self::PARAM_LINK => $this->baseUrl . self::_URI_STATION_MANAGE
-            ],
-            [
-                self::_TITLE => 'Itinéraires'
-                , self::PARAM_ICON => 'fa fa-subway'
-                , self::PARAM_LINK => $this->baseUrl . self::SEARCH_ACTION
-            ]
+        $filter = [
+            '(user)\/(.*)(ge|it|word|er)$',
+            '(home)\/(.*)(board)$',
+            '(metro)\/(lignes|stations)\/(.*)(ge|ch)$',
+            '(crud)\/(.*)(ge)$',
         ];
-        $items = array_merge($items, $freeItems);
-
-        if ($isAuth) {
-            $authItems = [];
-            $items = array_merge($items, $authItems);
-        }
-
-        array_push($items, $authLink);
-        $navConfig = [
-            self::_TITLE => [
-                'text' => 'Home',
-                self::PARAM_ICON => 'fa fa-home',
-                self::PARAM_LINK => $this->baseUrl
-            ],
-            'items' => $items
-        ];
-        return $navConfig;
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
-    protected function getEditLinks()
+    /**
+     * getEditLinks
+     *
+     * @return string
+     */
+    protected function getEditLinks(): string
     {
         $isAdmin = sessionTools::isAdmin();
         $linkDetailId = ($this->hasValue(self::_ID)) ? '/id/' . $this->getParams(self::_ID) : '';
@@ -421,7 +378,7 @@ class Lignes extends basicController
      *
      * @return inputFilter
      */
-    protected function getIndexInputFilter()
+    protected function getIndexInputFilter(): inputFilter
     {
         return new inputFilter(
             $this->getParams(),
@@ -442,7 +399,7 @@ class Lignes extends basicController
      *
      * @return string
      */
-    protected function tile($s, $x, $y, $z)
+    protected function tile($s, $x, $y, $z): string
     {
         $cacheFile = $this->getApp()->getPath() . "cache/img/gis/osm/metro/$z/$x/$y.png";
         $cacheDir = dirname($cacheFile);
@@ -466,7 +423,7 @@ class Lignes extends basicController
      * @param int $z
      * @return string
      */
-    protected function downloadOsmMap($s, $x, $y, $z)
+    protected function downloadOsmMap($s, $x, $y, $z): string
     {
         if ($s && $z && $x && $y) {
             $client = new \GuzzleHttp\Client();

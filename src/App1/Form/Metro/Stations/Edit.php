@@ -32,11 +32,9 @@ class Edit extends Form
      * __construct
      *
      * @param array $postedDatas
-     * @param int $uid
-     * @param string $mode
      * @return App1\Form\Metro\Lignes\Edit
      */
-    public function __construct($postedDatas, $uid, $mode = '')
+    public function __construct($postedDatas)
     {
         $this->app = \Pimvc\App::getInstance();
         $this->baseUrl = $this->app->getRequest()->getBaseUrl();
@@ -44,7 +42,6 @@ class Edit extends Form
         $this->stationsModel = new modelStations($this->modelConfig);
         $this->isAdmin = sessionTool::isAdmin();
         $this->postedData = $postedDatas;
-        $this->setMode($mode);
         parent::__construct(
             $this->_getFields(),
             self::METRO_STATIONS_EDIT_FORM_NAME,
@@ -56,7 +53,6 @@ class Edit extends Form
         $this->setLabels($this->_getLabels());
         $this->setAlign('left');
         $this->Setsectionsize(20);
-        $this->setMode($mode);
         $this->setValues($this->postedData);
         $this->setValidLabelButton('Enregistrer');
         $this->render();

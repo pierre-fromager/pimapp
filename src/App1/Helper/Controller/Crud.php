@@ -20,6 +20,7 @@ use \Pimvc\Views\Helpers\Toolbar\Glyph as glyphToolbar;
 use \Pimvc\Views\Helpers\Glyph as glyphHelper;
 use \Pimvc\Helper\Model\IHelper as interfaceModelHelper;
 use \Pimvc\Tools\Assist\Session as sessionAssistTools;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Crud extends basicController implements interfaceModelHelper
 {
@@ -50,6 +51,7 @@ class Crud extends basicController implements interfaceModelHelper
     protected $slot;
     protected $crudInstance;
     protected $fields;
+    protected $tableExists;
 
     /**
      * init
@@ -93,7 +95,10 @@ class Crud extends basicController implements interfaceModelHelper
         }
         $this->adapter = $this->modelConfig[$this->slot][self::_ADAPTER];
         if ($this->slot && $this->adapter && $this->table) {
-            $this->setCrudInstance();
+            $this->setTableExists();
+            if ($this->tableExists) {
+                $this->setCrudInstance();
+            }
         }
     }
 
@@ -302,44 +307,15 @@ class Crud extends basicController implements interfaceModelHelper
      */
     protected function getNavConfig()
     {
-        $isAuth = sessionTools::isAuth();
-        $isAdmin = sessionTools::isAdmin();
-        $items = [];
-        $authLink = $this->menuAction(
-            ($isAuth) ? 'Logout' : 'Login',
-            ($isAuth) ? 'fa fa-sign-out' : 'fa fa-sign-in',
-            ($isAuth) ? '/user/logout' : '/user/login'
-        );
-        $freeItems = [
-            $this->menuAction('Change lang', 'fa fa-language', '/lang/change'),
+        $filter = [
+            '(acl.*)\/(.*)(ge)$',
+            '(user.*)\/(.*)(it)$',
+            //'(database.*)\/((?!async)csv)$',
+            '(database.*)\/((im)|(up))',
+            '(database.*)\/(.*)(ex|ge|il|it|rd|er)$',
+            '(database.*)\/(tables(?!4d))',
         ];
-        $items = array_merge($items, $freeItems);
-        if ($isAdmin) {
-            $adminItems = [
-                $this->menuAction('Mysql', 'fa fa-database', '/database/tablesmysql'),
-                $this->menuAction('Pgsql', 'fa fa-database', '/database/tablespgsql'),
-                //$this->menuAction('4d', 'fa fa-database', '/database/tables4d'),
-                $this->menuAction('Csv upload', 'fa fa-file', '/database/uploadcsv'),
-                $this->menuAction('Csv import', 'fa fa-file-text', '/database/importcsv'),
-            ];
-            $items = array_merge($items, $adminItems);
-        }
-        if ($isAuth) {
-            $authItems = [
-                $this->menuAction('User', 'fa fa-user', '/user/edit'),
-            ];
-            $items = array_merge($items, $authItems);
-        }
-        array_push($items, $authLink);
-        $navConfig = [
-            self::_TITLE => [
-                self::_TEXT => 'Home',
-                self::_ICON => 'fa fa-home',
-                self::_LINK => $this->baseUrl
-            ],
-            self::_ITEMS => $items
-        ];
-        return $navConfig;
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**
@@ -453,5 +429,22 @@ class Crud extends basicController implements interfaceModelHelper
         unset($cssAssets);
         unset($jsAssets);
         jsCollection::save();
+    }
+
+    /**
+     * setTableExists
+     * @return $this
+     */
+    private function setTableExists()
+    {
+        $forge = new \Pimvc\Db\Model\Forge($this->slot);
+        try {
+            $this->tableExists = $forge->tableExist(
+                $this->removeSchemaFromName($this->table)
+            );
+        } catch (\Exception $e) {
+            $this->tableExists = false;
+        };
+        return $this;
     }
 }

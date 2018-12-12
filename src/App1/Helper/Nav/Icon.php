@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * App1\Helper\Nav\Icon
  *
@@ -8,10 +7,48 @@
 
 namespace App1\Helper\Nav;
 
-use Pimvc\Views\Helpers\Fa as faHelper;
+use \Pimvc\Views\Helpers\Fa;
 
 class Icon
 {
+
+    const ICONS = [
+        '/home/dashboard' => Fa::DASHBOARD,
+        '/user/manage' => Fa::USER,
+        '/user/edit' => Fa::USER,
+        '/user/detail' => Fa::USER,
+        '/user/login' => Fa::SIGN_IN,
+        '/user/logout' => Fa::SIGN_OUT,
+        '/user/register' => Fa::CERTIFICATE,
+        '/user/lostpassword' => Fa::LOCK,
+        '/user/changepassword' => Fa::LOCK,
+        '/lang/manage' => Fa::LANGUAGE,
+        '/lang/import' => Fa::LANGUAGE,
+        '/lang/export' => Fa::LANGUAGE,
+        '/acl/manage' => Fa::LOCK,
+        '/metro/lignes/manage' => Fa::TRAIN,
+        '/metro/lignes/edit' => Fa::TRAIN,
+        '/metro/lignes/detail' => Fa::TRAIN,
+        '/metro/lignes/search' => Fa::TRAIN,
+        '/metro/stations/manage' => Fa::TRAIN,
+        '/metro/stations/edit' => Fa::TRAIN,
+        '/metro/stations/detail' => Fa::TRAIN,
+        '/probes/manage' => Fa::COMPASS,
+        '/probes/edit' => Fa::COMPASS,
+        '/probes/detail' => Fa::COMPASS,
+        '/probes/volumes' => Fa::LINE_CHART,
+        '/probes/export' => Fa::CLOUD_DOWNLOAD,
+        '/probesconfig/manage' => Fa::COMPASS,
+        '/probesconfig/edit' => Fa::COMPASS,
+        '/probesconfig/detail' => Fa::COMPASS,
+        '/crud/manage' => Fa::CUBE,
+        '/crud/edit' => Fa::PENCIL,
+        '/crud/detail' => Fa::EYE,
+        '/database/tablesmysql' => Fa::DATABASE,
+        '/database/tablespgsql' => Fa::DATABASE,
+        '/database/uploadcsv' => Fa::CLOUD_UPLOAD,
+        '/database/importcsv' => Fa::CLOUD_DOWNLOAD
+    ];
 
     /**
      * get
@@ -21,35 +58,18 @@ class Icon
      */
     public static function get(string $url): string
     {
-        if (strpos($url, 'home/index') !== false) {
-            return faHelper::getFontClass(faHelper::HOME);
-        } elseif (strpos($url, '/metro', 0) !== false) {
-            return faHelper::getFontClass(faHelper::TRAIN);
-        } elseif (strpos($url, 'user/manage') !== false) {
-            return faHelper::getFontClass(faHelper::USER);
-        } elseif (strpos($url, '/search') !== false) {
-            return faHelper::getFontClass(faHelper::SEARCH);
-        } elseif (strpos($url, '/login') !== false) {
-            return faHelper::getFontClass(faHelper::SIGN_IN);
-        } elseif (strpos($url, '/logout') !== false) {
-            return faHelper::getFontClass(faHelper::SIGN_OUT);
-        } elseif (strpos($url, 'lang/') !== false) {
-            return faHelper::getFontClass(faHelper::LANGUAGE);
-        } elseif (strpos($url, 'password') !== false) {
-            return faHelper::getFontClass(faHelper::LOCK);
-        } elseif (strpos($url, 'register') !== false) {
-            return faHelper::getFontClass(faHelper::CERTIFICATE);
-        } elseif (strpos($url, 'database') !== false) {
-            return faHelper::getFontClass(faHelper::DATABASE);
-        } elseif (strpos($url, 'acl') !== false) {
-            return faHelper::getFontClass(faHelper::DATABASE);
-        } elseif (strpos($url, 'probes/') !== false) {
-            return faHelper::getFontClass(faHelper::COMPASS);
-        } elseif (strpos($url, 'probesconfig/') !== false) {
-            return faHelper::getFontClass(faHelper::COG);
-        } elseif (strpos($url, 'crud/manage') !== false) {
-            return faHelper::getFontClass(faHelper::COG);
-        }
-        return faHelper::getFontClass(faHelper::QUESTION);
+        $key = (isset(self::ICONS[$url])) ? self::ICONS[$url] : Fa::QUESTION;
+        return self::getIcon($key);
+    }
+
+    /**
+     * getIcon
+     *
+     * @param string $key
+     * @return string
+     */
+    private static function getIcon(string $key): string
+    {
+        return Fa::getFontClass($key);
     }
 }

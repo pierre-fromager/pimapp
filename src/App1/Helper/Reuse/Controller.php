@@ -1,4 +1,5 @@
 <?php
+
 namespace App1\Helper\Reuse;
 
 use \Pimvc\Views\Helpers\Widgets\Standart as standartWidget;
@@ -15,7 +16,7 @@ trait Controller
     /**
      * getNavConfig
      */
-    abstract protected function getNavConfig();
+    abstract protected function getNavConfig(): array;
 
     /**
      * getNav
@@ -56,10 +57,10 @@ trait Controller
             'nav' => ($nav) ? $this->getNav() : ''
         ];
         return (new responsiveLayout)
-                ->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
+                        ->setApp($this->getApp())
+                        ->setName(self::LAYOUT_NAME)
+                        ->setLayoutParams($layoutParams)
+                        ->build();
     }
 
     /**
@@ -108,7 +109,7 @@ trait Controller
             );
         }
     }
-
+    
     /**
      * translate
      *
@@ -207,26 +208,8 @@ trait Controller
      */
     protected function getCalledNamespace(): string
     {
-        return str_replace(
-            '/',
-            '\\',
-            dirname(str_replace('\\', '/', static::class))
-        );
-    }
-
-    /**
-     * getControllerNamespace
-     *
-     * @return string
-     */
-    protected function getControllerNamespace(): string
-    {
-        return $this->getApp()->path . self::_NAMESPACE;
-        /*
-          return str_replace(
-          '/',
-          '\\',
-          dirname(str_replace('\\', '/', static::class))
-          ); */
+        $nsParts = explode('\\', static::class);
+        array_pop($nsParts);
+        return implode('\\', $nsParts);
     }
 }

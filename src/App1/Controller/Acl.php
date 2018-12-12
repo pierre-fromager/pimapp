@@ -19,7 +19,7 @@ class Acl extends aclHelperController
     /**
      * manage
      *
-     * @return array
+     * @return \Pimvc\Http\Response
      */
     final public function manage()
     {
@@ -34,7 +34,7 @@ class Acl extends aclHelperController
     /**
      * toggle
      *
-     * @return array
+     * @return \Pimvc\Http\Response
      */
     final public function toggle()
     {
@@ -51,5 +51,15 @@ class Acl extends aclHelperController
             ];
             return $this->getJsonResponse($jsonAclParams);
         }
+    }
+
+    /**
+     * policies
+
+     * @return \Pimvc\Http\Response
+     */
+    final public function policies()
+    {
+        return $this->getJsonResponse($this->getAcls());
     }
 }

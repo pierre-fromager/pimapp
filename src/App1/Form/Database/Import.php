@@ -25,6 +25,8 @@ class Import extends Form
     const _SLOT = 'slot';
     const _TABLENAME = 'tablename';
     const _POOL_SIZE = 'poolsize';
+    const _DELIMITER = 'delimiter';
+    const _DECIMAL_SEPARATOR = 'decsep';
     const _LABEL = 'label';
 
     protected $isAdmin;
@@ -65,7 +67,10 @@ class Import extends Form
         $this->setData(self::_SLOT, $this->getSlotList());
         $this->setType(self::_POOL_SIZE, 'select');
         $this->setData(self::_POOL_SIZE, $this->getPoolSize());
-        
+        $this->setType(self::_DELIMITER, 'select');
+        $this->setData(self::_DELIMITER, $this->getDelimterList());
+        $this->setType(self::_DECIMAL_SEPARATOR, 'select');
+        $this->setData(self::_DECIMAL_SEPARATOR, $this->getDecimalSeparatorList());
         $this->_setWrappers();
         $this->setLabels($this->_getLabels());
         $this->setAlign('left');
@@ -109,6 +114,8 @@ class Import extends Form
             self::_SLOT => 'isrequired',
             self::_POOL_SIZE => 'isrequired',
             self::_TABLENAME => 'isrequired',
+            self::_DELIMITER => 'isrequired',
+            self::_DECIMAL_SEPARATOR => 'isrequired'
         ];
     }
 
@@ -125,6 +132,26 @@ class Import extends Form
                 GLOB_BRACE
             )
         );
+        return \Pimvc\Tools\Arrayproto::getTupple($liste);
+    }
+
+    /**
+     * getDelimterList
+     * @return array
+     */
+    private function getDelimterList(): array
+    {
+        $liste = [',', ';'];
+        return \Pimvc\Tools\Arrayproto::getTupple($liste);
+    }
+
+    /**
+     * getDecimalSeparatorList
+     * @return array
+     */
+    private function getDecimalSeparatorList(): array
+    {
+        $liste = ['.', ','];
         return \Pimvc\Tools\Arrayproto::getTupple($liste);
     }
 
@@ -170,6 +197,10 @@ class Import extends Form
         $this->setClass(self::_POOL_SIZE, $formControl);
         $this->setWrapperClass(self::_TABLENAME, $cols12);
         $this->setClass(self::_TABLENAME, $formControl);
+        $this->setWrapperClass(self::_DELIMITER, $cols6);
+        $this->setClass(self::_DELIMITER, $formControl);
+        $this->setWrapperClass(self::_DECIMAL_SEPARATOR, $cols6);
+        $this->setClass(self::_DECIMAL_SEPARATOR, $formControl);
     }
 
     /**
@@ -179,7 +210,7 @@ class Import extends Form
      */
     private function _getFields()
     {
-        return [self::_FILENAME, self::_SLOT, self::_POOL_SIZE, self::_TABLENAME];
+        return [self::_FILENAME, self::_SLOT, self::_POOL_SIZE, self::_TABLENAME, self::_DELIMITER, self::_DECIMAL_SEPARATOR];
     }
 
     /**
@@ -205,6 +236,8 @@ class Import extends Form
             self::_SLOT => 'Slot',
             self::_POOL_SIZE => 'Nb of inserts',
             self::_TABLENAME => 'Nom table',
+            self::_DELIMITER => 'Delimiter',
+            self::_DECIMAL_SEPARATOR => 'Séparateur de décimale'
         );
         if ($withIcon) {
             foreach ($labels as $key => $value) {
@@ -222,12 +255,14 @@ class Import extends Form
      */
     private static function _getLabelIcon($fieldName)
     {
-        $icons = array(
+        $icons = [
             self::_FILENAME => glyphHelper::get(glyphHelper::FILE),
             self::_SLOT => glyphHelper::get(glyphHelper::PAPERCLIP),
             self::_POOL_SIZE => glyphHelper::get(glyphHelper::STATS),
             self::_TABLENAME => glyphHelper::get(glyphHelper::SAVE),
-        );
+            self::_DELIMITER => glyphHelper::get(glyphHelper::ADJUST),
+            self::_DECIMAL_SEPARATOR => glyphHelper::get(glyphHelper::ADJUST),
+        ];
         return isset($icons[$fieldName]) ? $icons[$fieldName] : '';
     }
 }

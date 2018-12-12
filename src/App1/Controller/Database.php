@@ -10,26 +10,19 @@
  */
 namespace App1\Controller;
 
+use \Pimvc\Views\Helpers\Fa as faHelper;
+use \Pimvc\Tools\Flash as flashTools;
+use \Pimvc\Db\Model\Forge as dbForge;
+use \Pimvc\Db\Model\Field as dbField;
+use \Pimvc\Db\Model\Fields as dbFields;
+//use \Pimvc\Helper\Db\Field\Name\Normalize as FieldNormalizer;
 use \App1\Views\Helpers\Bootstrap\Tab as bootstrapTab;
-use App1\Helper\Controller\Database as databaseHelperController;
-use App1\Form\Files\Upload as uploadForm;
-//use \Pimvc\Views\Helpers\Glyph as glyphHelper;
-use Pimvc\Views\Helpers\Fa as faHelper;
-use Pimvc\Tools\Flash as flashTools;
-use Pimvc\Db\Model\Forge as dbForge;
-use Pimvc\Db\Model\Field as dbField;
-use Pimvc\Db\Model\Fields as dbFields;
-use \Pimvc\Helper\Db\Field\Name\Normalize as FieldNormalizer;
-use App1\Form\Database\Import as formImport;
+use \App1\Helper\Controller\Database as databaseHelperController;
+use \App1\Form\Files\Upload as uploadForm;
+use \App1\Form\Database\Import as formImport;
 
 class Database extends databaseHelperController
 {
-
-    const DOCUMENT_MIME_CSV = 'text/csv';
-    const DOCUMENT_UPLOAD_EXTRA = 'Le fichier doit porter les extensions suivantes ';
-    const FORM_FILE_MAX_FILESIZE = 52428800;
-    const DOCUMENT_PATH = 'cache/documents/';
-    const UPLOAD_SUCCESS = 'Upload successful for ';
 
     /**
      * tables4d
@@ -107,11 +100,11 @@ class Database extends databaseHelperController
         }
 
         $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => (string) $content
+            'content' => (string) $content
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Tablesmysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Tablesmysql.php')
+        );
     }
 
     /**
@@ -129,12 +122,9 @@ class Database extends databaseHelperController
             $this->tableList,
             $this->getParams(self::_ID)
         );
-        $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => (string) $content
+        $viewParams = ['content' => (string) $content
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Tablesmysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout($this->getView($viewParams, '/Views/Database/Tablesmysql.php'));
     }
 
     /**
@@ -198,11 +188,11 @@ class Database extends databaseHelperController
         }
 
         $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => (string) $content
+            'content' => (string) $content
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Tablesmysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Tablesmysql.php')
+        );
     }
 
     /**
@@ -235,7 +225,7 @@ class Database extends databaseHelperController
 
             $tableList = array_flip($this->tableList);
             $tabParams['Model'] = \Pimvc\Db\Generate\Model::get(
-                self::PDO_ADPATER_4D,
+                \Pimvc\Db\Model\Interfaces\Core::MODEL_ADAPTER_4D,
                 $tableList[$this->getParams(self::_ID)],
                 $this->indexes,
                 $this->relations
@@ -248,11 +238,11 @@ class Database extends databaseHelperController
         }
 
         $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => (string) $content
+            'content' => (string) $content
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Gencodemysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Gencodemysql.php')
+        );
     }
 
     /**
@@ -280,7 +270,7 @@ class Database extends databaseHelperController
                 $this->relations
             );
             $tabsParams['Model'] = \Pimvc\Db\Generate\Model::get(
-                self::PDO_ADPATER_MYSQL,
+                \Pimvc\Db\Model\Interfaces\Core::MODEL_ADAPTER_MYSQL,
                 $this->currentTableName,
                 $this->indexes,
                 $this->relations
@@ -293,11 +283,11 @@ class Database extends databaseHelperController
             $content .= $button . (string) $tabs;
         }
         $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => (string) $content
+            'content' => (string) $content
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Gencodemysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Gencodemysql.php')
+        );
     }
 
     /**
@@ -316,19 +306,20 @@ class Database extends databaseHelperController
         );
         $form->_setDestination($docPath)
             ->_setMaxsize(self::FORM_FILE_MAX_FILESIZE)
-            ->_setAllowedType([self::DOCUMENT_MIME_CSV])
-            ->_setAllowedExtension(['.csv', '.Csv', '.CSV'])
+            ->_setAllowedType([self::DOCUMENT_MIME_CSV, self::DOCUMENT_MIME_QIF])
+            ->_setAllowedExtension(
+                ['.qif', '.Qif', '.QIF', '.csv', '.Csv', '.CSV']
+            )
             ->render();
         if ($this->isPost()) {
             $filesInfos = $form->_getUploadInfos();
             if ($form->isValid()) {
                 $returnCode = $form->_move();
-                $parser = new \Pimvc\File\Csv\Parser();
                 $fullPathName = $docPath . $filesInfos->filename;
-                $delimiter = $parser->auto($fullPathName);
-                if ($parser->error != 0) {
-                    flashTools::addError($parser->error_info);
+                if ($returnCode === false) {
+                    flashTools::addError('Upload Error');
                 } else {
+                    $this->postProcessUploadCsv($fullPathName);
                     $message = self::UPLOAD_SUCCESS . $filesInfos->filename;
                     flashTools::addInfo($message);
                 }
@@ -337,11 +328,29 @@ class Database extends databaseHelperController
         $csvIcon = faHelper::get(faHelper::FILE);
         $widgetTitle = $csvIcon . ' Csv upload';
         $viewParams = [
-            'nav' => (string) $this->getNav()
-            , 'content' => $this->getWidget($widgetTitle, (string) $form)
+            'content' => $this->getWidget($widgetTitle, (string) $form)
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Gencodemysql.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Gencodemysql.php')
+        );
+    }
+
+    /**
+     * scancsv
+     *
+     */
+    final public function scancsv()
+    {
+        $csvPath = $this->getApp()->getPath() . 'cache/documents/';
+        $filename = '00050005835.csv';
+        $filePath = $csvPath . $filename;
+        $csva = $this->csvInfo($filePath);
+        echo '<pre>' . print_r($csva, true) . '</pre>';
+        die;
+        /*
+          return (string) $this->getLayout(
+          $this->getView($viewParams, '/Views/Database/Gencodemysql.php')
+          ); */
     }
 
     /**
@@ -356,22 +365,29 @@ class Database extends databaseHelperController
         $isValid = $form->isValid();
         $pagesize = $this->getParams('poolsize');
         if ($isPost && $isValid) {
+            $filepath = $this->getDocumentPath() . $this->getParams('filename');
+            if ($this->getParams('decsep') == ',') {
+                $csvContent = preg_replace(
+                    '/([0-9]),/i',
+                    '${1}.',
+                    file_get_contents($filepath)
+                );
+                file_put_contents($filepath, $csvContent);
+            }
             $form->setMode('readonly');
             $parser = new \Pimvc\File\Csv\Parser();
-            $filepath = $this->getDocumentPath() . $this->getParams('filename');
-            $delimiter = $parser->auto($filepath);
-
+            $parser->delimiter = $this->getParams('delimiter');
+            $parser->parse($filepath);
             if ($parser->error != 0) {
-                flashTools::addError('Error occured during csv parsing');
+                flashTools::addError('Error occured during csv parsing : [' . $parser->error . ']' . implode(',', $parser->error_info));
             } else {
-                $headers = array_keys($parser->data[0]);
-                $normalizedHeaders = FieldNormalizer::normalizeFieldsName(
-                    $headers
-                );
+                $headers = $parser->titles;
+                $normalizedHeaders = $this->getNormalizedHeaders($filepath, $parser->delimiter);
                 $mapperHeader = array_combine($headers, $normalizedHeaders);
                 $fields = new dbFields();
                 foreach ($headers as $columnName) {
                     $_field = (new dbField())
+                        ->setDecimalSeparator($this->getParams('decsep'))
                         ->setFromData($parser->data, $columnName)
                         ->setName($mapperHeader[$columnName]);
                     $fields->addItem($_field);
@@ -401,15 +417,17 @@ class Database extends databaseHelperController
             'isValid' => $isValid,
             'tablename' => $this->getParams('tablename'),
             'filename' => $this->getParams('filename'),
+            'delimiter' => $this->getParams('delimiter'),
+            'decsep' => $this->getParams('decsep'),
             'slot' => $this->getParams('slot'),
             'pagesize' => ($pagesize) ? $pagesize : 100,
             'page' => 1,
             'ingest' => $isPost,
-            'nav' => (string) $this->getNav()
-            , 'content' => $this->getWidget($widgetTitle, $widgetContent, 'widget-body')
+            'content' => $this->getWidget($widgetTitle, $widgetContent, 'widget-body')
         ];
-        $view = $this->getView($viewParams, '/Views/Database/Importcsv.php');
-        return (string) $this->getLayout($view);
+        return (string) $this->getLayout(
+            $this->getView($viewParams, '/Views/Database/Importcsv.php')
+        );
     }
 
     /**
@@ -417,12 +435,15 @@ class Database extends databaseHelperController
      */
     final public function asyncimportcsv()
     {
+
         $pagesize = $this->getParams('pagesize');
         $page = $this->getParams('page');
         $slot = $this->getParams('slot');
         $tablename = $this->getParams('tablename');
         $filename = $this->getParams('filename');
-        $isValid = $pagesize && $page && $slot && $tablename && $filename;
+        $delimiter = $this->getParams('delimiter');
+        $decimalSeparator = $this->getParams('decsep');
+        $isValid = $pagesize && $page && $slot && $tablename && $filename && $delimiter;
         $response = new \stdClass();
         $response->error = 0;
         $response->jsonError = JSON_ERROR_NONE;
@@ -434,17 +455,19 @@ class Database extends databaseHelperController
             $filepath = $this->getDocumentPath() . $filename;
             $tableExists = $forge->tableExist($tablename);
             if ($tableExists) {
+                $columns = $forge->describeTable();
                 $fileExist = file_exists($filepath);
                 if ($fileExist) {
-                    $response->headers = $this->getNormalizedHeaders($filepath);
+                    $response->headers = $this->getNormalizedHeaders($filepath, $delimiter);
                     $parser = new \Pimvc\File\Csv\Parser();
+                    $parser->delimiter = $delimiter;
                     $parser->fields = $response->headers;
                     $parser->offset = $response->offset = (($page - 1) * $pagesize);
                     $parser->limit = $response->limit = $pagesize;
                     $response->maxline = $this->countFileLines($filepath);
                     $percent = ($parser->offset * 100) / $response->maxline;
                     $response->progress = round($percent, 0);
-                    $delimiter = $parser->auto($filepath);
+                    $parser->parse($filepath);
                     $response->datas = [];
                     $response->linesError = [];
                     $response->delim = $delimiter;
@@ -475,61 +498,5 @@ class Database extends databaseHelperController
             $response->errors[] = 'missing params';
         }
         return $this->getJsonResponse($response);
-    }
-
-    /**
-     * getNormalizedHeaders
-     *
-     * @param string $filepath
-     * @return array
-     */
-    private function getNormalizedHeaders(string $filepath): array
-    {
-        $parser = new \Pimvc\File\Csv\Parser();
-        $parser->offset = 0;
-        $parser->limit = 1;
-        $delimiter = $parser->auto($filepath);
-        $headers = array_keys($parser->data[0]);
-        unset($parser);
-        return FieldNormalizer::normalizeFieldsName($headers);
-    }
-
-    /**
-     * getPath
-     *
-     * @return string
-     */
-    private function getDocumentPath()
-    {
-        $documentPath = $this->getApp()->getPath() . self::DOCUMENT_PATH;
-        if (!file_exists($documentPath)) {
-            mkdir($documentPath, 0777, true);
-        }
-        return $documentPath;
-    }
-
-    /**
-     * countFileLines
-     *
-     * @param string $filename
-     * @return int
-     */
-    private function countFileLines($filename): int
-    {
-        $fh = new \SplFileObject($filename, 'r');
-        $fh->seek(PHP_INT_MAX);
-        $nbLine = $fh->key();
-        unset($fh);
-        return (int) $nbLine;
-    }
-
-    /**
-     * isPost
-     *
-     * @return boolean
-     */
-    private function isPost()
-    {
-        return ($this->getApp()->getRequest()->getMethod() === 'POST');
     }
 }

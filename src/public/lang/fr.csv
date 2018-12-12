@@ -11,6 +11,8 @@ USERS_EDIT_TITLE,Edition compte utilisateur,User edit title
 USER_SIGNIN,Se connecter,Users
 USER_SIGNUP,s'inscrire,Users
 USER_EDIT_INTEG_ERROR,Vous ne pouvez pas modifier des informations qui ne vous appartiennent pas.,__USER_EDIT_INTEG_ERROR
+USER_DETAIL,Détail utilisateur,__USER_DETAIL
+USER_EDIT,Edition utilisateur,__USER_EDIT
 USER_DETAIL_TITLE,Détail du compte utilisateur,__USER_DETAIL_TITLE
 USER_EDIT_TITLE,Edition compte utilisateur,__USER_EDIT_TITLE
 USER_MESSAGE_REGISTRATION_SUCCESS,Inscription réussie,;
@@ -29,10 +31,14 @@ WELCOME_TO,Bienvenue sur,Bienvenue sur
 PROPULSED_BY,Propulsé par,Propulsé par
 PERMISSIONS,Permissions,Acl
 LANG,Langue,changer langue nav
+LANG_IMPORT,Langue import,changer langue nav
+LANG_EXPORT,Langue export,changer langue nav
 TRAIN,lignes,lignes train idf
 DATABASE,base de données,base de données
 SENSORS,Sondes,Capteurs
 SENSORS_CONFIG,Sondes config,Capteurs config
+SENSORS_VOLUMES,Sondes volumes,Sondes volumes
+SENSORS_EXPORT,Sondes export,Sondes export
 CRITERIAS,Critères,Critères
 COLUMNS,Colonnes,Colonnes
 CHOOSE_LANG,Choisir une langue,Colonnes
@@ -44,3 +50,8 @@ METRO_STATIONS_MANAGEMENT,Stations,
 ACL_MANAGER,Gestion des permissions,
 ACL,Permissions,
 CRUD_MANAGEMENT,Crud,
+DASHBOARD,Tableau de bord,Home Dashboard
+DATABASE_MYSQL,Mysql
+DATABASE_PGSQL,Postgres
+DATABASE_UPLOAD,Téléverser
+DATABASE_IMPORT,Importer

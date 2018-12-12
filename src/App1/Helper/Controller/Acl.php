@@ -1,4 +1,5 @@
 <?php
+
 /**
  * App1\Helper\Controller\Acl
  *
@@ -8,13 +9,13 @@
  * @copyright Pier-Infor
  * @version 1.0
  */
+
 namespace App1\Helper\Controller;
 
 use \Pimvc\Tools\Acl as aclTools;
 use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
 use \Pimvc\Controller\Basic as basicController;
-use \Pimvc\Views\Helpers\Fa as faHelper;
-use \App1\Helper\Lang\IEntries as ILang;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Acl extends basicController
 {
@@ -23,11 +24,6 @@ class Acl extends basicController
 
     const LAYOUT_NAME = 'responsive';
     const _ID = 'id';
-    const _TITLE = 'title';
-    const _ICON = 'icon';
-    const _LINK = 'link';
-    const _ITEMS = 'items';
-    const _TEXT = 'text';
 
     protected $controllerPath = '';
     protected $controllerFileList = array();
@@ -94,21 +90,19 @@ class Acl extends basicController
         }
     }
 
-    /**
+    /*
      * getNavConfig
      *
      * @return array
      */
-    protected function getNavConfig()
+
+    protected function getNavConfig(): array
     {
-        return [
-            self::_TITLE => [
-                self::_TEXT => $this->translate(ILang::__HOME),
-                self::_ICON => faHelper::getFontClass(faHelper::HOME),
-                self::_LINK => $this->baseUrl
-            ],
-            self::_ITEMS => []
+        $filter = [
+            '(user.*)\/(.*)(ge|il|it|rd|er)$',
+            '(acl.*)\/(.*)(ge)$',
         ];
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**

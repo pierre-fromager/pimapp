@@ -1,10 +1,14 @@
 <?php
+
 /**
  * Description of App1\Model\Users
  *
  * @author pierrefromager
  */
+
 namespace App1\Model;
+
+use \Pimvc\Tools\Session as sessionTools;
 
 class Users extends \Pimvc\Model\Users
 {
@@ -75,19 +79,33 @@ class Users extends \Pimvc\Model\Users
     public function getYearWeeksVolume()
     {
         $sql = self::MODEL_SELECT .
-            " CONCAT(YEAR(datec), '/', WEEK(datec)) AS week_name," .
-            " YEAR(datee), WEEK(datec), COUNT(*) AS counter " .
-            " FROM " . $this->_name .
-            self::MODEL_GROUP_BY . "week_name" .
-            self::MODEL_ORDER .
-            "YEAR(datec) ASC," .
-            "WEEK(datec) ASC";
+                " CONCAT(YEAR(datec), '/', WEEK(datec)) AS week_name," .
+                " YEAR(datee), WEEK(datec), COUNT(*) AS counter " .
+                " FROM " . $this->_name .
+                self::MODEL_GROUP_BY . "week_name" .
+                self::MODEL_ORDER .
+                "YEAR(datec) ASC," .
+                "WEEK(datec) ASC";
         $this->run($sql);
         $results = array();
         foreach ($this->_statement->fetchAll() as $row) {
             $results[] = ['datec' => $row['week_name'], 'counter' => $row['counter']];
         }
         return $results;
+    }
+
+    /**
+     * getBoxSn
+     *
+     * @return string
+     */
+    public function getBoxSn()
+    {
+        $snResult = $this->find(
+            [self::_SN],
+            [$this->_primary => sessionTools::getUid()]
+        )->getCurrent();
+        return (isset($snResult->sn)) ? $snResult->sn : '';
     }
 
     /**

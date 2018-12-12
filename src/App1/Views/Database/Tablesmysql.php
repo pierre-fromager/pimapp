@@ -7,7 +7,6 @@
         font-size:0.7em;
     }
 </style>
-<?= $nav; ?>
 <br style="clear:both"/>
 <div class="row">
     <div class="col-md-12">

@@ -1,20 +1,16 @@
 <?php
-
 /**
  * Description of App1\Helper\Controller\Lang
  *
  * @author Pierre Fromager
  */
-
 namespace App1\Helper\Controller;
 
 use \Pimvc\Controller\Basic as basicController;
-use App1\Tools\Lang as toolsLang;
-use Pimvc\Tools\Session as sessionTools;
-use Pimvc\Views\Helpers\Collection\Css as cssCollection;
-use Pimvc\Views\Helpers\Collection\Js as jsCollection;
-use Pimvc\Views\Helpers\Fa as faHelper;
-use \App1\Helper\Lang\IEntries as ILang;
+use \Pimvc\Views\Helpers\Collection\Css as cssCollection;
+use \Pimvc\Views\Helpers\Collection\Js as jsCollection;
+use \App1\Tools\Lang as toolsLang;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Lang extends basicController
 {
@@ -83,7 +79,7 @@ class Lang extends basicController
     {
         $langLinks = '';
         foreach ($this->langs as $lang) {
-            $url = $this->baseUrl . '/lang/change/name/' . $lang[self::_NAME];
+            $url = $this->baseUrl . '/lang/manage/name/' . $lang[self::_NAME];
             $link = '<a href="' . $url . '">' . $lang[self::_LABEL] . '</a>';
             $p = '<p class="' . self::CHANGE_PARA . '">' . $link . '</p>';
             $langLinks .= '<div class="' . self::CHANGE_WRAPPER . '">' . $p . '</div>';
@@ -96,29 +92,13 @@ class Lang extends basicController
      *
      * @return array
      */
-    protected function getNavConfig()
+    protected function getNavConfig(): array
     {
-        $lgIcon = faHelper::getFontClass(faHelper::LANGUAGE);
-        $freeItems = [
-            $this->menuAction('Change lang', $lgIcon, self::_CHANGE_ACTION),
+        $filter = [
+            '(lang.*)\/(.*)(ge|rt)$',
+            '(user.*)\/(.*)(ge|rd|il|it)$',
         ];
-        $items = array_merge([], $freeItems);
-        $isAdmin = sessionTools::isAdmin();
-        if ($isAdmin) {
-            $adminItems = [
-                $this->menuAction('Import lang', $lgIcon, self::_IMPORT_ACTION),
-                $this->menuAction('Export lang', $lgIcon, self::_EXPORT_ACTION),
-            ];
-            $items = array_merge($items, $adminItems);
-        }
-        return [
-            self::_TITLE => [
-                self::_TEXT => $this->translate(ILang::__HOME),
-                self::_ICON => faHelper::getFontClass(faHelper::HOME),
-                self::_LINK => $this->baseUrl
-            ],
-            self::_ITEMS => $items
-        ];
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**

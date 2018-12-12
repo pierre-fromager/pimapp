@@ -1,8 +1,10 @@
 <?php
+
 /**
  * App1\Helper\Nav\Title
  *
  */
+
 namespace App1\Helper\Nav;
 
 use \App1\Views\Helpers\Bootstrap\Nav;
@@ -13,9 +15,12 @@ class Title
 
     const TODO = 'TODOTITLE';
     const TITLES = [
+        '/home/dashboard' => IEntries::__DASHBOARD,
         '/user/manage' => IEntries::__USER_ACOUNT_MANAGEMENT,
         '/user/register' => IEntries::__USERS_SIGN_UP,
         '/user/lostpassword' => IEntries::__LOST_PASSWORD,
+        '/user/edit' => IEntries::__USER_EDIT,
+        '/user/detail' => IEntries::__USER_DETAIL,
         '/user/changepassword' => IEntries::__CHANGE_PASSWORD,
         '/metro/lignes/search' => IEntries::__METRO_LINES_SEARCH,
         '/metro/lignes/manage' => IEntries::__METRO_LINES_MANAGEMENT,
@@ -26,7 +31,13 @@ class Title
         '/acl/manage' => IEntries::__ACL,
         '/probes/manage' => IEntries::__SENSORS,
         '/probesconfig/manage' => IEntries::__SENSORS_CONFIG,
-        '/crud/manage' => IEntries::__CRUD_MANAGEMENT
+        '/probes/volumes' => IEntries::__SENSORS_VOLUMES,
+        '/probes/export' => IEntries::__SENSORS_EXPORT,
+        '/crud/manage' => IEntries::__CRUD_MANAGEMENT,
+        '/database/tablesmysql' => IEntries::__DATABASE_MYSQL,
+        '/database/tablespgsql' => IEntries::__DATABASE_PGSQL,
+        '/database/uploadcsv' => IEntries::__DATABASE_UPLOAD,
+        '/database/importcsv' => IEntries::__DATABASE_IMPORT
     ];
 
     /**

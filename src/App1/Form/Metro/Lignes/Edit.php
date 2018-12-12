@@ -8,15 +8,16 @@ namespace App1\Form\Metro\Lignes;
 
 use Pimvc\Form;
 use Pimvc\Views\Helpers\Glyph as glyphHelper;
+use Pimvc\Views\Helpers\Fa as faHelper;
 use Pimvc\Tools\Session as sessionTool;
 use App1\Model\Metro\Lignes as modelLignes;
 
 class Edit extends Form
 {
-    const LINE_EDIT_ACTION = 'metro/lignes/edit';
-    const LINE_EDIT_FORM_NAME = 'metro-lignes-edit';
-    const LINE_EDIT_FORM_METHOD = 'post';
-    const LINE_EDIT_DECORATOR_BREAK = '<br style="clear:both"/>';
+    const PROBE_EDIT_ACTION = 'metro/lignes/edit';
+    const PROBE_EDIT_FORM_NAME = 'metro-lignes-edit';
+    const PROBE_EDIT_FORM_METHOD = 'post';
+    const PROBE_EDIT_DECORATOR_BREAK = '<br style="clear:both"/>';
 
     protected $isAdmin;
     protected $uid;
@@ -45,9 +46,9 @@ class Edit extends Form
         $this->setMode($mode);
         parent::__construct(
             $this->_getFields(),
-            self::LINE_EDIT_FORM_NAME,
-            $this->baseUrl . DIRECTORY_SEPARATOR . self::LINE_EDIT_ACTION,
-            self::LINE_EDIT_FORM_METHOD,
+            self::PROBE_EDIT_FORM_NAME,
+            $this->baseUrl . DIRECTORY_SEPARATOR . self::PROBE_EDIT_ACTION,
+            self::PROBE_EDIT_FORM_METHOD,
             $this->postedData
         );
         $this->_setWrappers();

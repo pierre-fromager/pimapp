@@ -1,12 +1,13 @@
 <?php
+
 /**
  * Description of App1\Helper\Lang\IEntries
  */
+
 namespace App1\Helper\Lang;
 
 interface IEntries
 {
-
     const __HOME = 'HOME';
     const __AUTH_FAIL = 'AUTH_FAIL';
     const __INVALID_CREDENTIAL = 'INVALID_CREDENTIAL';
@@ -22,6 +23,8 @@ interface IEntries
     const __PROPULSED_BY = 'PROPULSED_BY';
     const __PERMISSIONS = 'PERMISSIONS';
     const __LANG = 'LANG';
+    const __LANG_IMPORT = 'LANG_IMPORT';
+    const __LANG_EXPORT = 'LANG_EXPORT';
     const __CHOOSE_LANG = 'CHOOSE_LANG';
     const __TRAIN = 'TRAIN';
     const __DATABASE = 'DATABASE';
@@ -31,6 +34,8 @@ interface IEntries
     const __USERS_SIGN_IN = 'USER_SIGNIN';
     const __USERS_SIGN_UP = 'USER_SIGNUP';
     const __USER_EDIT_INTEG_ERROR = 'USER_EDIT_INTEG_ERROR';
+    const __USER_EDIT = 'USER_EDIT';
+    const __USER_DETAIL = 'USER_DETAIL';
     const __USER_EDIT_TITLE = 'USER_EDIT_TITLE';
     const __USER_DETAIL_TITLE = 'USER_DETAIL_TITLE';
     const __USER_MESSAGE_REGISTRATION_SUCCESS = 'USER_MESSAGE_REGISTRATION_SUCCESS';
@@ -47,9 +52,16 @@ interface IEntries
     const __METRO_STATIONS_MANAGEMENT = 'METRO_STATIONS_MANAGEMENT';
     const __SENSORS = 'SENSORS';
     const __SENSORS_CONFIG = 'SENSORS_CONFIG';
+    const __SENSORS_EXPORT = 'SENSORS_EXPORT';
+    const __SENSORS_VOLUMES = 'SENSORS_VOLUMES';
     const __CRITERIAS = 'CRITERIAS';
     const __COLUMNS = 'COLUMNS';
     const __ACL_MANAGER = 'ACL_MANAGER';
     const __ACL = 'ACL';
     const __CRUD_MANAGEMENT = 'CRUD_MANAGEMENT';
+    const __DASHBOARD = 'DASHBOARD';
+    const __DATABASE_MYSQL = 'DATABASE_MYSQL';
+    const __DATABASE_PGSQL = 'DATABASE_PGSQL';
+    const __DATABASE_UPLOAD = 'DATABASE_UPLOAD';
+    const __DATABASE_IMPORT = 'DATABASE_IMPORT';
 }

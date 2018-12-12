@@ -22,13 +22,16 @@ use \Pimvc\Views\Helpers\Gis\Osm\Options as OsmMapOptions;
 use \Pimvc\Views\Helpers\Gis\Osm\Marker\Options as OsmMarkerOptions;
 use \Pimvc\Views\Helpers\Gis\Osm\Marker as OsmMarker;
 use \Pimvc\Controller\Basic as basicController;
-use App1\Form\Metro\Stations\Edit as editMetroStationsForm;
-use App1\Model\Metro\Lignes as modelLignes;
-use App1\Model\Metro\Stations as modelStations;
+use \App1\Form\Metro\Stations\Edit as editMetroStationsForm;
+use \App1\Model\Metro\Lignes as modelLignes;
+use \App1\Model\Metro\Stations as modelStations;
+use \App1\Helper\Nav\Auto\Config as autoNavConfig;
 
 class Stations extends basicController
 {
+    use \App1\Helper\Reuse\Controller;
 
+    const _PAGESIZE = 'pagesize';
     const PUBLIC_CSS = '/public/css/';
     const PUBLIC_JS = '/public/js/';
     const PARAM_ID = 'id';
@@ -228,114 +231,19 @@ class Stations extends basicController
     }
 
     /**
-     * getLayout
-     *
-     * @param string $content
-     * @return \App1\Views\Helpers\Layouts\Responsive
-     */
-    protected function getLayout($content)
-    {
-        $layout = (new \App1\Views\Helpers\Layouts\Responsive());
-        $layoutParams = ['content' => $content];
-        $layout->setApp($this->getApp())
-                ->setName(self::LAYOUT_NAME)
-                ->setLayoutParams($layoutParams)
-                ->build();
-        return $layout;
-    }
-
-    /**
      * getNavConfig
      *
      * @return array
      */
-    protected function getNavConfig()
+    protected function getNavConfig(): array
     {
-        $items = [];
-        $isAuth = sessionTools::isAuth();
-        $isPro = sessionTools::getProfil() === 'pro';
-        $authLink = ($isAuth) ? [
-            self::PARAM_TITLE => 'Logout'
-            , 'icon' => 'fa fa-sign-out'
-            , 'link' => $this->baseUrl . '/user/logout'
-                ] : [
-            self::PARAM_TITLE => 'Login'
-            , 'icon' => 'fa fa-sign-in'
-            , 'link' => $this->baseUrl . '/user/login'
-                ];
-
-        $freeItems = [
-            [
-                'title' => 'Lignes'
-                , 'icon' => 'fa fa-subway'
-                , 'link' => $this->baseUrl . '/metro/lignes/manage'
-            ], [
-                'title' => 'Itinéraires'
-                , 'icon' => 'fa fa-subway'
-                , 'link' => $this->baseUrl . '/metro/lignes/search'
-            ]
+        $filter = [
+            '(user)\/(.*)(ge|it|word|er)$',
+            '(home)\/(.*)(board)$',
+            '(metro)\/(lignes|stations)\/(.*)(ch)$',
+            '(crud)\/(.*)(ge)$',
         ];
-
-        $items += $freeItems;
-
-        $isAdmin = sessionTools::isAdmin();
-        if ($isAdmin) {
-            $items += [
-                [
-                    self::PARAM_TITLE => 'Acl'
-                    , 'icon' => 'fa fa-lock'
-                    , 'link' => $this->baseUrl . '/acl/manage'
-                ],
-                [
-                    self::PARAM_TITLE => 'Database'
-                    , 'icon' => 'fa fa-database'
-                    , 'link' => $this->baseUrl . '/database/tablesmysql'
-                ], [
-                    self::PARAM_TITLE => 'Stations'
-                    , 'icon' => 'fa fa-subway'
-                    , 'link' => $this->baseUrl . '/metro/stations/manage'
-                ]
-            ];
-        }
-
-        if ($isAuth) {
-            $authItems = [/* [
-                      self::PARAM_TITLE => 'Bizz Calc'
-                      , 'icon' => 'fa fa-calculator'
-                      , 'link' => $this->baseUrl . '/business/index'
-                      ],[
-                      self::PARAM_TITLE => 'Bizz Cra'
-                      , 'icon' => 'fa fa-calendar'
-                      , 'link' => $this->baseUrl . '/business/calendar'
-                      ] */];
-            $items = array_merge($items, $authItems);
-        }
-
-
-        array_push($items, $authLink);
-        $navConfig = [
-            self::PARAM_TITLE => [
-                'text' => 'Home',
-                'icon' => 'fa fa-home',
-                'link' => $this->baseUrl
-            ],
-            'items' => $items
-        ];
-        return $navConfig;
-    }
-
-    /**
-     * setPageSize
-     *
-     */
-    protected function setPageSize()
-    {
-        if ($this->getParams(self::PARAM_PAGESIZE)) {
-            sessionTools::set(
-                self::PARAM_PAGESIZE,
-                $this->getParams(self::PARAM_PAGESIZE)
-            );
-        }
+        return (new autoNavConfig)->setFilter($filter)->render()->getConfig();
     }
 
     /**

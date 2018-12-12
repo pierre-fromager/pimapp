@@ -22,9 +22,11 @@
     var progress = 0;
     var tablename = '<?= $tablename; ?>';
     var filename = '<?= $filename; ?>';
+    var delimiter = '<?= $delimiter; ?>';
     var slot = '<?= $slot; ?>';
     var page = <?= $page; ?>;
     var pagesize = <?= $pagesize; ?>;
+    var decsep = '<?= $decsep; ?>';
 
     function setProgress(percent) {
         progress = percent;
@@ -40,8 +42,10 @@
                 tablename: tablename,
                 slot: slot,
                 filename: filename,
+                delimiter: delimiter,
                 page: page,
-                pagesize: pagesize
+                pagesize: pagesize,
+                decsep: decsep
             }
         }
         return $.ajax(ajaxParams);
@@ -94,8 +98,6 @@
     <?php endif; ?>
     });
 </script>
-
-<?= $nav; ?>
 
 <br style="clear:both"/>
 

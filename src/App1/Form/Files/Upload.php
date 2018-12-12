@@ -188,11 +188,11 @@ class Upload extends Form
     /**
      * _setAllowedType
      *
-     * @param array $allowedType
+     * @param array $allowedTypes
      */
-    public function _setAllowedType($allowedType)
+    public function _setAllowedType($allowedTypes)
     {
-        $this->_allowedTypes = $allowedType;
+        $this->_allowedTypes = $allowedTypes;
         return $this;
     }
 
