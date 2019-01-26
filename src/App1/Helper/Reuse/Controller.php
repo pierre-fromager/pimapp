@@ -9,6 +9,7 @@ use \Pimvc\Html\Element\Decorator as htmlElement;
 use \App1\Views\Helpers\Bootstrap\Nav as bootstrapNav;
 use \App1\Views\Helpers\Layouts\Responsive as responsiveLayout;
 use \App1\Tools\Mail\Sender as mailSender;
+use \App1\Views\Helpers\Gdpr\Modal as gdprModal;
 
 trait Controller
 {
@@ -211,5 +212,16 @@ trait Controller
         $nsParts = explode('\\', static::class);
         array_pop($nsParts);
         return implode('\\', $nsParts);
+    }
+    
+    /**
+     * getGdprModal
+     *
+     * @return string
+     */
+    protected function getGdprModal(): string
+    {
+        $accepted = (isset($_COOKIE['rgpd_accepted']) && ($_COOKIE['rgpd_accepted'] == 1));
+        return ($accepted) ? '' : (string) (new gdprModal)->render();
     }
 }

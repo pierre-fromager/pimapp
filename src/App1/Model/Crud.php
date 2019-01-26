@@ -11,7 +11,7 @@ class Crud extends \Pimvc\Db\Model\Orm
 
     protected $_slot = '';
     protected $_name = '';
-    protected $_primary = 'id';
+    protected $_primary = '';
     protected $_alias = '';
     protected $_adapter = '';
     protected $_refMap = [];

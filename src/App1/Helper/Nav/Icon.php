@@ -13,7 +13,9 @@ class Icon
 {
 
     const ICONS = [
+        '/log/index' => Fa::BOOK,
         '/home/dashboard' => Fa::DASHBOARD,
+        '/home/cgu' => Fa::NEWSPAPER_O,
         '/user/manage' => Fa::USER,
         '/user/edit' => Fa::USER,
         '/user/detail' => Fa::USER,
@@ -46,6 +48,7 @@ class Icon
         '/crud/detail' => Fa::EYE,
         '/database/tablesmysql' => Fa::DATABASE,
         '/database/tablespgsql' => Fa::DATABASE,
+        '/database/tables4d' => Fa::DATABASE,
         '/database/uploadcsv' => Fa::CLOUD_UPLOAD,
         '/database/importcsv' => Fa::CLOUD_DOWNLOAD
     ];

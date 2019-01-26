@@ -116,6 +116,7 @@ class Select extends Form
     {
         $forge = new \Pimvc\Db\Model\Forge($this->postedData[self::_SLOT]);
         $tablesName = $forge->showTables();
+        sort($tablesName);
         unset($forge);
         return \Pimvc\Tools\Arrayproto::getTupple($tablesName);
     }

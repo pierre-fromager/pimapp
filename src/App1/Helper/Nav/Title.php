@@ -15,7 +15,9 @@ class Title
 
     const TODO = 'TODOTITLE';
     const TITLES = [
+        '/log/index' => IEntries::__LOGS,
         '/home/dashboard' => IEntries::__DASHBOARD,
+        '/home/cgu' => IEntries::__CGU,
         '/user/manage' => IEntries::__USER_ACOUNT_MANAGEMENT,
         '/user/register' => IEntries::__USERS_SIGN_UP,
         '/user/lostpassword' => IEntries::__LOST_PASSWORD,
@@ -36,6 +38,7 @@ class Title
         '/crud/manage' => IEntries::__CRUD_MANAGEMENT,
         '/database/tablesmysql' => IEntries::__DATABASE_MYSQL,
         '/database/tablespgsql' => IEntries::__DATABASE_PGSQL,
+        '/database/tables4d' => IEntries::__DATABASE_FOURD,
         '/database/uploadcsv' => IEntries::__DATABASE_UPLOAD,
         '/database/importcsv' => IEntries::__DATABASE_IMPORT
     ];

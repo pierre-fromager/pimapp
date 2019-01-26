@@ -8,7 +8,9 @@ namespace App1\Helper\Lang;
 
 interface IEntries
 {
+
     const __HOME = 'HOME';
+    const __LOGS = 'LOGS';
     const __AUTH_FAIL = 'AUTH_FAIL';
     const __INVALID_CREDENTIAL = 'INVALID_CREDENTIAL';
     const __LOGIN = 'LOGIN';
@@ -62,6 +64,16 @@ interface IEntries
     const __DASHBOARD = 'DASHBOARD';
     const __DATABASE_MYSQL = 'DATABASE_MYSQL';
     const __DATABASE_PGSQL = 'DATABASE_PGSQL';
+    const __DATABASE_FOURD = 'DATABASE_FOURD';
     const __DATABASE_UPLOAD = 'DATABASE_UPLOAD';
     const __DATABASE_IMPORT = 'DATABASE_IMPORT';
+    const __OPTIMIZATION = 'OPTIMIZATION';
+    const __DEPARTURE = 'DEPARTURE';
+    const __ARRIVAL = 'ARRIVAL';
+    const __GDPR_TITLE = 'GDPR_TITLE';
+    const __GDPR_CONTENT_1 = 'GDPR_CONTENT_1';
+    const __GDPR_CONTENT_2 = 'GDPR_CONTENT_2';
+    const __GDPR_CONTENT_3 = 'GDPR_CONTENT_3';
+    const __ACCEPT = 'ACCEPT';
+    const __CGU = 'CGU';
 }
