@@ -24,13 +24,15 @@ class Restful implements \Pimvc\Http\Interfaces\Layer
     const RESTFULL_ACTION_STORE = 'store';
     const RESTFULL_ACTION_PUT = 'update';
     const RESTFULL_ACTION_DELETE = 'destroy';
+    const RESTFULL_ACTION_OPTIONS = 'preflight';
     const RESTFULL_METHODS_ACTIONS = [
         PimRequest::REQUEST_METHOD_GET => self::RESTFULL_ACTION_INDEX,
         PimRequest::REQUEST_METHOD_POST => self::RESTFULL_ACTION_STORE,
         PimRequest::REQUEST_METHOD_PUT => self::RESTFULL_ACTION_PUT,
-        PimRequest::REQUEST_METHOD_DELETE => self::RESTFULL_ACTION_DELETE
+        PimRequest::REQUEST_METHOD_DELETE => self::RESTFULL_ACTION_DELETE,
+        PimRequest::REQUEST_METHOD_OPTIONS => self::RESTFULL_ACTION_OPTIONS
     ];
-
+    
     private $method;
     private $app;
     private $controller;

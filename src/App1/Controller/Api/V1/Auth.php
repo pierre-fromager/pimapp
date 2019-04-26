@@ -17,7 +17,7 @@ class Auth extends RestfulController
     const AUTH_ERROR_MESSAGE = 'errorMessage';
     const AUTH_LOGIN = 'login';
     const AUTH_PASSWORD = 'password';
-    const AUTH_ALLOWED_METHOD = ['POST'];
+    const AUTH_ALLOWED_METHOD = ['POST','OPTIONS'];
 
     private $request;
     private $baseUrl;
@@ -64,7 +64,35 @@ class Auth extends RestfulController
         } else {
             $this->dispatchError(403, 'Forbidden : incorrect credentials');
         }
+        $this->getApp()->getResponse()->setHeaders($this->getCorsHeaders());
         return $this->wrappedResponse(__FUNCTION__, $data);
+    }
+    
+    /**
+     * // OPTIONS
+     *
+     * preflight CORS
+     *
+     */
+    final public function preflight()
+    {
+        $this->getApp()->getResponse()->setHeaders($this->getCorsHeaders());
+        return $this->wrappedResponse(__FUNCTION__, []);
+    }
+    
+    /**
+     * getCorsHeaders
+     *
+     * @return array
+     */
+    private function getCorsHeaders():array
+    {
+        $aca = 'Access-Control-Allow-';
+        $headers[] = $aca . 'Origin: *';
+        $headers[] = $aca . 'Credentials: true';
+        $headers[] = $aca . 'Methods: GET, POST, PUT, DELETE, OPTIONS';
+        $headers[] = $aca . 'Headers: Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin';
+        return $headers;
     }
 
     /**
