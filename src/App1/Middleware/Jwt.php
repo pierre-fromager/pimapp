@@ -24,6 +24,7 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
     const JWT_ERROR = 'error';
     const JWT_ERROR_MESSAGE = 'errorMessage';
 
+    private $request;
     private $headers;
     private $app;
 
@@ -47,7 +48,8 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
     private function process()
     {
         $this->app = \Pimvc\App::getInstance();
-        $this->headers = $this->app->getRequest()->getHeaders();
+        $this->request = $this->app->getRequest();
+        $this->headers = $this->request->getHeaders();
         if ($this->required()) {
             if ($this->isValidAuthorization()) {
                 try {
@@ -76,9 +78,28 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
                     $this->dispatchError(500, $e->getMessage());
                 }
             } else {
-                $this->dispatchError(401, 'Bad request : Missing ' . self::JWT_AUTORIZATION);
+                if (!$this->isPreflight()) {
+                    $this->dispatchError(401, 'Bad request : Missing ' . self::JWT_AUTORIZATION);
+                }
             }
         }
+    }
+    
+    /**
+     * isPreflight
+     *
+     * @return bool
+     */
+    private function isPreflight(): bool
+    {
+        $isOptionsMethod = ($this->request->getMethod() == 'OPTIONS');
+        $corsHeadersKeys = array_keys($this->headers);
+        $hasOrigin = in_array('Origin', $corsHeadersKeys);
+        $hasAccessControlRequestMethod = in_array(
+            'Access-Control-Request-Method',
+            $corsHeadersKeys
+        );
+        return ($isOptionsMethod && $hasOrigin && $hasAccessControlRequestMethod);
     }
 
     /**
@@ -88,7 +109,7 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
      * @param array $user
      * @return boolean
      */
-    private function isValidCredential($decodedToken, $user)
+    private function isValidCredential($decodedToken, $user): bool
     {
         $login = $decodedToken->{Token::TOKEN_DATA}->{Token::TOKEN_DATA_LOGIN};
         $passwordHash = $decodedToken->{Token::TOKEN_DATA}->{Token::TOKEN_DATA_PASSWORD_HASH};
@@ -187,15 +208,12 @@ class Jwt implements \Pimvc\Http\Interfaces\Layer
      * log
      *
      */
-    private function log()
+    private function log($data = [])
     {
         $this->app->getLogger()->log(
             __CLASS__,
             \Pimvc\Logger::DEBUG,
-            [
-            //'role' => $this->role,
-            //'allow' => $this->allowed
-            ]
+            $data
         );
     }
 }
